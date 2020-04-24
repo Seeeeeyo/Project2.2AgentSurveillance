@@ -1,16 +1,17 @@
 package Group9.agent.Intruder;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class History {
-    Map<Integer, Cell> history = new HashMap<>();
+    Map<Integer, Cell2> history = new HashMap<>();
 
-    public void addCell(int i, Cell cell){
+    public void addCell(int i, Cell2 cell){
         history.put(i, cell);
     }
 
-    public Cell getCell(int i){
-        return histroy.get(i);
+    public Cell2 getCell(int i){
+        return history.get(i);
     }
     public int getCellCount(int i){
         return history.get(i).getCount();

@@ -94,5 +94,6 @@ public class Cell {
     public Coordinate[] getPoints()
     {
         Coordinate[] points = {new Coordinate(midX + 0.5 * size, midY + 0.5 * size), new Coordinate(midX - 0.5 * size, midY + 0.5 * size), new Coordinate(midX - 0.5 * size, midY - 0.5 * size), new Coordinate(midX + 0.5 * size, midY - 0.5 * size),};
+    return points;
     }
 }
