@@ -11,6 +11,7 @@ public class Main {
         Game game = new Game(Parser.parseFile("./src/main/java/Group9/map/maps/test_2.map"), new DefaultAgentFactory(), false);
         game.run();
         System.out.printf("The winner is: %s\n", game.getWinner());
+        System.out.println("test");
 
     }
 
