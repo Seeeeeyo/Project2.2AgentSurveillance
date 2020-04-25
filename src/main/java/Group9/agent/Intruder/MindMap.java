@@ -35,6 +35,8 @@ public class MindMap {
         new MindMap(50, 50, Direction.fromRadians(0));
     }
 
+    /*instanciate the mindmap. The agent is set at the center of the matrix.
+    * */
     public MindMap(double height, double width, Direction angle){
         mapData = new int[(int)height][(int)width];
         setState(new AgentState(new Point(height/2,width/2),angle);
