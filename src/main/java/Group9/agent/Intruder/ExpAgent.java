@@ -96,28 +96,17 @@ public class ExpAgent implements Guard {
 
     public List<TypeOfAction> moveHistory;
 
-    //state of agent.
-    protected double[][] stateSituation;
-
     public int mapWidth = 80;
 
     public int mapLength = 120;
 
     final public int scale = 1;
 
-    // agent's initial coordinate
-    public int initialY = (mapWidth/2)*scale;
 
-    public int initialX = (mapLength/2)*scale;
-
-    //agent self location
-    private double x;
-
-    private double y;
 
     final public double unknownPlace = 0;
 
-    final public double wall = 13;
+   /* final public double wall = 13;
 
     final public double teleport = 23;
 
@@ -127,7 +116,7 @@ public class ExpAgent implements Guard {
 
     final public double sentryTower = 59;
 
-    final public double emptySpace = -1;
+    final public double emptySpace = -1;*/
 
     //even not useful for guard agent
     final public double targetPlace = 67;
@@ -166,7 +155,7 @@ public class ExpAgent implements Guard {
     //check if there is a teleport needed to explore completely
     public boolean teleportNeedExplore = false;
 
-    public double[] selfLocation;
+    private MindMap map;
 
     //whether the agent faces a boundary
     public boolean touchedBoundary = false;
@@ -232,8 +221,8 @@ public class ExpAgent implements Guard {
         System.out.println("The agent will return :  "+exp.getAction(guardPercepts).getClass());
 
 
-        if (!exp.isGridMapEmpty()) {
-            exp.printGridMap();
+        if (!exp.map.isGridMapEmpty()) {
+            exp.map.printGridMap();
         }
 
 
@@ -242,254 +231,14 @@ public class ExpAgent implements Guard {
     //constructor
     public ExpAgent() {
 
-        stateSituation = new double[mapWidth*scale][mapLength*scale];
-
-        stateSituation[initialY][initialX] = itself;
-
         moveHistory = new ArrayList();
 
         moveHistory.add(new TypeOfAction(1,1,1));
 
-        setX(initialX);
-
-        setY(initialY);
-
-        selfLocation = new double[2];
-    }
-
-    //The coordinate for object before making rotation.
-    public double[] coordinateBasedOnInitialPoint(double x, double y,double sumOfRotateAngle) {
-        double[] xy = new double[2];
-
-        double previousX =  (x*Math.cos(Math.toRadians(sumOfRotateAngle)) + y*Math.sin(Math.toRadians(sumOfRotateAngle)));
-
-        double previousY =  (y*Math.cos(Math.toRadians(sumOfRotateAngle)) - x*Math.sin(Math.toRadians(sumOfRotateAngle)));
-
-        xy[0] = previousX;
-
-        xy[1] = previousY;
-
-        return xy;
-
-    }
-
-    /**
-     *
-     * @param currX perceived x
-     * @param currY perceived y
-     * @return x value based on the coordinate of initial point
-     */
-    public double changeToStartingPointCoordinateX(double currX, double currY){
-        double val = 0;
-
-        double sumOfRotation = 0;
-
-        for (int i = 0;i<moveHistory.size();i++){
-
-            //if the action is rotation
-            if (moveHistory.get(i).getActionType() == 2){
-                sumOfRotation = sumOfRotation + moveHistory.get(i).getVal();
-            }
-        }
-
-        double X = coordinateBasedOnInitialPoint(currX,currY,sumOfRotation)[0];
-
-        val = X - selfLocation[0];
-
-        return val;
+        map = new MindMap();
     }
 
 
-
-    //after doing re-rotate calculation, these method will return a value compare to ini valuel
-    public double changeToStartingPointCoordinateY(double currX,double currY){
-        double val = 0;
-
-        double sumOfRotation = 0;
-
-        for (int i = 0;i<moveHistory.size();i++){
-
-            //if the action is rotation
-            if (moveHistory.get(i).getActionType() == 2){
-                sumOfRotation = sumOfRotation + moveHistory.get(i).getVal();
-            }
-        }
-
-        double Y = coordinateBasedOnInitialPoint(currX,currY,sumOfRotation)[1];
-
-        val = Y - selfLocation[0];
-
-        return val;
-    }
-
-
-    //given a rotation angle and moving distance, return the xy- coordinates of where agent is based on the previous point.
-    public double[] getXandYAfterRotationMove(double degree, double distance){
-
-        double[] xy = new double[2];
-
-        if (degree >0){
-            //x value
-            xy[0] = distance * Math.sin(Math.toRadians(degree));
-
-            //y value
-            xy[1] = distance * Math.cos(Math.toRadians(degree));
-        }else {
-
-            xy[0] = -distance * Math.sin(Math.toRadians(-degree));
-
-            xy[1] = distance * Math.cos(Math.toRadians(-degree));
-        }
-
-
-        return xy;
-    }
-
-
-    //return the xy- coordinates of where agent is based on the initial point.
-    public void updateXY(){
-
-        double sumOfRotation = 0;
-
-        double lastMoveDistance = 0;
-
-        for (int i = 0;i<moveHistory.size();i++){
-
-            //if the action is rotation
-            if (moveHistory.get(i).getActionType() == 2){
-                sumOfRotation = sumOfRotation + moveHistory.get(i).getVal();
-            }
-        }
-
-        for (int i = moveHistory.size()-1;i>=0;i--){
-
-            if (moveHistory.get(i).getActionType() == 1){
-                lastMoveDistance = moveHistory.get(i).getVal();
-            }
-        }
-        double[] xy = getXandYAfterRotationMove(sumOfRotation,lastMoveDistance);
-
-        selfLocation[0] = selfLocation[0] + xy[0];
-
-        selfLocation[1] = selfLocation[1] + xy[1];
-
-    }
-
-
-
-
-
-
-
-    /**
-     * update the Map after executing an action
-     * @param
-     * @param
-     * @return a new map being updated
-     */
-    public void updateGridMap(GuardPercepts percepts){
-
-
-
-        //currently, the explore agent only need to execute move or rotate
-
-        //all the objects in vision
-        Set<ObjectPercept> objectPercepts = percepts.getVision().getObjects().getAll();
-
-        List<ObjectPercept> ls = new ArrayList<ObjectPercept>(objectPercepts);
-
-        Iterator<ObjectPercept> iterator = objectPercepts.iterator();
-
-        to:for (int i = 0;i<ls.size();i++){
-            double objectX = changeToStartingPointCoordinateX(ls.get(i).getPoint().getX(),ls.get(i).getPoint().getY());
-
-            double objectY = changeToStartingPointCoordinateY(ls.get(i).getPoint().getX(),ls.get(i).getPoint().getY());
-
-
-
-            ObjectPerceptType type = ls.get(i).getType();
-
-            switch (type) {
-                case Wall:
-                    if(stateSituation[(int)(selfLocation[1]+initialY - objectY)][(int)(selfLocation[0]+initialX+objectX)] == unknownPlace) stateSituation[(int)(selfLocation[1]+initialY - objectY)][(int)(selfLocation[0]+initialX+objectX)] = wall;
-                    continue to;
-
-                case Door  :
-                    if(stateSituation[(int)(selfLocation[1]+initialY - objectY)][(int)(selfLocation[0]+initialX+objectX)] == unknownPlace) stateSituation[(int)(selfLocation[1]+initialY - objectY)][(int)(selfLocation[0]+initialX+objectX)] = door;
-                    continue to;
-
-                case Window  :
-                    if(stateSituation[(int)(selfLocation[1]+initialY - objectY)][(int)(selfLocation[0]+initialX+objectX)] == unknownPlace) stateSituation[(int)(selfLocation[1]+initialY+initialY - objectY)][(int)(selfLocation[0]+initialX+objectX)] = window;
-                    continue to;
-
-                case Teleport:
-                    if(stateSituation[(int)(selfLocation[1]+initialY - objectY)][(int)(selfLocation[0]+initialX+objectX)] == unknownPlace) stateSituation[(int)(selfLocation[1] - objectY)][(int)(selfLocation[0]+initialX+objectX)] = teleport;
-                    continue to;
-
-                case SentryTower:
-                    if(stateSituation[(int)(selfLocation[1]+initialY- objectY)][(int)(selfLocation[0]+initialX+objectX)] == unknownPlace) stateSituation[(int)(selfLocation[1] +initialY- objectY)][(int)(selfLocation[0]+initialX+objectX)] = sentryTower;
-                    continue to;
-
-                case EmptySpace:
-                    if(stateSituation[(int)(selfLocation[1]+initialY - objectY)][(int)(selfLocation[0]+initialX+objectX)] == unknownPlace) stateSituation[(int)(selfLocation[1]+initialY - objectY)][(int)(selfLocation[0]+initialX+objectX)] = emptySpace;
-                    continue to;
-
-                case ShadedArea:
-                    if(stateSituation[(int)(selfLocation[1]+initialY - objectY)][(int)(selfLocation[0]+initialX+objectX)] == unknownPlace) stateSituation[(int)(selfLocation[1]+initialY - objectY)][(int)(selfLocation[0]+initialX+objectX)] = shadedArea;
-                    continue to;
-
-                case Guard:
-                    if(stateSituation[(int)(selfLocation[1]+initialY - objectY)][(int)(selfLocation[0]+initialX+objectX)] == unknownPlace) stateSituation[(int)(selfLocation[1]+initialY - objectY)][(int)(selfLocation[0]+initialX+objectX)] = guard;
-                    continue to;
-
-                case Intruder:
-                    if(stateSituation[(int)(selfLocation[1]+initialY - objectY)][(int)(selfLocation[0]+initialX+objectX)] == unknownPlace) stateSituation[(int)(selfLocation[1]+initialY - objectY)][(int)(selfLocation[0]+initialX+objectX)] = intruder;
-                    continue to;
-                case TargetArea:
-                    continue to;
-
-            }
-
-        }
-
-
-    }
-
-
-
-
-
-    /**
-     * Based on the current map situation, change the size of the map in order to achieve a better map.
-     * @param lastSituation
-     * @return a map after changed by a proper size.
-     */
-    public double[][] changeGridMapSize(double[][] lastSituation){
-        double[][] newState = lastSituation.clone();
-
-        return newState;
-    }
-
-    /**
-     * find the location of the agent.
-     * @param state
-     * @return the x-y coordinate of the agent
-     */
-    public int[] findSelfLocation(double[][] state) {
-        int[] location = new int[2];
-
-        for (int i = 0; i < state.length; i++) {
-            for(int j = 0;j<state[0].length;j++) {
-                if(state[i][j] == itself) {
-                    location[0] = i;
-                    location[1] = j;
-                }
-            }
-        }
-
-        return location;
-
-    }
 
     @java.lang.Override
     public GuardAction getAction(GuardPercepts percepts) {
@@ -553,7 +302,7 @@ public class ExpAgent implements Guard {
         //----------------------------update the map based on what agent perceived now--------------------------------------
 
 //		updateXY();
-        updateGridMap(percepts);
+        map.updateGridMap(percepts);
 
         //------------------------------------------------------------------
 
@@ -845,9 +594,9 @@ public class ExpAgent implements Guard {
     public boolean alreadyExplored(){
         boolean val = false;
 
-        x =  findSelfLocation(stateSituation)[0];
+        int  x =  map.state.getX();
 
-        y =  findSelfLocation(stateSituation)[1];
+        int  y =  map.state.getY();
 
         double sum1 = 0;
 
@@ -865,7 +614,7 @@ public class ExpAgent implements Guard {
         for (int i = (int)x-5;i<x;i++){
             for (int j = (int)y-2;j<y+2;j++){
 
-                sum1 = stateSituation[i][j] + sum1;
+               // sum1 = stateSituation[i][j] + sum1;
 
             }
         }
@@ -883,21 +632,6 @@ public class ExpAgent implements Guard {
 
 
     //------- getter and setter and debug functions-------------------
-    public void setX(double value) {
-        x = value;
-    }
-
-    public void setY(double value) {
-        y = value;
-    }
-
-    public double getX() {
-        return x;
-    }
-
-    public double getY() {
-        return y;
-    }
 
     public int getSequence() {
         return actionSequence;
@@ -917,36 +651,6 @@ public class ExpAgent implements Guard {
 
     public double getRotateAngle() {
         return rotateAngle;
-    }
-
-    public void printGridMap(){
-
-        for (int i = 0;i<stateSituation.length;i++){
-            for (int j = 0;j<stateSituation[0].length;j++){
-
-                System.out.print(stateSituation[i][j]+" ");
-
-
-            }
-            System.out.println();
-        }
-
-
-
-    }
-
-
-    public boolean isGridMapEmpty(){
-
-        for (int i = 0;i<stateSituation.length;i++){
-            for (int j = 0;j<stateSituation[0].length;j++){
-
-                if (stateSituation[i][j] != 0){
-                    return false;
-                }
-            }
-        }
-        return true;
     }
 
 
