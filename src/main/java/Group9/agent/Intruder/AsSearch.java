@@ -272,8 +272,8 @@ public class AsSearch {
                 listOfMoves.add(tmp);
             }
             else if(listPositions.get(i)[0] == listPositions.get(i + 1)[0]-1){
-               // String tmp = "up"; // 4 = up
-                int tmp = 4; // 4 = up
+               // String tmp = "up"; // 1 = up
+                int tmp = 1; // 1 = up
                 listOfMoves.add(tmp);
             }
         }

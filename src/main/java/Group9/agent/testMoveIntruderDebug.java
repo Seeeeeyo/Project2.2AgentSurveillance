@@ -11,11 +11,11 @@ public class testMoveIntruderDebug {
         array.add(1);
         array.add(1);
         array.add(2);
-        array.add(1);
+    /*    array.add(1);
         array.add(2);
         array.add(2);
         array.add(3);
-        array.add(3);
+        array.add(3);*/
 
 
         List<int[]> list = getNumberConsecutiveMoves(array);
