@@ -21,7 +21,7 @@ public class AgentState {
     }
 
     /*The pos data type is a point of doubles. We can either get this double (real) form or the standard rounded integer form
-    * */
+     * */
     public Point getRealPos() {
         return pos;
     }
@@ -58,6 +58,9 @@ public class AgentState {
         return angle;
     }
 
+    public Vector vectorPos(){
+        return new Vector(pos);
+    }
     public void setAngle(Direction angle) {
         this.angle = angle;
     }
