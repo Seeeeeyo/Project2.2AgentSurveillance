@@ -1,7 +1,6 @@
 package Group9.agent.factories;
 
-import Group9.agent.RandomAgent;
-import Group9.agent.RandomIntruderAgent;
+import Group9.agent.*;
 import Interop.Agent.Guard;
 import Interop.Agent.Intruder;
 
@@ -32,7 +31,7 @@ public class DefaultAgentFactory implements IAgentFactory {
         List<Guard> guards = new ArrayList<>();
         for(int i = 0; i < number; i++)
         {
-            guards.add(new RandomAgent());
+            guards.add(new Rule_Based_Guard());
             //guards.add(new DeepSpace());
         }
         return guards;

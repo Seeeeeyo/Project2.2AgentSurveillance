@@ -11,13 +11,15 @@ import java.io.File;
 import java.util.List;
 
 public class Gui extends Application {
-    private File mapFile = new File("./src/main/java/Group9/map/maps/test_2.map");
+    private File mapFile = new File("./src/main/java/Group9/map/maps/testnew.map");
     private MainController mainController = new MainController(this,mapFile,true);
     private MainScene scene = new MainScene(new StackPane(), mainController.getGame().getGameMap(),this);
     private Stage primary = new Stage();
 
     public static void Gui(String[] args) {
+
         launch(args);
+
     }
 
     @Override

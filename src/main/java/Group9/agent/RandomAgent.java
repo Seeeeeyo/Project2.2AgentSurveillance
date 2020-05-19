@@ -32,6 +32,9 @@ public class RandomAgent implements Guard {
         }
     }
 
+
+
+
     private double getSpeedModifier(GuardPercepts guardPercepts)
     {
         SlowDownModifiers slowDownModifiers =  guardPercepts.getScenarioGuardPercepts().getScenarioPercepts().getSlowDownModifiers();
