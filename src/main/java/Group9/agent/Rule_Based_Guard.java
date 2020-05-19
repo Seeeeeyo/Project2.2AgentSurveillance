@@ -26,7 +26,7 @@ import java.util.Set;
 
 public class Rule_Based_Guard implements Guard {
 
-    public boolean debug = false;
+    public boolean debug = true;//turn on if need to see debug message
 
     public double a = 1;
 
@@ -82,8 +82,6 @@ public class Rule_Based_Guard implements Guard {
 
     final public double guard = 1;
 
-    final public double boundary = 107;
-
     private int avoidSequence = -1;
 
     private int patrolSequence = -1;
@@ -117,6 +115,17 @@ public class Rule_Based_Guard implements Guard {
         //updateGridMap(objectPerceptArrayList);
         //printMoveHistory();
         //printMemoryMap();
+
+        SlowDownModifiers slowDownModifiers =  percepts.getScenarioGuardPercepts().getScenarioPercepts().getSlowDownModifiers();
+        double modifier = 1;
+        if (percepts.getAreaPercepts().isInWindow()){
+            modifier = slowDownModifiers.getInWindow();
+        }else if (percepts.getAreaPercepts().isInSentryTower()){
+            modifier = slowDownModifiers.getInSentryTower();
+        }else if (percepts.getAreaPercepts().isInDoor()){
+            modifier = slowDownModifiers.getInDoor();
+        }
+
 
         //-----------if find target area-------------
 
@@ -248,7 +257,7 @@ public class Rule_Based_Guard implements Guard {
 
             if (debug) System.out.println("----- Begin to approach-----");
             Direction intruderDirection = ov.getObjectDirection(objectPerceptArrayList,ObjectPerceptType.Intruder);
-            System.out.println("Current degree is ------------  "+intruderDirection.getDegrees());
+            if (debug)System.out.println("Current degree is ------------  "+intruderDirection.getDegrees());
 
             //Distance to the intruder:
             Distance toIntruder = ov.distanceToObject(objectPerceptArrayList,ObjectPerceptType.Intruder);
@@ -269,7 +278,7 @@ public class Rule_Based_Guard implements Guard {
 
                 if (intruderDirection.getDegrees() < 2 || intruderDirection.getDegrees() > 358) {
                     if (debug) System.out.println("----- Move to approach-----");
-                    return new Move(new Distance(percepts.getScenarioGuardPercepts().getMaxMoveDistanceGuard().getValue() * getSpeedModifier(percepts)));
+                    return new Move(new Distance(percepts.getScenarioGuardPercepts().getMaxMoveDistanceGuard().getValue() * modifier));
 
                 } else {
 
@@ -301,7 +310,6 @@ public class Rule_Based_Guard implements Guard {
         }
 
 
-        SlowDownModifiers slowDownModifiers =  percepts.getScenarioGuardPercepts().getScenarioPercepts().getSlowDownModifiers();
 
         if(!percepts.wasLastActionExecuted())
         {
@@ -311,35 +319,10 @@ public class Rule_Based_Guard implements Guard {
         else
         {
             moveHistory.add(new TypeOfAction(percepts.getScenarioGuardPercepts().getMaxMoveDistanceGuard().getValue(),1));
-            return new Move(new Distance(percepts.getScenarioGuardPercepts().getMaxMoveDistanceGuard().getValue() * getSpeedModifier(percepts)));
+            return new Move(new Distance(percepts.getScenarioGuardPercepts().getMaxMoveDistanceGuard().getValue() * modifier));
         }
     }
 
-
-    /**
-     * Author: Group 9
-     * @param guardPercepts
-     * @return Modifier value
-     * Since the mechanism for modifier is same for every group, so
-     */
-    private double getSpeedModifier(GuardPercepts guardPercepts)
-    {
-        SlowDownModifiers slowDownModifiers =  guardPercepts.getScenarioGuardPercepts().getScenarioPercepts().getSlowDownModifiers();
-        if(guardPercepts.getAreaPercepts().isInWindow())
-        {
-            return slowDownModifiers.getInWindow();
-        }
-        else if(guardPercepts.getAreaPercepts().isInSentryTower())
-        {
-            return slowDownModifiers.getInSentryTower();
-        }
-        else if(guardPercepts.getAreaPercepts().isInDoor())
-        {
-            return slowDownModifiers.getInDoor();
-        }
-
-        return 1;
-    }
 
 
     public void printMoveHistory(){
