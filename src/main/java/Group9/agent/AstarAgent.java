@@ -20,7 +20,7 @@ import java.util.List;
 
     private MindMap map = new MindMap();
     private boolean firstTurn = true;
-    private int int lastMove = -1;;
+    private int lastMove = -1;
 
     private double getSpeedModifier(IntruderPercepts guardPercepts)
     {
@@ -48,8 +48,8 @@ private int turn =0;
         map.computeTargetPoint(percepts.getTargetDirection());
 
         List<int[]> listPositions =  AsSearch.computePath(map);
-        ArrayList listMoves = AsSearch.getListOfActionsDirections(listPositions);
-        ArrayList<int[]> listConsecutivesActions = AsSearch.getNumberConsecutiveMoves(listMoves);
+        ArrayList<Integer> listMoves = AsSearch.getListOfActionsDirections(listPositions);
+        List<int[]>listConsecutivesActions = AsSearch.getNumberConsecutiveMoves(listMoves);
 
 
         int counter = 0;
@@ -64,6 +64,14 @@ private int turn =0;
 
         if(!percepts.wasLastActionExecuted())
         {
+
+            // changed the first turn boolean
+            if (firstTurn) {
+                firstTurn=false;
+                System.out.println("firstTurn = " + firstTurn);
+            }
+            System.out.println("turn = " + turn);
+            turn++;
 
             // get the angle to rotate
             if((lastMove == 1 && move == 3) || (lastMove == 3 && move == 2) || (lastMove == 2 && move == 4) || (lastMove == 4 && move == 1)){
@@ -82,14 +90,6 @@ private int turn =0;
             else {
                 return new Rotate(Angle.fromRadians(percepts.getScenarioIntruderPercepts().getScenarioPercepts().getMaxRotationAngle().getRadians() * Game._RANDOM.nextDouble()));
             }
-
-            // changed the first turn boolean
-            if (firstTurn) {
-                firstTurn=false;
-                System.out.println("firstTurn = " + firstTurn);
-            }
-            System.out.println("turn = " + turn);
-            turn++;
         }
 
 
@@ -104,10 +104,10 @@ private int turn =0;
                     Angle angle = Angle.fromDegrees(270);
                     return new Rotate(angle);
                 }*/
-
                 Angle angle = Angle.fromDegrees(-map.getState().getAngle().getDegrees());
                 if(angle.getDegrees() > percepts.getScenarioIntruderPercepts().getScenarioPercepts().getMaxRotationAngle().getDegrees()){
                     angle = percepts.getScenarioIntruderPercepts().getScenarioPercepts().getMaxRotationAngle();
+                    return new Rotate(angle);
                 }
             }
 
@@ -126,7 +126,6 @@ private int turn =0;
             if ((move == 3)){
                 if (map.getState().getAngle().getDegrees() == 90) {
                     return new Move(new Distance(percepts.getScenarioIntruderPercepts().getMaxMoveDistanceIntruder().getValue() * getSpeedModifier(percepts)));
-                    return new Rotate(angle);
                 }
 
                 Angle angle = Angle.fromDegrees(90-map.getState().getAngle().getDegrees());
@@ -139,7 +138,6 @@ private int turn =0;
             if ((move == 4)){
                 if (map.getState().getAngle().getDegrees() == 270) {
                     return new Move(new Distance(percepts.getScenarioIntruderPercepts().getMaxMoveDistanceIntruder().getValue() * getSpeedModifier(percepts)));
-                    return new Rotate(angle);
                 }
 
                 Angle angle = Angle.fromDegrees(270-map.getState().getAngle().getDegrees());
