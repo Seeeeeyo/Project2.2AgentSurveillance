@@ -20,7 +20,7 @@ public class AsSearch {
        Angle initialAngle = new Angle(0.0);
        AgentState agentState = new AgentState(initialPoint, Direction.fromRadians(initialAngle.getRadians()));
        System.out.println("Initial map: ");
-      // printMatrix(matrix);
+       printMatrix(matrix);
        mindmap.setState(agentState);
        computePath(mindmap);
    }
@@ -42,7 +42,6 @@ public class AsSearch {
 
    public static List<int[]> computePath(MindMap mindMap){
        int[][] searchStates = mindMap.walkable();
-
 
 
        List<int[]> listOfPositions = new ArrayList<int[]>();
@@ -122,18 +121,6 @@ public class AsSearch {
               // System.out.println();
 
 
-               if (target[0] == possibleNewX - xdiff && target[1] == possibleNewY - ydiff) { // checks if the agent is in the target area
-                   actions[possibleNewX][possibleNewY] = i + 1;
-                   /*
-                   i = 1 is going to the top
-                   i = 2 is going to the bottom
-                   i = 3 is going to the right
-                   i = 4 is going to the left
-                    */
-                   stop = true;
-               }
-               if (!stop) {
-
                    // expand in the x direction if needed  to the bottom
                    if (searchStates.length <= possibleNewX) {
                        actions = expandBottom(actions);
@@ -174,7 +161,17 @@ public class AsSearch {
 //                   printMatrix(searchStates);
                    }
 
-
+               if (target[0] == possibleNewX - xdiff && target[1] == possibleNewY - ydiff) { // checks if the agent is in the target area
+                   actions[possibleNewX][possibleNewY] = i + 1;
+                   /*
+                   i = 1 is going to the top
+                   i = 2 is going to the bottom
+                   i = 3 is going to the right
+                   i = 4 is going to the left
+                    */
+                   stop = true;
+               }
+               if (!stop) {
                    if (searchStates[possibleNewX][possibleNewY] == 0) { // if unvisited and walkable
                        Point pointA = new Point(target[0],target[1]);
                        Point pointB = new Point(possibleNewX-xdiff-instantxdiff, possibleNewY-ydiff-instantydiff);
@@ -183,12 +180,12 @@ public class AsSearch {
                        int cost = (int) Math.floor(euclDistance.getValue());
                       // int newCost = checkedState[0] + cost; // new cost = addition of the previous cost (previous moves) and this move
                        int newCost = cost+checkedState[1];
-                       System.out.println("newCost = " + newCost);
+//                       System.out.println("newCost = " + newCost);
                        int[] newState = {newCost,checkedState[1]+1, possibleNewX - xdiff - instantxdiff, possibleNewY - ydiff - instantydiff}; // potential new state
                        searchStates[possibleNewX][possibleNewY] = 1; // no need to explore anymore
                        states.add(newState);
                        actions[possibleNewX][possibleNewY] = i + 1;
-                       System.out.println("add " + newCost + " " + (possibleNewX - xdiff - instantxdiff) + " " + (possibleNewY - ydiff - instantydiff));
+//                       System.out.println("add " + newCost + " " + (possibleNewX - xdiff - instantxdiff) + " " + (possibleNewY - ydiff - instantydiff));
                      //  printMatrix(searchStates);
                    /*
                    i = 1 is going to the top
@@ -201,7 +198,7 @@ public class AsSearch {
            }
        }
 
-      // printMatrix(actions);
+      printMatrix(actions);
 
                int xdiff = mindMap.getState().getX() - initialState[0];
                int ydiff = mindMap.getState().getY() - initialState[1];
@@ -315,7 +312,7 @@ public class AsSearch {
                 ac = action;
             } else {
                 if (action == ac) {
-                    out.get(out.size())[1]++;
+                    out.get(out.size()-1)[1]++;
                 } else {
                     ac = action;
                     int[] plus = new int[]{action, 1};
@@ -392,7 +389,7 @@ public class AsSearch {
         /*System.out.println("before expansion: ");
         printMatrix(matrix);
         System.out.println();*/
-        System.out.println("expanded bottom");
+//        System.out.println("expanded bottom");
         // expand in the x direction if needed  to the bottom
             int[][] tmp = new int[matrix.length + 1][matrix[0].length];
             for(int i = 0; i < matrix.length; i++){
@@ -413,7 +410,7 @@ public class AsSearch {
         //System.out.println("before expansion: ");
         // printMatrix(matrix);
         // System.out.println();
-        System.out.println("expanded top");
+//        System.out.println("expanded top");
         // expand in the x direction if needed  to the top
         int[][] tmp = new int[matrix.length + 1][matrix[0].length];
         for(int i = 0; i < matrix.length; i++){
@@ -430,7 +427,7 @@ public class AsSearch {
      * @return new matrix (expanded) with 1 extra right column
      */
     public static int[][] expandRight(int[][] matrix){
-        System.out.println("expanded right");
+//        System.out.println("expanded right");
         // expand in the y direction if needed to the right
             int[][] tmp = new int[matrix.length][matrix[0].length + 1];
             for(int i = 0; i < matrix.length; i++){
@@ -447,7 +444,7 @@ public class AsSearch {
      * @return new matrix (expanded) with 1 extra Left column
      */
     public static int[][] expandLeft(int[][] matrix) {
-        System.out.println("expanded left");
+//        System.out.println("expanded left");
         // expand in the y direction if needed to the left
         int diff = 1;
         int[][] tmp = new int[matrix.length][matrix[0].length + 1];
