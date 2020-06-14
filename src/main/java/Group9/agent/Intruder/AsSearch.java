@@ -5,10 +5,7 @@ import Interop.Geometry.Direction;
 import Interop.Geometry.Distance;
 import Interop.Geometry.Point;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class AsSearch {
 
@@ -27,6 +24,8 @@ public class AsSearch {
        mindmap.setState(agentState);
        computePath(mindmap);
    }
+
+   private static ArrayList<Integer> listMoves = new ArrayList<>();
 
     private static final int[][] moves =  // list of all the possible moves
             {{-1, 0},
@@ -94,7 +93,7 @@ public class AsSearch {
 
            int[] checkedState = states.remove(0);
 
-        //   System.out.println("Checked State: ");
+          // System.out.println("Checked State: ");
           // System.out.print( "Cost = " + checkedState[0] + ", " );
           // System.out.print( "x = " + checkedState[2]  + ", ");
           // System.out.print("y = " + checkedState[3]);
@@ -123,7 +122,7 @@ public class AsSearch {
               // System.out.println();
 
 
-               if (target[0] == possibleNewX - xdiff && target[1] == possibleNewY - ydiff) { // checks if the robot is in the target area
+               if (target[0] == possibleNewX - xdiff && target[1] == possibleNewY - ydiff) { // checks if the agent is in the target area
                    actions[possibleNewX][possibleNewY] = i + 1;
                    /*
                    i = 1 is going to the top
@@ -216,13 +215,17 @@ public class AsSearch {
 
                listOfPositions.add(lastPosition);
 
+               ArrayList<Integer> array = new ArrayList<>();
+
                while( x != (initialState[0]+xdiff) || y != (initialState[1]+ydiff)){
+                   array.add(actions[x][y]);
 
                  //  System.out.println("action coord x = " + (moves[actions[x][y]-1][0]));
                   // System.out.println("action coord y = " + (moves[actions[x][y]-1][1]));
 
                    int x2 = x - moves[actions[x][y]-1][0];
                    int y2 = y - moves[actions[x][y]-1][1];
+
 
                    int[] position = {x2,y2};
                    listOfPositions.add(position);
@@ -233,6 +236,9 @@ public class AsSearch {
                  //  System.out.println("y = " + y);
                }
 
+               listMoves = array;
+
+
                Collections.reverse(listOfPositions); // inverse the position order so the first index of the array is the first position
                for (int j = 0; j < listOfPositions.size(); j++) {
                 //   System.out.println("x position of " + j + "th move = " + listOfPositions.get(j)[0]);
@@ -241,6 +247,14 @@ public class AsSearch {
                }
        return listOfPositions;
     }
+
+
+
+
+    public static ArrayList<Integer> getListDirections(){
+       return listMoves;
+    }
+
 
     /**
      * This method translates the coordinates of the path into a list of moves: "right", "left", "up" and "down
@@ -252,10 +266,16 @@ public class AsSearch {
        // ArrayList<String> listOfMoves = new ArrayList<>();
         ArrayList<Integer> listOfMoves = new ArrayList<>();
         System.out.println("size = " + length);
+        System.out.println(listPositions.get(1)[0]);
 
-        System.out.println("listPositions = " + listPositions);
+
+        for (int i = 0; i < listPositions.size(); i++) {
+            System.out.println("listPositions = " + Arrays.toString(listPositions.get(i)));
+        }
+
 
         for (int i = 0; i < length; i++) {
+            System.out.println("i =" + i);
             if (listPositions.get(i)[0] == listPositions.get(i + 1)[0]) {
                 if (listPositions.get(i)[1] == listPositions.get(i + 1)[1]) {
                     System.out.println("smthg not normal in the path finding");

@@ -139,26 +139,34 @@ public class MindMap {
         Vector vb2 = state.vectorPos().add(new Vector(d));
         Vector vb1 = va1.add(new Vector(directionFirstTurn));
         Point b1 = new Point(vb1.x,vb1.y);
-//        System.out.println("b1= "+b1.getX()+" "+b1.getY());
+ //       System.out.println("b1= "+b1.getX()+" "+b1.getY());
         Point b2 = new Point(vb2.x,vb2.y);
-//        System.out.println("b2= "+b2.getX()+" "+b2.getY());
+ //       System.out.println("b2= "+b2.getX()+" "+b2.getY());
 
 //        calculating the equations of the lines
         double m1 = (a1.getY()-a2.getY())/(a1.getX()-a2.getX());
+//        System.out.println("m1 = " + m1);
         double m2 = (b1.getY()-b2.getY())/(b1.getX()-b2.getX());
+//        System.out.println("m2 = " + m2);
 //        case lines are parallel
         if(Math.abs(m1-m2)<=0.05){
             System.out.println("parallel");
             return findClosestUnvisitedPoint(d);
         }
         double c1 = a1.getY()-m1*a1.getX();
+//        System.out.println("c1 = " + c1);
         double c2 = b1.getY()-m2*b1.getX();
+//        System.out.println("c2 = " + c2);
 
 //        solving the system
         double interX =(c2-c1)/(m1-m2);
+//        System.out.println("interX = " + interX);
         double interY = m1*interX+c1;
+//        System.out.println("interY = " + interY);
         checkExpention((int)interX,(int)interY);
-        return new Point(interX,interY);
+        //return new Point(interX,interY);
+
+        return new Point(25,65);
     }
 
     public void computeTargetPoint(Direction d){
@@ -168,7 +176,7 @@ public class MindMap {
             targetPos = findClosestUnvisitedPoint(d);
         }else{
            targetPos = findIntersection(d);
-        }
+        } 
     }
 
     public boolean isVisited(Vector v){

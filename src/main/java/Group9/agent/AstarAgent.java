@@ -48,8 +48,9 @@ private int turn =0;
         map.computeTargetPoint(percepts.getTargetDirection());
 
         List<int[]> listPositions =  AsSearch.computePath(map);
-        ArrayList<Integer> listMoves = AsSearch.getListOfActionsDirections(listPositions);
-        List<int[]>listConsecutivesActions = AsSearch.getNumberConsecutiveMoves(listMoves);
+        //ArrayList<Integer> listMoves = AsSearch.getListOfActionsDirections(listPositions);
+        ArrayList array = AsSearch.getListDirections();
+        List<int[]> listConsecutivesActions = AsSearch.getNumberConsecutiveMoves(array);
 
 
         int counter = 0;
