@@ -170,13 +170,14 @@ public class MindMap {
     }
 
     public void computeTargetPoint(Direction d){
-        if(null==directionFirstTurn){
+        targetPos = new Point(25,65);
+        /* if(null==directionFirstTurn){
             directionFirstTurn = d;
             posFirstTurn = state.getPos();
             targetPos = findClosestUnvisitedPoint(d);
         }else{
            targetPos = findIntersection(d);
-        } 
+        } */
     }
 
     public boolean isVisited(Vector v){
