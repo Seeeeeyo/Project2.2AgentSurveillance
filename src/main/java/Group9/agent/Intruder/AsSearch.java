@@ -9,14 +9,14 @@ import java.util.*;
 
 public class AsSearch {
 
-   public static void main(String[] args){
+   public static void main2(String[] args){
        MindMap mindmap = new MindMap();
        int[][] matrix = {{0,0,2,0,0,0},{0,0,0,0,0,0},{0,0,2,0,2,0},{0,0,2,0,2,0},{0,0,2,0,2,0}}; // where 2 = walls, 0 is nothing special
        mindmap.setMapData(matrix);
-       Point targetPoint = new Point(1,3);
+       Point targetPoint = new Point(5,5);
        System.out.println("value "+matrix[5-1][5-1]);
        mindmap.setTargetPos(targetPoint);
-       Point initialPoint = new Point(1,1);
+       Point initialPoint = new Point(0,0);
        Angle initialAngle = new Angle(0.0);
        AgentState agentState = new AgentState(initialPoint, Direction.fromRadians(initialAngle.getRadians()));
        System.out.println("Initial map: ");
@@ -32,7 +32,18 @@ public class AsSearch {
        System.out.println("numberConsecutiveMove = " + numberConsecutiveMove);
    }
 
-   private static ArrayList<Integer> listMoves = new ArrayList<>();
+//   public static void main(String [] args){
+//       int a= 1;
+//       test(a);
+//       System.out.println(a);
+//   }
+//
+//   public static int test(int a){
+//       int out = a;
+//       a = 2;
+//       return out;
+//   }
+//   private static ArrayList<Integer> listMoves = new ArrayList<>();
 
     private static final int[][] moves =  // list of all the possible moves
             {{-1, 0},
@@ -46,7 +57,8 @@ public class AsSearch {
      * @param mindMap with the data of the map previously created
      * @return a list of (x,y) coordinates from first to last move
      */
-   public static List<int[]> computePath(MindMap mindMap){
+
+   public static ArrayList<Integer> computePath(MindMap mindMap){
        int[][] searchStates = mindMap.walkable();
 
        List<int[]> listOfPositions = new ArrayList<>();
@@ -211,10 +223,10 @@ public class AsSearch {
 
                listOfPositions.add(lastPosition);
 
-               ArrayList<Integer> array = new ArrayList<>();
+               ArrayList<Integer> list_of_moves = new ArrayList<>();
 
                while( x != (initialState[0]+xdiff) || y != (initialState[1]+ydiff)){
-                   array.add(actions[x][y]);
+                   list_of_moves.add(actions[x][y]);
 
                  //  System.out.println("action coord x = " + (moves[actions[x][y]-1][0]));
                   // System.out.println("action coord y = " + (moves[actions[x][y]-1][1]));
@@ -231,7 +243,6 @@ public class AsSearch {
                    // System.out.println("y = " + y);
                }
 
-               listMoves = array;
 
                Collections.reverse(listOfPositions); // inverse the position order so the first index of the array is the first position
                for (int j = 0; j < listOfPositions.size(); j++) {
@@ -239,14 +250,8 @@ public class AsSearch {
                  //  System.out.println("y position of " + j + "th move = " + listOfPositions.get(j)[1]);
                  //  System.out.println(" ----------- ");
                }
-       return listOfPositions;
-    }
-
-
-
-
-    public static ArrayList<Integer> getListDirections(){
-       return listMoves;
+//       return listOfPositions;
+       return list_of_moves;
     }
 
 
@@ -299,8 +304,8 @@ public class AsSearch {
     }
 
 
-    public static List<int[]> getNumberConsecutiveMoves(ArrayList<Integer> listActions) {
-        List<int[]> out = new ArrayList<>();
+    public static ArrayList<int[]> toConsecutiveMoves(ArrayList<Integer> listActions) {
+        ArrayList<int[]> out = new ArrayList<>();
 
         int ac = -1; //keeps
         for (Integer action : listActions) {
@@ -364,14 +369,27 @@ public class AsSearch {
     }
     */
 
-
-
-
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_GREEN = "\u001B[32m";
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_BLUE = "\u001B[34m";
 
     public static void printMatrix(int[][] matrix){
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[i].length; j++) {
-                System.out.print(matrix[i][j] + " ");
+                int type = matrix[i][j];
+                if(type == 2){
+                    System.out.print(ANSI_RED+ matrix[i][j] + " "+ANSI_RESET);
+                }
+                else if(type == 8){
+                    System.out.print(ANSI_GREEN+ matrix[i][j] + " "+ANSI_RESET);
+                }
+                else if(type == 11){
+                    System.out.print(ANSI_BLUE+ matrix[i][j] + " "+ANSI_RESET);
+                }
+                else {
+                    System.out.print(matrix[i][j] + " ");
+                }
             }
             System.out.println();
         }
