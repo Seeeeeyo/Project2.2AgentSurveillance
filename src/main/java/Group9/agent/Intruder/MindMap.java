@@ -39,11 +39,11 @@ public class MindMap {
     private static final int Guard = 8;
     private static final int Intruder =9;
     private static final int Sentry =10;
-    private static final int Empty =11;
-    //default size is arbitrary 50
+    private static final int Empty = 11;
+    //default size is arbitrary 20
     public MindMap(){
-        int height =50;
-        int width = 60;
+        int height =20;
+        int width = 20;
         Direction d = Direction.fromRadians(0);
         mapData = new int[(int)height][(int)width];
         this.state = new AgentState(new Point(height/2,width/2),d);
@@ -64,7 +64,7 @@ public class MindMap {
             ExtendMap(height,0);
         }
         if(width<0){
-            ExtendMap(width,0);
+            ExtendMap(0,width);
         }
         if(width>=mapData[0].length){
             ExtendMap(0,width-mapData[0].length+1);
@@ -78,15 +78,14 @@ public class MindMap {
           expandBottom(height);
       }
       if(height<0){
-          expandTop(height);
+          expandTop(-height);
       }
       if(width>0){
           expandRight(width);
       }
       if(width<0){
-          expandLeft(width);
+          expandLeft(-width);
       }
-
     }
 
     //reset the map data
@@ -130,6 +129,14 @@ public class MindMap {
     }
 
     public Point findIntersection(Direction d){
+        if(state.getX()==posFirstTurn.getX() && state.getY()==posFirstTurn.getY()){ //the agent has not moved
+            directionFirstTurn = d;
+            return findClosestUnvisitedPoint(d);
+        }
+        System.out.println("d = " + d.getRadians());
+        System.out.println(posFirstTurn);
+        System.out.println("directionFirstTurn = " + directionFirstTurn.getRadians());
+        System.out.println(state.getPos());
 //        building 4 points
         Point a1 = posFirstTurn;
 //        System.out.println("a1= "+a1.getX()+" "+a1.getY());
@@ -164,19 +171,18 @@ public class MindMap {
         double interY = m1*interX+c1;
 //        System.out.println("interY = " + interY);
         checkExpention((int)interX,(int)interY);
-        //return new Point(interX,interY);
-
-        return new Point(25,65);
+        return new Point(interX,interY);
     }
 
     public void computeTargetPoint(Direction d){
-        if(null==directionFirstTurn){
-            directionFirstTurn = d;
-            posFirstTurn = state.getPos();
-            targetPos = findClosestUnvisitedPoint(d);
-        }else{
-           targetPos = findIntersection(d);
-        } 
+//        if(null==directionFirstTurn){
+//            directionFirstTurn = d;
+//            posFirstTurn = state.getPos();
+//            targetPos = findClosestUnvisitedPoint(d);
+//        }else{
+//           targetPos = findIntersection(d);
+//        }
+       targetPos = new Point(25,65);
     }
 
     public boolean isVisited(Vector v){
@@ -212,6 +218,12 @@ public class MindMap {
 
     public int getData(int x, int y){
         checkExpention(x,y);
+        if(x<0){
+            x=0;
+        }
+        if(y<0){
+            y=0;
+        }
         return mapData[x][y];
     }
 
@@ -287,7 +299,7 @@ public class MindMap {
         Set<ObjectPercept> objectPercepts = percepts.getVision().getObjects().getAll();
 
         List<ObjectPercept> ls = new ArrayList<ObjectPercept>(objectPercepts);
-
+        System.out.println("ls = " + ls.size());
         Iterator<ObjectPercept> iterator = objectPercepts.iterator();
 
         to:for (int i = 0;i<ls.size();i++){
@@ -295,88 +307,111 @@ public class MindMap {
             //TODO change the bellow codes, they should compute the object coordinates in the matrix. (they are different form the coordinates
             //in the field of view of the agent.
             Vector agentPos = new Vector(state.getRealPos());
+//            agentPos.printLnVector();
             Vector direction = new Vector(state.getAngle());
-            Vector p = direction.get2DPerpendicularVector();
+//            direction.printLnVector();
+            Vector xAxis = direction.get2DPerpendicularVector();
 
-            Vector x = p.setLength2((ls.get(i).getPoint().getX()));
-            Vector y = direction.setLength2(ls.get(i).getPoint().getY());
+            Point ls_point = ls.get(i).getPoint();
+//            System.out.println(ls_point.toString());
+
+            Vector x = xAxis.setLength2((ls_point.getX()));
+            Vector y = direction.setLength2(ls_point.getY());
 
             Vector objectCoos = agentPos.add(x).add(y);
 
             int ox = (int) Math.round(objectCoos.x);
             int oy = (int) Math.round(objectCoos.y);
-            checkExpention(ox,oy);
-            ObjectPerceptType type = ls.get(i).getType();
 
+            checkExpention(ox,oy);
+            if(ox<0){
+                ox=0;
+            }
+            if(oy<0){
+                oy=0;
+            }
+//            System.out.println("oy = " + oy);
+//            System.out.println("ox = " + ox);
+
+            ObjectPerceptType type = ls.get(i).getType();
+//            System.out.println("type = " + type.toString());
             switch (type) {
                 case Wall:
-                    if(mapData[ox][oy] == Unvisited)
+//                    if(mapData[ox][oy] == Unvisited)
                        mapData[ox][oy] = Wall;
                 continue to;
 
                 case Door  :
-                    if(mapData[ox][oy] == Unvisited)
+//                    if(mapData[ox][oy] == Unvisited)
                         mapData[ox][oy] = Door;
                     continue to;
 
                 case Window  :
-                    if(mapData[ox][oy] == Unvisited)
+//                    if(mapData[ox][oy] == Unvisited)
                        mapData[ox][oy] = Window;
                     continue to;
 
                 case Teleport:
-                    if(mapData[ox][oy] == Unvisited)
+//                    if(mapData[ox][oy] == Unvisited)
                         mapData[ox][oy] = Teleport;
                     continue to;
 
                 case SentryTower:
-                    if(mapData[ox][oy] == Unvisited)
+//                    if(mapData[ox][oy] == Unvisited)
                         mapData[ox][oy] = Sentry;
                     continue to;
 
                 case EmptySpace:
-                    if(mapData[ox][oy] == Unvisited)
+//                    if(mapData[ox][oy] == Unvisited)
                         mapData[ox][oy] = Empty;
                     continue to;
 
                 case ShadedArea:
-                    if(mapData[ox][oy] == Unvisited)
+//                    if(mapData[ox][oy] == Unvisited)
                         mapData[ox][oy] = Shaded;
                     continue to;
 
                 case Guard:
-                    if(mapData[ox][oy] == Unvisited)
+//                    if(mapData[ox][oy] == Unvisited)
                         mapData[ox][oy] = Guard;
                     continue to;
 
                 case Intruder:
-                    if(mapData[ox][oy] == Unvisited)
+//                    if(mapData[ox][oy] == Unvisited)
                         mapData[ox][oy] = Intruder;
                     continue to;
                 case TargetArea:
-                    if(mapData[ox][oy] == Unvisited)
+//                    if(mapData[ox][oy] == Unvisited)
                         mapData[ox][oy] = TargetArea;
                     continue to;
 
 
             }
-
     }
-
-
+        System.out.println();
+        System.out.println("after update");
+        AsSearch.printMatrix(mapData);
   }
 
 
     //method to update the state based on the chosen action
     public void updateState(Action a){
        if( a instanceof Move){
-               Vector pos = new Vector(state.getPos());
+           mapData[state.getX()][state.getY()] = Empty;
+           Vector pos = new Vector(state.getPos());
+               System.out.println("pos = " + pos.getString());
                Vector agentOrientation = new Vector(state.getAngle());
+           System.out.println("agentOrientation = " + agentOrientation.getString());
                agentOrientation.setLength(((Move) a).getDistance().getValue());
                Vector newpos = pos.add(agentOrientation);
+           System.out.println("newpos = " + newpos.getString());
                state.setPos(newpos.x,newpos.y);
+           mapData[state.getX()][state.getY()] = Guard;
        }else if ( a instanceof Rotate){
-           state.setAngle(Direction.fromRadians( ((Rotate) a).getAngle().getRadians()));
+           mapData[state.getX()][state.getY()] = Guard;
+           System.out.println("old angle "+state.getAngle().getDegrees());
+           state.setAngle(Direction.fromRadians(state.getAngle().getRadians() + ((Rotate) a).getAngle().getRadians()));
+           System.out.println("new angle "+state.getAngle().getDegrees());
        }else{
 
        }
@@ -436,17 +471,6 @@ public class MindMap {
         }
 //        printMatrix(out);
         return out;
-    }
-
-    public static void printMatrix(int[][] matrix){
-        for (int i = 0; i < matrix.length; i++) {
-            for (int j = 0; j < matrix[i].length; j++) {
-                System.out.print(matrix[i][j] + " ");
-            }
-            System.out.println();
-        }
-        System.out.println();
-        System.out.println("----------");
     }
 
     /**

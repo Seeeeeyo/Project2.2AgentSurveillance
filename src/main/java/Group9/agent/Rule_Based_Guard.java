@@ -26,7 +26,7 @@ import java.util.Set;
 
 public class Rule_Based_Guard implements Guard {
 
-    public boolean debug = true;//turn on if need to see debug message
+    public boolean debug = false;//turn on if need to see debug message
 
     public double a = 1;
 
