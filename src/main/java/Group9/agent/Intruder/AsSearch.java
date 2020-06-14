@@ -9,7 +9,7 @@ import java.util.*;
 
 public class AsSearch {
 
-   public static void main2(String[] args){
+  /* public static void main2(String[] args){
        MindMap mindmap = new MindMap();
        int[][] matrix = {{0,0,2,0,0,0},{0,0,0,0,0,0},{0,0,2,0,2,0},{0,0,2,0,2,0},{0,0,2,0,2,0}}; // where 2 = walls, 0 is nothing special
        mindmap.setMapData(matrix);
@@ -23,7 +23,7 @@ public class AsSearch {
        printMatrix(matrix);
        mindmap.setState(agentState);
       // computePath(mindmap);
-       List<int[]> listPositions =  AsSearch.computePath(mindmap);
+       List<Integer> listPositions =  AsSearch.computePath(mindmap);
        ArrayList<Integer> directions = AsSearch.getListOfActionsDirections(listPositions);
        List<int[]> listConsecutivesActions = AsSearch.getNumberConsecutiveMoves(directions);
        int move = listConsecutivesActions.get(0)[0];
@@ -31,6 +31,7 @@ public class AsSearch {
        int numberConsecutiveMove = listConsecutivesActions.get(0)[1];
        System.out.println("numberConsecutiveMove = " + numberConsecutiveMove);
    }
+   */
 
 //   public static void main(String [] args){
 //       int a= 1;
