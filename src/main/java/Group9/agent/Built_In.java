@@ -215,6 +215,45 @@ public class Built_In {
         return slope;
     }
 
+    public Point getIntruder(ArrayList<ObjectPercept> objectPerceptArrayList){
+
+        Point point = new Point(-1000,-1000);
+        ArrayList<Point> pointt = new ArrayList<>();
+
+
+        for (int i = 0;i<objectPerceptArrayList.size();i++){
+            if (objectPerceptArrayList.get(i).getType().equals(ObjectPerceptType.Intruder)){
+
+                point = objectPerceptArrayList.get(i).getPoint();
+                pointt.add(objectPerceptArrayList.get(i).getPoint());
+
+            }
+        }
+
+        if (pointt.size() == 1){
+            return point;
+        }
+
+        //when field of view get multiple point of intruder, in order to get better position, use the mean value of x,y
+
+        double size = pointt.size();
+        double sumX = 0;
+        double sumY = 0;
+
+        for (int i = 0;i<size;i++){
+
+            sumX = pointt.get(i).getX() + sumX;
+            sumY = pointt.get(i).getY() + sumY;
+        }
+
+        double x = sumX/size;
+
+        double y = sumY/size;
+
+        return new Point(x,y);
+
+    }
+
 
 }
 
@@ -255,6 +294,7 @@ class encapAction {
 
     public ArrayList<GuardAction> avoid;
     public ArrayList<GuardAction> targetPatrol;
+    public ArrayList<GuardAction> capture;
 
     public boolean debug = false;
 
@@ -264,6 +304,83 @@ class encapAction {
 
 
     }
+
+    public encapAction(Point x){
+
+        initialCapure(x);
+    }
+
+    /**
+     *
+     * @param x
+     */
+    public void initialCapure(Point x){
+        capture = new ArrayList<>();
+
+        double degree = x.getClockDirection().getDegrees();
+
+        if (degree>180) degree = degree - 360;
+
+        double absDegree = Math.abs(degree);
+
+        int rotateTimes = (int)Math.ceil((absDegree)/(45.0));
+
+        double thres = 6;
+
+        if (degree<0){
+            if (rotateTimes <=1){
+                double addition = 45 - Math.abs(degree);
+                if (addition>=thres){
+                    capture.add(new Rotate(Angle.fromDegrees(-degree-thres)));
+                }else {
+                    capture.add(new Rotate(Angle.fromDegrees(-degree-addition)));
+                }
+
+            }else {
+                for (int i = 1;i<rotateTimes;i++){
+                    capture.add(new Rotate(Angle.fromDegrees(45)));
+                }
+                double addition = absDegree - (rotateTimes-1)*45;
+                capture.add(new Rotate(Angle.fromDegrees(addition)));
+            }
+        }else {
+            if (rotateTimes <=1){
+                double addition = 45 - Math.abs(degree);
+                if (addition>=thres){
+                    capture.add(new Rotate(Angle.fromDegrees(degree+thres)));
+                }else {
+                    capture.add(new Rotate(Angle.fromDegrees(degree)));
+                }
+
+            }else {
+                for (int i = 1;i<rotateTimes;i++){
+                    capture.add(new Rotate(Angle.fromDegrees(-45)));
+                }
+                double addition = -(absDegree - (rotateTimes-1)*45);
+                capture.add(new Rotate(Angle.fromDegrees(addition)));
+            }
+        }
+
+        int moveTimes = (int)Math.ceil((x.getDistanceFromOrigin().getValue())/(1.40));
+
+        double additionMove = x.getDistanceFromOrigin().getValue() - (moveTimes-1)*1.4;
+        if (additionMove>0.3) additionMove = additionMove - 0.3;
+
+        if (moveTimes>1 && moveTimes!=0){
+            for (int i = 0;i<moveTimes-1;i++){
+                capture.add(new Move(new Distance(1.4)));
+            }
+
+            capture.add(new Move(new Distance(additionMove)));
+
+        }else if (moveTimes ==1){
+            capture.add(new Move(new Distance(additionMove)));
+        }else{
+            System.out.println("no-------------------");
+        }
+
+    }
+
 
     public void initialAvoid(){
         avoid = new ArrayList<>();

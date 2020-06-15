@@ -37,13 +37,13 @@ public class RandomIntruderAgent implements Intruder {
     public IntruderAction getAction(IntruderPercepts percepts) {
         if(!percepts.wasLastActionExecuted())
         {
-            return new NoAction();
-            //return new Rotate(Angle.fromRadians(percepts.getScenarioIntruderPercepts().getScenarioPercepts().getMaxRotationAngle().getRadians() * Game._RANDOM.nextDouble()));
+            //return new NoAction();
+            return new Rotate(Angle.fromRadians(percepts.getScenarioIntruderPercepts().getScenarioPercepts().getMaxRotationAngle().getRadians() * Game._RANDOM.nextDouble()));
         }
         else
         {
-            return new NoAction();
-            //return new Move(new Distance(percepts.getScenarioIntruderPercepts().getMaxMoveDistanceIntruder().getValue() * getSpeedModifier(percepts)));
+            //return new NoAction();
+            return new Move(new Distance(percepts.getScenarioIntruderPercepts().getMaxMoveDistanceIntruder().getValue() * getSpeedModifier(percepts)));
         }
     }
 

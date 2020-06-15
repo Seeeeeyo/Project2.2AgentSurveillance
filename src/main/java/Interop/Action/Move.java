@@ -19,4 +19,6 @@ public final class Move implements Action, IntruderAction, GuardAction {
         return distance;
     }
 
+
+
 }
