@@ -110,9 +110,12 @@ public class MindMap {
 
     public Point findClosestUnvisitedPoint(Direction d){
         Vector direction = new Vector(d);
-        direction.setLength(0.2);
+        System.out.println("direction = " + direction.getString());
+        direction.addLength(state.getAngle().getRadians());
+        System.out.println("direction = " + direction.getString());
+        direction.setLength(0.1);
         Vector pos = state.vectorPos();
-        double increment = 0.2;
+        double increment = 0.1;
         boolean found = false;
         while(!found){
             Vector target = pos.add2(direction);
@@ -189,9 +192,12 @@ public class MindMap {
 //        }else{
 //           targetPos = findIntersection(d);
 //        }
-        if(targetPos==null) {
-            targetPos = new Point(5, 5);
-        }
+
+//        if(targetPos==null) {
+//            targetPos = new Point(5, 5);
+//        }
+        targetPos = findClosestUnvisitedPoint(d);
+
     }
 
     public boolean isVisited(Vector v){
@@ -399,7 +405,7 @@ public class MindMap {
     }
         System.out.println();
         System.out.println("after update");
-        AsSearch.printMatrix(mapData);
+      //  AsSearch.printMatrix(mapData);
   }
 
 
