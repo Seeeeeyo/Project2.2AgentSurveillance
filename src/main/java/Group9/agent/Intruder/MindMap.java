@@ -21,7 +21,7 @@ import java.util.Set;
 public class MindMap {
 
     private AgentState state; //position + direction of the agent
-    private Point targetPos;
+    private Point targetPos =null;
     private Direction directionFirstTurn;
     private Point posFirstTurn;
 
@@ -110,9 +110,12 @@ public class MindMap {
 
     public Point findClosestUnvisitedPoint(Direction d){
         Vector direction = new Vector(d);
-        direction.setLength(0.2);
+        System.out.println("direction = " + direction.getString());
+        direction.addLength(state.getAngle().getRadians());
+        System.out.println("direction = " + direction.getString());
+        direction.setLength(0.1);
         Vector pos = state.vectorPos();
-        double increment = 0.2;
+        double increment = 0.1;
         boolean found = false;
         while(!found){
             Vector target = pos.add2(direction);
@@ -125,6 +128,12 @@ public class MindMap {
         }
         pos.add(direction);
         checkExpention((int)pos.x,(int)pos.y);
+        if(pos.x<0){
+            pos.x =0;
+        }
+        if(pos.y<0){
+            pos.y =0;
+        }
         return new Point(pos.x,pos.y);
     }
 
@@ -175,14 +184,20 @@ public class MindMap {
     }
 
     public void computeTargetPoint(Direction d){
-        targetPos = new Point(25,65);
-        /* if(null==directionFirstTurn){
-            directionFirstTurn = d;
-            posFirstTurn = state.getPos();
-            targetPos = findClosestUnvisitedPoint(d);
-        }else{
-           targetPos = findIntersection(d);
-        } */
+//        if(null==directionFirstTurn){
+//            directionFirstTurn = d;
+//            posFirstTurn = state.getPos();
+//            targetPos = findClosestUnvisitedPoint(d);
+//        System.out.println("targetPos = " + targetPos.toString());
+//        }else{
+//           targetPos = findIntersection(d);
+//        }
+
+//        if(targetPos==null) {
+//            targetPos = new Point(5, 5);
+//        }
+        targetPos = findClosestUnvisitedPoint(d);
+
     }
 
     public boolean isVisited(Vector v){
@@ -390,7 +405,7 @@ public class MindMap {
     }
         System.out.println();
         System.out.println("after update");
-        AsSearch.printMatrix(mapData);
+      //  AsSearch.printMatrix(mapData);
   }
 
 
@@ -406,27 +421,15 @@ public class MindMap {
                Vector newpos = pos.add(agentOrientation);
            System.out.println("newpos = " + newpos.getString());
                state.setPos(newpos.x,newpos.y);
-           mapData[state.getX()][state.getY()] = Guard;
+           mapData[state.getX()][state.getY()] = Intruder;
        }else if ( a instanceof Rotate){
-           mapData[state.getX()][state.getY()] = Guard;
+           mapData[state.getX()][state.getY()] = Intruder;
            System.out.println("old angle "+state.getAngle().getDegrees());
            state.setAngle(Direction.fromRadians(state.getAngle().getRadians() + ((Rotate) a).getAngle().getRadians()));
            System.out.println("new angle "+state.getAngle().getDegrees());
        }else{
 
        }
-    }
-
-    public void printGridMap(){
-        for (int i = 0;i<mapData.length;i++){
-            for (int j = 0;j<mapData[0].length;j++){
-
-                System.out.print(mapData[i][j]+" ");
-
-
-            }
-            System.out.println();
-        }
     }
 
     public boolean isGridMapEmpty(){
@@ -473,17 +476,6 @@ public class MindMap {
         return out;
     }
 
-    public static void printMatrix(int[][] matrix){
-        for (int i = 0; i < matrix.length; i++) {
-            for (int j = 0; j < matrix[i].length; j++) {
-                System.out.print(matrix[i][j] + " ");
-            }
-            System.out.println();
-        }
-        System.out.println();
-        System.out.println("----------");
-    }
-
     /**
      * @param size to expand
      * @return new matrix (expanded) with 1 extra Left column
@@ -499,7 +491,9 @@ public class MindMap {
             System.arraycopy(mapData[i], 0, tmp[i], 0, mapData[0].length);
         }
         targetPos = new Point(targetPos.getX(),targetPos.getY()+1);
+        System.out.println(targetPos.toString());
         state.setPos(state.getX(),state.getY()+1);
+        System.out.println(state.getPos().toString());
         mapData = tmp;
     }
     /**

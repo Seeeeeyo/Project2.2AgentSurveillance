@@ -70,7 +70,7 @@ public class AsSearch {
 
 //       printMatrix(searchStates);
        int[] target = {(int)mindMap.getTargetPos().getX(),(int)mindMap.getTargetPos().getY()}; // position of the target area
-        System.out.println("target: x = " + target[0]+", y = " +target[1]);
+       System.out.println("target: x = " + target[0]+", y = " +target[1]);
        // add the 4 actions
        ArrayList<int []> states = new ArrayList<>();
 
@@ -212,9 +212,9 @@ public class AsSearch {
                //int xdiff = mindMap.getState().getX() - target[0];
                //int ydiff = mindMap.getState().getY() - target[1];
 
-               int xCoorTarget = target[0]+xdiff;
-               int yCoorTarget = target[1]+ydiff;
-
+               int xCoorTarget = target[0] -xdiff;
+               int yCoorTarget = target[1] -ydiff;
+             //  actions[xCoorTarget][yCoorTarget] = 9; // 9 is an arbitrary value set to identify the target point
                int x = xCoorTarget;
                int y = yCoorTarget;
                //int x = mindMap.getState().getX();
@@ -226,7 +226,7 @@ public class AsSearch {
 
                ArrayList<Integer> list_of_moves = new ArrayList<>();
 
-               while( x != (initialState[0]+xdiff) || y != (initialState[1]+ydiff)){
+               while( x != (initialState[0]-xdiff) || y != (initialState[1]-ydiff)){
                    list_of_moves.add(actions[x][y]);
 
                  //  System.out.println("action coord x = " + (moves[actions[x][y]-1][0]));
