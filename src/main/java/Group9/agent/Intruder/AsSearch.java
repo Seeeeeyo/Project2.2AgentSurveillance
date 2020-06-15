@@ -105,13 +105,11 @@ public class AsSearch {
          */
 
            int[] checkedState = states.remove(0);
-
           // System.out.println("Checked State: ");
           // System.out.print( "Cost = " + checkedState[0] + ", " );
           // System.out.print( "x = " + checkedState[2]  + ", ");
           // System.out.print("y = " + checkedState[3]);
           // System.out.println();
-
 
            for (int i = 0; i < moves.length; i++) { // to check the 4 different moves
 
@@ -127,11 +125,9 @@ public class AsSearch {
 
                possibleNewX += xdiff; // new x coordinate after one of the 4 moves
                possibleNewY += ydiff; // new y coordinate after one of the 4 moves
-
               // System.out.println("possibleNewX = " + possibleNewX);
               // System.out.println("possibleNewY = " + possibleNewY);
               // System.out.println();
-
 
                // expand in the x direction if needed  to the bottom
                if (searchStates.length <= possibleNewX) {
@@ -188,16 +184,14 @@ public class AsSearch {
                        Point pointA = new Point(target[0],target[1]);
                        Point pointB = new Point(possibleNewX-xdiff-instantxdiff, possibleNewY-ydiff-instantydiff);
                        Distance euclDistance = new Distance(pointA,pointB);
-                      // int cost = (int) Math.floor(euclDistance.getValue()); // cost of this move, equal to 1 here since only move of 1 case
-                       int cost = (int) Math.floor(euclDistance.getValue());
-                      // int newCost = checkedState[0] + cost; // new cost = addition of the previous cost (previous moves) and this move
-                       int newCost = cost+checkedState[1];
-//                       System.out.println("newCost = " + newCost);
+                       int cost = (int) Math.floor(euclDistance.getValue()); // cost of this move, equal to 1 here since only move of 1 case
+                       int newCost = cost+checkedState[1]; // new cost = addition of the previous cost (previous moves) and this move
+                       //System.out.println("newCost = " + newCost);
                        int[] newState = {newCost,checkedState[1]+1, possibleNewX - xdiff - instantxdiff, possibleNewY - ydiff - instantydiff}; // potential new state
                        searchStates[possibleNewX][possibleNewY] = 1; // no need to explore anymore
                        states.add(newState);
                        actions[possibleNewX][possibleNewY] = i + 1;
-//                       System.out.println("add " + newCost + " " + (possibleNewX - xdiff - instantxdiff) + " " + (possibleNewY - ydiff - instantydiff));
+                       //System.out.println("add " + newCost + " " + (possibleNewX - xdiff - instantxdiff) + " " + (possibleNewY - ydiff - instantydiff));
                      //  printMatrix(searchStates);
                    /*
                    i = 1 is going to the top
@@ -215,11 +209,17 @@ public class AsSearch {
                int xdiff = mindMap.getState().getX() - initialState[0];
                int ydiff = mindMap.getState().getY() - initialState[1];
 
+               //int xdiff = mindMap.getState().getX() - target[0];
+               //int ydiff = mindMap.getState().getY() - target[1];
+
                int xCoorTarget = target[0]+xdiff;
                int yCoorTarget = target[1]+ydiff;
-             //  actions[xCoorTarget][yCoorTarget] = 9; // 9 is an arbitrary value set to identify the target point
+
                int x = xCoorTarget;
                int y = yCoorTarget;
+               //int x = mindMap.getState().getX();
+               //int y = mindMap.getState().getY();
+               //actions[xCoorTarget][yCoorTarget] = 9; // 9 is an arbitrary value set to identify the target point
                int[] lastPosition = {x,y};
 
                listOfPositions.add(lastPosition);
@@ -245,13 +245,14 @@ public class AsSearch {
                }
 
 
-               Collections.reverse(listOfPositions); // inverse the position order so the first index of the array is the first position
+               //Collections.reverse(listOfPositions); // inverse the position order so the first index of the array is the first position
                for (int j = 0; j < listOfPositions.size(); j++) {
                 //   System.out.println("x position of " + j + "th move = " + listOfPositions.get(j)[0]);
                  //  System.out.println("y position of " + j + "th move = " + listOfPositions.get(j)[1]);
                  //  System.out.println(" ----------- ");
                }
 //       return listOfPositions;
+       Collections.reverse(list_of_moves); // inverse the position order so the first index of the array is the first position
        return list_of_moves;
     }
 
@@ -380,16 +381,16 @@ public class AsSearch {
             for (int j = 0; j < matrix[i].length; j++) {
                 int type = matrix[i][j];
                 if(type == 2){
-                    System.out.print(ANSI_RED+ matrix[i][j] + " "+ANSI_RESET);
+                    System.out.print(ANSI_RED+ matrix[i][j] + "  "+ANSI_RESET);
                 }
                 else if(type == 8){
-                    System.out.print(ANSI_GREEN+ matrix[i][j] + " "+ANSI_RESET);
+                    System.out.print(ANSI_GREEN+ matrix[i][j] + "  "+ANSI_RESET);
                 }
                 else if(type == 11){
                     System.out.print(ANSI_BLUE+ matrix[i][j] + " "+ANSI_RESET);
                 }
                 else {
-                    System.out.print(matrix[i][j] + " ");
+                    System.out.print(matrix[i][j] + "  ");
                 }
             }
             System.out.println();

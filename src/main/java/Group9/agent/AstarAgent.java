@@ -157,6 +157,7 @@ private int turn =0;
 //        }else
 //        {
                 if ((astar_move == 1)) {
+                    System.out.println("map.getState().getAngle().getDegrees()  = " + map.getState().getAngle().getDegrees() );
                     if (map.getState().getAngle().getDegrees() == 0) {
                         Move forward = new Move(new Distance(percepts.getScenarioIntruderPercepts().getMaxMoveDistanceIntruder().getValue() * getSpeedModifier(percepts)));
                         System.out.println("Move 1 " + forward.getDistance().getValue());
@@ -174,6 +175,7 @@ private int turn =0;
 
 
             if ((astar_move == 2)){
+                System.out.println("map.getState().getAngle().getDegrees()  = " + map.getState().getAngle().getDegrees() );
                 if (map.getState().getAngle().getDegrees() == 180) {
                     Move forward =new Move(new Distance(percepts.getScenarioIntruderPercepts().getMaxMoveDistanceIntruder().getValue() * getSpeedModifier(percepts)));
                     System.out.println("Move 2 "+forward.getDistance().getValue());
@@ -185,6 +187,7 @@ private int turn =0;
             }
 
             if ((astar_move == 3)){
+                System.out.println("map.getState().getAngle().getDegrees()  = " + map.getState().getAngle().getDegrees() );
                 if (map.getState().getAngle().getDegrees() == 90) {
                     Move forward = new Move(new Distance(percepts.getScenarioIntruderPercepts().getMaxMoveDistanceIntruder().getValue() * getSpeedModifier(percepts)));
                     System.out.println("Move 3 "+forward.getDistance().getValue());
@@ -196,6 +199,7 @@ private int turn =0;
             }
 
             if ((astar_move == 4)){
+                System.out.println("map.getState().getAngle().getDegrees()  = " + map.getState().getAngle().getDegrees() );
                 if (map.getState().getAngle().getDegrees() == 270) {
                     Move forward = new Move(new Distance(percepts.getScenarioIntruderPercepts().getMaxMoveDistanceIntruder().getValue() * getSpeedModifier(percepts)));
                     System.out.println("Move 4 "+forward.getDistance().getValue());
@@ -222,6 +226,8 @@ private int turn =0;
 
         double old = map.getState().getAngle().getDegrees();
         Angle rotation_angle = Angle.fromDegrees(a-old);
+
+        System.out.println("percepts.getScenarioIntruderPercepts().getScenarioPercepts().getMaxRotationAngle().getDegrees() = " + percepts.getScenarioIntruderPercepts().getScenarioPercepts().getMaxRotationAngle().getDegrees());
 
         if(rotation_angle.getDegrees() > percepts.getScenarioIntruderPercepts().getScenarioPercepts().getMaxRotationAngle().getDegrees()){
             rotation_angle = percepts.getScenarioIntruderPercepts().getScenarioPercepts().getMaxRotationAngle();
