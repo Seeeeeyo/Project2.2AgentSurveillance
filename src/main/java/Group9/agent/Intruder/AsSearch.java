@@ -66,11 +66,11 @@ public class AsSearch {
 
        int[] initialState = {(int)mindMap.getState().getPos().getX(),(int)mindMap.getState().getPos().getY()};
        System.out.println("initialState = " + initialState[0]+", "+initialState[1]);
-       searchStates[initialState[0]][initialState[1]] = 1; // the robot is there at the start so no need to explore it again
+      searchStates[initialState[0]][initialState[1]] = 1; // the robot is there at the start so no need to explore it again
 
 //       printMatrix(searchStates);
-       int[] target = {(int)mindMap.getTargetPos().getX(),(int)mindMap.getTargetPos().getY()}; // position of the target area
-        System.out.println("target: x = " + target[0]+", y = " +target[1]);
+      int[] target = {(int)mindMap.getTargetPos().getX(),(int)mindMap.getTargetPos().getY()}; // position of the target area
+       System.out.println("target: x = " + target[0]+", y = " +target[1]);
        // add the 4 actions
        ArrayList<int []> states = new ArrayList<>();
 
@@ -252,6 +252,7 @@ public class AsSearch {
                  //  System.out.println(" ----------- ");
                }
 //       return listOfPositions;
+       Collections.reverse(list_of_moves);
        return list_of_moves;
     }
 
@@ -269,10 +270,9 @@ public class AsSearch {
         System.out.println(listPositions.get(1)[0]);
 
 
-      /*  for (int i = 0; i < listPositions.size(); i++) {
+        for (int i = 0; i < listPositions.size(); i++) {
             System.out.println("listPositions = " + Arrays.toString(listPositions.get(i)));
         }
-       */
 
 
         for (int i = 0; i < length-1; i++) {
