@@ -22,7 +22,7 @@ public class DefaultAgentFactory implements IAgentFactory {
         List<Intruder> intruders = new ArrayList<>();
         for(int i = 0; i < number; i++)
         {
-            intruders.add(new RandomIntruderAgent());
+            intruders.add(new AstarAgent());
         }
         return intruders;
     }

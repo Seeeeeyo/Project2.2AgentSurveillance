@@ -21,8 +21,8 @@ public class Vector
     }
 
     public Vector(Direction a){
-        this.x = Math.acos(a.getRadians());
-        this.y = Math.asin(a.getRadians());
+        this.x = Math.cos(a.getRadians());
+        this.y = Math.sin(a.getRadians());
         this.z = 0;
     }
 
@@ -68,11 +68,11 @@ public class Vector
         return new Vector(x, y, z);
     }
 
-    public Vector addLength(double term){
+    public Vector addLength2(double term){
         return new Vector(this.setLength2(this.length()+term));
     }
 
-    public Vector addLength2(double term){
+    public Vector addLength(double term){
         return this.setLength(this.length()+term);
     }
 
