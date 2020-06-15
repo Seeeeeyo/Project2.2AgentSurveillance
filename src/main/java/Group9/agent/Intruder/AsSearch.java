@@ -207,13 +207,15 @@ public class AsSearch {
      // printMatrix(actions);
 
                int xdiff = mindMap.getState().getX() - initialState[0];
+       System.out.println("xdiff = " + xdiff);
                int ydiff = mindMap.getState().getY() - initialState[1];
+       System.out.println("ydiff = " + ydiff);
 
                //int xdiff = mindMap.getState().getX() - target[0];
                //int ydiff = mindMap.getState().getY() - target[1];
 
-               int xCoorTarget = target[0] -xdiff;
-               int yCoorTarget = target[1] -ydiff;
+               int xCoorTarget = target[0] +xdiff;
+               int yCoorTarget = target[1] +ydiff;
              //  actions[xCoorTarget][yCoorTarget] = 9; // 9 is an arbitrary value set to identify the target point
                int x = xCoorTarget;
                int y = yCoorTarget;
@@ -226,7 +228,7 @@ public class AsSearch {
 
                ArrayList<Integer> list_of_moves = new ArrayList<>();
 
-               while( x != (initialState[0]-xdiff) || y != (initialState[1]-ydiff)){
+               while( x != (initialState[0]+xdiff) || y != (initialState[1]+ydiff)){
                    list_of_moves.add(actions[x][y]);
 
                  //  System.out.println("action coord x = " + (moves[actions[x][y]-1][0]));
@@ -371,33 +373,7 @@ public class AsSearch {
     }
     */
 
-    public static final String ANSI_RED = "\u001B[31m";
-    public static final String ANSI_GREEN = "\u001B[32m";
-    public static final String ANSI_RESET = "\u001B[0m";
-    public static final String ANSI_BLUE = "\u001B[34m";
 
-    public static void printMatrix(int[][] matrix){
-        for (int i = 0; i < matrix.length; i++) {
-            for (int j = 0; j < matrix[i].length; j++) {
-                int type = matrix[i][j];
-                if(type == 2){
-                    System.out.print(ANSI_RED+ matrix[i][j] + "  "+ANSI_RESET);
-                }
-                else if(type == 8){
-                    System.out.print(ANSI_GREEN+ matrix[i][j] + "  "+ANSI_RESET);
-                }
-                else if(type == 11){
-                    System.out.print(ANSI_BLUE+ matrix[i][j] + " "+ANSI_RESET);
-                }
-                else {
-                    System.out.print(matrix[i][j] + "  ");
-                }
-            }
-            System.out.println();
-        }
-        System.out.println("-----------");
-        System.out.println();
-   }
 
     /**
      * @param matrix to expand

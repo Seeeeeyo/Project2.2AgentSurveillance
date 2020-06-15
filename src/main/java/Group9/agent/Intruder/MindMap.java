@@ -113,28 +113,30 @@ public class MindMap {
         System.out.println("direction = " + direction.getString());
         direction.addLength(state.getAngle().getRadians());
         System.out.println("direction = " + direction.getString());
-        direction.setLength(0.1);
+//        direction.setLength(0.1);
+        direction.setLength(10);
         Vector pos = state.vectorPos();
-        double increment = 0.1;
-        boolean found = false;
-        while(!found){
-            Vector target = pos.add2(direction);
-            if(!isVisited(target)){
-                found = true;
-            }
-            else{
-                direction.addLength(increment);
-            }
-        }
-        pos.add(direction);
-        checkExpention((int)pos.x,(int)pos.y);
-        if(pos.x<0){
+        direction.add(pos);
+//        double increment = 0.1;
+//        boolean found = false;
+//        while(!found){
+//            Vector target = pos.add2(direction);
+//            if(!isVisited(target)){
+//                found = true;
+//            }
+//            else{
+//                direction.addLength(increment);
+//            }
+//        }
+//        pos.add(direction);
+        checkExpention((int)direction.x,(int)direction.y);
+        if(direction.x<0){
             pos.x =0;
         }
-        if(pos.y<0){
-            pos.y =0;
+        if(direction.y<0){
+            direction.y =0;
         }
-        return new Point(pos.x,pos.y);
+        return new Point(direction.x,direction.y);
     }
 
     public Point findIntersection(Direction d){
@@ -193,11 +195,18 @@ public class MindMap {
 //           targetPos = findIntersection(d);
 //        }
 
-//        if(targetPos==null) {
-//            targetPos = new Point(5, 5);
-//        }
-        targetPos = findClosestUnvisitedPoint(d);
-
+        if(targetPos==null) {
+            targetPos = new Point(104,55);
+            checkExpention((int)targetPos.getX(),(int)targetPos.getY());
+            if(targetPos.getY()<0){
+                targetPos= new Point(targetPos.getX(),0);
+            }
+            if(targetPos.getX()<0){
+                targetPos= new Point(0,targetPos.getY());
+            }
+        }
+//        targetPos = findClosestUnvisitedPoint(d);
+//
     }
 
     public boolean isVisited(Vector v){
@@ -403,11 +412,40 @@ public class MindMap {
 
             }
     }
-        System.out.println();
-        System.out.println("after update");
-      //  AsSearch.printMatrix(mapData);
+        //System.out.println();
+      // System.out.println("after update");
+    //   printMatrix(mapData,targetPos);
   }
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_GREEN = "\u001B[32m";
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_BLUE = "\u001B[34m";
 
+
+    public static void printMatrix(int[][] matrix,Point targetPos){
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                int type = matrix[i][j];
+                if(targetPos!=null && i==targetPos.getX() && j==targetPos.getY()){
+                    System.out.print(ANSI_GREEN+ "T "+ANSI_RESET);
+                }else if(type == 2){
+                    System.out.print(ANSI_RED+ matrix[i][j] + " "+ANSI_RESET);
+                }
+                else if(type == 8){
+                    System.out.print(ANSI_GREEN+ matrix[i][j] + " "+ANSI_RESET);
+                }
+                else if(type == 11){
+                    System.out.print(ANSI_BLUE+ matrix[i][j] + " "+ANSI_RESET);
+                }
+                else {
+                    System.out.print(matrix[i][j] + " ");
+                }
+            }
+            System.out.println();
+        }
+        System.out.println("-----------");
+        System.out.println();
+    }
 
     //method to update the state based on the chosen action
     public void updateState(Action a){
