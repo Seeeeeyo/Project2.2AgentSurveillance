@@ -172,6 +172,23 @@ public class Built_In {
 
         return returnList;
     }
+    //print array int[]
+    public void printIntegerArray(int [] array){
+        for (int i = 0;i<array.length;i++){
+            System.out.println("The "+(i+1)+" element is "+array[i]);
+        }
+    }
+
+    public ArrayList<Point> getAllPoints(ArrayList<ObjectPercept> objectPerceptArrayList){
+        ArrayList<Point> returnList = new ArrayList<>();
+
+        for (int i = 0;i<objectPerceptArrayList.size();i++){
+           returnList.add(objectPerceptArrayList.get(i).getPoint());
+        }
+
+        return returnList;
+    }
+
 
     public Point[] findNearAndFarPoint(ArrayList<ObjectPercept> objectPerceptArrayList) {
 

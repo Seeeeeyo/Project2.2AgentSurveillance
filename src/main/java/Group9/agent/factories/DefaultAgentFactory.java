@@ -31,9 +31,9 @@ public class DefaultAgentFactory implements IAgentFactory {
         List<Guard> guards = new ArrayList<>();
         for(int i = 0; i < number; i++)
         {
-            //guards.add(new Capturer());
+            guards.add(new Capturer());
             //guards.add(new RL());
-            guards.add(new MapAgent(300,600));
+            //guards.add(new MapAgent(300,600));
             //guards.add(new DeepSpace());
         }
         return guards;

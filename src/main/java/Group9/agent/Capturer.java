@@ -1,14 +1,19 @@
 package Group9.agent;
 
 import Group9.Game;
+import Group9.map.objects.Wall;
 import Interop.Action.*;
 import Interop.Agent.Guard;
 import Interop.Geometry.Angle;
+import Interop.Geometry.Direction;
 import Interop.Geometry.Distance;
 import Interop.Geometry.Point;
 import Interop.Percept.GuardPercepts;
 import Interop.Percept.Scenario.SlowDownModifiers;
+import Interop.Percept.Smell.SmellPercept;
 import Interop.Percept.Smell.SmellPerceptType;
+import Interop.Percept.Sound.SoundPercept;
+import Interop.Percept.Sound.SoundPerceptType;
 import Interop.Percept.Vision.ObjectPercept;
 import Interop.Percept.Vision.ObjectPerceptType;
 
@@ -38,11 +43,24 @@ public class Capturer implements Guard {
     public GuardAction getAction(GuardPercepts percepts) {
 
         Txt IO = new Txt();
-
         Built_In  bi = new Built_In();
 
         Set<ObjectPercept> objectPercepts = percepts.getVision().getObjects().getAll();
+        Set<SoundPercept> soundPercepts = percepts.getSounds().getAll();
+        Set<SmellPercept> smellPercepts = percepts.getSmells().getAll();
         ArrayList<ObjectPercept> objectPerceptArrayList = new ArrayList<ObjectPercept>(objectPercepts);
+        ArrayList<SoundPercept> soundPerceptArrayList = new ArrayList<SoundPercept>(soundPercepts);
+        ArrayList<SmellPercept> smellPerceptArrayList = new ArrayList<>(smellPercepts);
+
+        SlowDownModifiers slowDownModifiers =  percepts.getScenarioGuardPercepts().getScenarioPercepts().getSlowDownModifiers();
+        double modifier = 1;
+        if (percepts.getAreaPercepts().isInWindow()){
+            modifier = slowDownModifiers.getInWindow();
+        }else if (percepts.getAreaPercepts().isInSentryTower()){
+            modifier = slowDownModifiers.getInSentryTower();
+        }else if (percepts.getAreaPercepts().isInDoor()){
+            modifier = slowDownModifiers.getInDoor();
+        }
 
 
         if (!detectIntruderFirst&&!detectIntruderSecond){
@@ -128,49 +146,57 @@ public class Capturer implements Guard {
 
 
 
+        Angle moveAngle = Angle.fromRadians(percepts.getScenarioGuardPercepts().getScenarioPercepts().getMaxRotationAngle().getRadians() * Game._RANDOM.nextDouble());
 
 
 
+
+        if (objectPerceptArrayList.size() == 0){
+            System.out.println("No object in view");
+        }else {
+            if (needRotate(objectPerceptArrayList)){
+
+                actionHistory.add(new ActionHistory(2,moveAngle.getDegrees()));
+                return new Rotate(moveAngle);
+            }
+        }
 
 
         if(!percepts.wasLastActionExecuted())
         {
-            if(Math.random() < 0.1)
-            {
-                actionHistory.add(new ActionHistory(5,1));
-                return new DropPheromone(SmellPerceptType.values()[(int) (Math.random() * SmellPerceptType.values().length)]);
-            }
+            actionHistory.add(new ActionHistory(2,moveAngle.getDegrees()));
+            return new Rotate(moveAngle);
 
-            actionHistory.add(new ActionHistory(2,percepts.getScenarioGuardPercepts().getScenarioPercepts().getMaxRotationAngle().getRadians() * Game._RANDOM.nextDouble()));
-            return new Rotate(Angle.fromRadians(percepts.getScenarioGuardPercepts().getScenarioPercepts().getMaxRotationAngle().getRadians() * Game._RANDOM.nextDouble()));
         }
-        else
-        {
-            actionHistory.add(new ActionHistory(1,percepts.getScenarioGuardPercepts().getMaxMoveDistanceGuard().getValue() * getSpeedModifier(percepts)));
-            return new Move(new Distance(percepts.getScenarioGuardPercepts().getMaxMoveDistanceGuard().getValue() * getSpeedModifier(percepts)));
-        }
+        actionHistory.add(new ActionHistory(1,percepts.getScenarioGuardPercepts().getMaxMoveDistanceGuard().getValue() * modifier));
+        return new Move(new Distance(percepts.getScenarioGuardPercepts().getMaxMoveDistanceGuard().getValue() * modifier));
 
     }
 
 
 
-    private double getSpeedModifier(GuardPercepts guardPercepts)
-    {
-        SlowDownModifiers slowDownModifiers =  guardPercepts.getScenarioGuardPercepts().getScenarioPercepts().getSlowDownModifiers();
-        if(guardPercepts.getAreaPercepts().isInWindow())
-        {
-            return slowDownModifiers.getInWindow();
-        }
-        else if(guardPercepts.getAreaPercepts().isInSentryTower())
-        {
-            return slowDownModifiers.getInSentryTower();
-        }
-        else if(guardPercepts.getAreaPercepts().isInDoor())
-        {
-            return slowDownModifiers.getInDoor();
+    public boolean needRotate(ArrayList<ObjectPercept> objectPerceptArrayList){
+
+
+        boolean flag = false;
+        boolean val = false;
+
+
+        for (int i = 0;i<objectPerceptArrayList.size();i++){
+
+            double x = objectPerceptArrayList.get(i).getPoint().getX();
+            double y = objectPerceptArrayList.get(i).getPoint().getY();
+
+            //if the point is solid, then, input = 1;
+            if (!flag&&objectPerceptArrayList.get(i).getType().isSolid() && Math.abs(x)<0.8){
+                val = true;
+                flag = true;
+            }
+
         }
 
-        return 1;
+        return val;
+
     }
 
 
@@ -530,7 +556,7 @@ class tttt{
         RL rt = new RL();
 
 
-        Point p1 = new Point(-3,2);
+        Point p1 = new Point(3,2);
         Point p2 = new Point(-3.5,2);
         Point p3 = new Point(-2.7,5);
         Point p4 = new Point(-2.5,2);
@@ -538,24 +564,59 @@ class tttt{
         Point p6 = new Point(-0.5,2);
         Point p7 = new Point(0.6,3);
         Point p8 = new Point(1.3,4);
-        Point p9 = new Point(2.3,6);
+        Point p9 = new Point(5.3,6);
 
-        ArrayList<Point> p = new ArrayList<>();
+        ObjectPercept objectPercept1 = new ObjectPercept(ObjectPerceptType.EmptySpace,p1);
+        ObjectPercept objectPercept2 = new ObjectPercept(ObjectPerceptType.Wall,p2);
+        ObjectPercept objectPercept3 = new ObjectPercept(ObjectPerceptType.Wall,p3);
+        ObjectPercept objectPercept4 = new ObjectPercept(ObjectPerceptType.Door,p4);
+        ObjectPercept objectPercept5 = new ObjectPercept(ObjectPerceptType.Wall,p5);
+        ObjectPercept objectPercept6 = new ObjectPercept(ObjectPerceptType.Wall,p6);
+        ObjectPercept objectPercept7 = new ObjectPercept(ObjectPerceptType.Wall,p7);
+        ObjectPercept objectPercept8 = new ObjectPercept(ObjectPerceptType.Wall,p8);
+        ObjectPercept objectPercept9 = new ObjectPercept(ObjectPerceptType.Teleport,p9);
 
-        p.add(p1);
-        p.add(p2);
-        p.add(p3);
-        p.add(p4);
-        p.add(p5);
-        p.add(p6);
-        p.add(p7);
-        p.add(p8);
-        p.add(p9);
+        Direction direction =  Direction.fromRadians(2);
 
-        ArrayList<Point> aaa = rt.sortPoints(p);
+        SmellPercept smellPercept = new SmellPercept(SmellPerceptType.Pheromone5,new Distance(2));
+        SmellPercept smellPercept1 = new SmellPercept(SmellPerceptType.Pheromone2,new Distance(2));
+        SoundPercept soundPercept = new SoundPercept(SoundPerceptType.Yell,direction);
 
-        cp.printArraylist(aaa);
-        System.out.println(aaa.size());
+        ArrayList<ObjectPercept> p = new ArrayList<>();
+        ArrayList<SmellPercept> smell = new ArrayList<>();
+
+        ArrayList<SoundPercept> sound = new ArrayList<>();
+
+
+        smell.add(smellPercept1);
+        smell.add(smellPercept);
+        sound.add(soundPercept);
+
+        p.add(objectPercept1);
+        p.add(objectPercept2);
+        p.add(objectPercept3);
+        p.add(objectPercept4);
+        p.add(objectPercept5);
+        p.add(objectPercept6);
+        p.add(objectPercept7);
+        p.add(objectPercept8);
+        p.add(objectPercept9);
+
+        RL rl = new RL();
+
+
+        System.out.println(sound.size());
+
+        ArrayList<ObjectPercept> a = rl.sortPoints(p);
+
+        //cp.printArraylist(bi.getAllPoints(a));
+
+        bi.printIntegerArray(rl.putPointAsInput(a,sound,smell));
+
+
+
+       // cp.printArraylist(a);
+//        System.out.println(aaa.size());
 
 
 
