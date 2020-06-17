@@ -103,7 +103,7 @@ public class MapAgent implements Guard {
 
         updateCurrentAngle();
         updateCurrentPosition();
-//        printCurrentPosition();
+       printCurrentPosition();
 
         if (debug) System.out.println("Agent's Angle is: "+currentAngle);
         updateMap(objectPerceptArrayList);
@@ -405,7 +405,7 @@ public class MapAgent implements Guard {
 
 
 
-class ActionHistory{
+ class ActionHistory{
 
     int type;
     /*

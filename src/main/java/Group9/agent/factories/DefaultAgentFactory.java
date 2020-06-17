@@ -1,6 +1,7 @@
 package Group9.agent.factories;
 
 import Group9.agent.*;
+import Group9.agent.Intruder.MapAgentAs;
 import Interop.Agent.Guard;
 import Interop.Agent.Intruder;
 
@@ -22,7 +23,7 @@ public class DefaultAgentFactory implements IAgentFactory {
         List<Intruder> intruders = new ArrayList<>();
         for(int i = 0; i < number; i++)
         {
-            intruders.add(new AstarAgent());
+            intruders.add(new MapAgentAs(150,150));
         }
         return intruders;
     }
