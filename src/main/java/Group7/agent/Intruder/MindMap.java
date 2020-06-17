@@ -43,8 +43,8 @@ public class MindMap {
     public  int yy;
     //default size is arbitrary 20
     public MindMap(){
-        int height = 50;
-        int width = 50;
+        int height = 200;
+        int width = 200;
         xx = height;
         yy = width;
 
@@ -93,7 +93,7 @@ public class MindMap {
         double this_direction = state.getAngle();
         System.out.println("direction = " +(-dir+this_direction));
 //        direction.setLength(0.1);
-        Vector direction = new Vector(-d.getRadians()+Math.toRadians(state.getAngle()));
+        Vector direction = new Vector(-d.getDegrees()+ state.getAngle());
         direction.setLength(5);
         Vector pos = state.vectorPos();
         double increment = 5;
@@ -182,7 +182,7 @@ public class MindMap {
         //TODO
         if(targetPos==null){
             // target pos must be positive -> otherwise, expend the matrix with checkEpention()
-            targetPos = new Point(10,60);
+            targetPos = new Point(160,295);
         }
 
     }
@@ -374,7 +374,7 @@ public class MindMap {
 
            Vector pos = new Vector(state.getRealPos());
 
-           Vector agentOrientation = new Vector(Math.toRadians(state.getAngle()));
+           Vector agentOrientation = new Vector(state.getAngle());
 
            agentOrientation.setLength(moveLength);
 
@@ -419,7 +419,7 @@ public class MindMap {
         double y = point.getY();
 
 
-        Vector direction = new Vector(Math.toRadians(state.getAngle()));
+        Vector direction = new Vector(state.getAngle());
 
         Vector p = direction.get2DPerpendicularVector();
 
@@ -472,6 +472,23 @@ public class MindMap {
         return out;
     }
 
+    public ArrayList<Point> unWalkablePointList(){
+
+        ArrayList<Point> out = new ArrayList<>();
+
+         int[][] walkmatrix = walkable();
+
+         for (int i = 0; i < walkmatrix.length; i++) {
+            for (int j = 0; j < walkmatrix[0].length ; j++) {
+                if(walkmatrix[i][j]==Wall){
+                    out.add(new Point(i,j));
+                }
+            }
+        }
+
+//        printMatrix(out);
+        return out;
+    }
 
 
     /**
