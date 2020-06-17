@@ -20,28 +20,8 @@ public class AllTests extends SimpleUnitTest {
     }
 
     private static void testGroups(String[] args) {
-        System.out.println("\n\n\nGroup 1 Tests: \n\n");
-        Group1.GroupTests.main(args);
-        System.out.println("\n\n\nGroup 2 Tests: \n\n");
-        Group2.GroupTests.main(args);
-        System.out.println("\n\n\nGroup 3 Tests: \n\n");
-        Group3.GroupTests.main(args);
-        System.out.println("\n\n\nGroup 4 Tests: \n\n");
-        Group4.GroupTests.main(args);
-        System.out.println("\n\n\nGroup 5 Tests: \n\n");
-        Group5.GroupTests.main(args);
-        System.out.println("\n\n\nGroup 6 Tests: \n\n");
-        Group6.GroupTests.main(args);
         System.out.println("\n\n\nGroup 7 Tests: \n\n");
         Group7.GroupTests.main(args);
-        System.out.println("\n\n\nGroup 8 Tests: \n\n");
-        Group8.GroupTests.main(args);
-        System.out.println("\n\n\nGroup 9 Tests: \n\n");
-        Group9.GroupTests.main(args);
-        System.out.println("\n\n\nGroup 10 Tests: \n\n");
-        Group10.GroupTests.main(args);
-        System.out.println("\n\n\nGroup 11 Tests: \n\n");
-        Group11.GroupTests.main(args);
     }
 
 //    private static void testAgentFactories() {
