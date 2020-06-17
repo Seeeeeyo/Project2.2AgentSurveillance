@@ -60,9 +60,11 @@ public class AsSearch {
    public static ArrayList<Integer> computePath(MindMap mindMap){
        int[][] searchStates = mindMap.walkable();
 
+     //  MindMap.printMatrix(searchStates,mindMap.getTargetPos(),mindMap.getState().getPos());
+
        List<int[]> listOfPositions = new ArrayList<>();
 
-       int[] initialState = {(int)mindMap.getState().getPos().getX(),(int)mindMap.getState().getPos().getY()};
+       int[] initialState = mindMap.getState().getPosArray();
        System.out.println("initialState = " + initialState[0]+", "+initialState[1]);
        searchStates[initialState[0]][initialState[1]] = 1; // the robot is there at the start so no need to explore it again
 
@@ -203,12 +205,12 @@ public class AsSearch {
            }
        }
 
-     // printMatrix(actions);
+    // MindMap.printMatrix(actions,mindMap.getTargetPos(),mindMap.getState().getPos());
 
                int xdiff = mindMap.getState().getX() - initialState[0];
-       System.out.println("xdiff = " + xdiff);
+      // System.out.println("xdiff = " + xdiff);
                int ydiff = mindMap.getState().getY() - initialState[1];
-       System.out.println("ydiff = " + ydiff);
+      // System.out.println("ydiff = " + ydiff);
 
                //int xdiff = mindMap.getState().getX() - target[0];
                //int ydiff = mindMap.getState().getY() - target[1];
@@ -252,11 +254,11 @@ public class AsSearch {
 
 
                //Collections.reverse(listOfPositions); // inverse the position order so the first index of the array is the first position
-               for (int j = 0; j < listOfPositions.size(); j++) {
+//               for (int j = 0; j < listOfPositions.size(); j++) {
                 //   System.out.println("x position of " + j + "th move = " + listOfPositions.get(j)[0]);
                  //  System.out.println("y position of " + j + "th move = " + listOfPositions.get(j)[1]);
                  //  System.out.println(" ----------- ");
-               }
+//               }
 //       return listOfPositions;
        Collections.reverse(list_of_moves); // inverse the position order so the first index of the array is the first position
        return list_of_moves;

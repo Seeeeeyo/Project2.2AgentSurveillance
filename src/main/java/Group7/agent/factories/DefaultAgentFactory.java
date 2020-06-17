@@ -2,9 +2,9 @@ package Group7.agent.factories;
 
 import Group7.agent.AstarAgent;
 import Group7.agent.*;
+import Group7.agent.Intruder.MapAgentAs;
 import Interop.Agent.Guard;
 import Interop.Agent.Intruder;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +22,7 @@ public class DefaultAgentFactory implements IAgentFactory {
         List<Intruder> intruders = new ArrayList<>();
         for(int i = 0; i < number; i++)
         {
-            intruders.add(new AstarAgent());
+            intruders.add(new MapAgentAs(150,150));
         }
         return intruders;
     }
@@ -31,9 +31,9 @@ public class DefaultAgentFactory implements IAgentFactory {
         List<Guard> guards = new ArrayList<>();
         for(int i = 0; i < number; i++)
         {
-            //guards.add(new Capturer());
+            guards.add(new Capturer());
             //guards.add(new RL());
-            guards.add(new MapAgent(300,600));
+            //guards.add(new MapAgent(300,600));
             //guards.add(new DeepSpace());
         }
         return guards;

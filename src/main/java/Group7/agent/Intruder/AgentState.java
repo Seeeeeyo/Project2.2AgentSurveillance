@@ -1,6 +1,5 @@
 package Group7.agent.Intruder;
 
-import Interop.Geometry.Direction;
 import Interop.Geometry.Point;
 
 /*Stores info relative to a specific agent.
@@ -8,14 +7,14 @@ Meant to be used by the agent classes.
 * */
 public class AgentState {
     private Point pos;
-    private Direction angle; //stores the angle of view of the agent
+    private double angle; //stores the angle of view of the agent
 
-    public AgentState(Point pos, Direction angle) {
+    public AgentState(Point pos, double angle) {
         this.pos = pos;
         this.angle = angle;
     }
 
-    public AgentState(Direction angle){
+    public AgentState(double angle){
         this.pos = new Point(0,0);
         this.angle = angle;
     }
@@ -29,7 +28,13 @@ public class AgentState {
     public Point getPos() {
         return new Point(Math.round(pos.getX()),Math.round(pos.getY()));
     }
+    public double[] getRealPosArray() {
+        return new double[]{pos.getX(),pos.getY()};
+    }
 
+    public int[] getPosArray() {
+        return new int[]{(int)Math.round(pos.getX()),(int)Math.round(pos.getY())};
+    }
     public void setPos(Point pos) {
         this.pos = pos;
     }
@@ -54,14 +59,14 @@ public class AgentState {
         return pos.getY();
     }
 
-    public Direction getAngle() {
+    public double getAngle() {
         return angle;
     }
 
     public Vector vectorPos(){
         return new Vector(pos);
     }
-    public void setAngle(Direction angle) {
+    public void setAngle(double angle) {
         this.angle = angle;
     }
 }

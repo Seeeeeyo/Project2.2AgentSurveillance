@@ -20,6 +20,17 @@ public class Vector
         this.z = 0;
     }
 
+    public static void main(String [] args){
+        Vector v = new Vector(Direction.fromRadians(Math.PI/4));
+        v.printLnVector();
+    }
+
+    public Vector(double angle){
+        this.x = Math.cos(angle);
+        this.y = Math.sin(angle);
+        this.z = 0;
+    }
+
     public Vector(Direction a){
         this.x = Math.cos(a.getRadians());
         this.y = Math.sin(a.getRadians());

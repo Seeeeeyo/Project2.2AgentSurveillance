@@ -28,7 +28,7 @@ import java.util.Set;
 
 public class MapAgent implements Guard {
 
-    public boolean debug = true;
+    public boolean debug = false;
     //----map parameter---
     final public double itself = 99;
 
@@ -102,9 +102,9 @@ public class MapAgent implements Guard {
 
         updateCurrentAngle();
         updateCurrentPosition();
-        printCurrentPosition();
+       printCurrentPosition();
 
-        if (debug) System.out.println("Agnet's Angle is: "+currentAngle);
+        if (debug) System.out.println("Agent's Angle is: "+currentAngle);
         updateMap(objectPerceptArrayList);
 
         if(!percepts.wasLastActionExecuted())
@@ -276,7 +276,6 @@ public class MapAgent implements Guard {
     public void updateCurrentAngle(){
 
 
-
         if (actionHistory.get(actionHistory.size()-1).type == 2){
             if (debug) System.out.println("update angle");
            setCurrentAngle(currentAngle + actionHistory.get(actionHistory.size()-1).val);
@@ -405,7 +404,7 @@ public class MapAgent implements Guard {
 
 
 
-class ActionHistory{
+ class ActionHistory{
 
     int type;
     /*

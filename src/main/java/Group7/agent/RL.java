@@ -11,11 +11,14 @@ import Interop.Percept.Scenario.SlowDownModifiers;
 import Interop.Percept.Smell.SmellPercept;
 import Interop.Percept.Smell.SmellPerceptType;
 import Interop.Percept.Sound.SoundPercept;
+import Interop.Percept.Sound.SoundPerceptType;
 import Interop.Percept.Vision.ObjectPercept;
 import Interop.Percept.Vision.ObjectPerceptType;
 
 import java.util.ArrayList;
 import java.util.Set;
+
+//This agent can avoid collision effectively.
 
 public class RL implements Guard {
 
@@ -31,18 +34,21 @@ public class RL implements Guard {
 
     @Override
     public GuardAction getAction(GuardPercepts percepts) {
-
-
-        System.out.println("turn is : "+turns);
-        turns++;
-
         Txt IO = new Txt();
-
         Built_In  bi = new Built_In();
-
         Capturer cp =new Capturer();
 
+        Angle moveAngle = Angle.fromRadians(percepts.getScenarioGuardPercepts().getScenarioPercepts().getMaxRotationAngle().getRadians() * Game._RANDOM.nextDouble());
 
+        SlowDownModifiers slowDownModifiers =  percepts.getScenarioGuardPercepts().getScenarioPercepts().getSlowDownModifiers();
+        double modifier = 1;
+        if (percepts.getAreaPercepts().isInWindow()){
+            modifier = slowDownModifiers.getInWindow();
+        }else if (percepts.getAreaPercepts().isInSentryTower()){
+            modifier = slowDownModifiers.getInSentryTower();
+        }else if (percepts.getAreaPercepts().isInDoor()){
+            modifier = slowDownModifiers.getInDoor();
+        }
 
         Set<ObjectPercept> objectPercepts = percepts.getVision().getObjects().getAll();
         Set<SoundPercept> soundPercepts = percepts.getSounds().getAll();
@@ -55,133 +61,196 @@ public class RL implements Guard {
         if (objectPerceptArrayList.size() == 0){
             System.out.println("No object in view");
         }else {
-            //has objects in the field of view:
+           if (needRotate(objectPerceptArrayList)){
 
+               Angle RotateAngle = properAngle(objectPerceptArrayList);
 
-
-
-
-
-
-
-
+               actionHistory.add(new ActionHistory(2,moveAngle.getDegrees()));
+               return new Rotate(moveAngle);
+           }
         }
-
-
-
-
-
-        for (int i = 0;i<objectPerceptArrayList.size();i++){
-            //System.out.println("The "+(i+1)+" point for vision object is: "+objectPerceptArrayList.get(i).getType());
-
-
-            if (objectPerceptArrayList.get(i).getType().equals(ObjectPerceptType.Intruder)){
-                System.out.println(i+" intruder x point: "+objectPerceptArrayList.get(i).getPoint());
-                System.out.println(i+" intruder y point: "+objectPerceptArrayList.get(i).getPoint().getY());
-            }
-
-        }
-
-
-
-
-
 
 
         if(!percepts.wasLastActionExecuted())
         {
-            if(Math.random() < 0.1)
-            {
-                actionHistory.add(new ActionHistory(5,1));
-                return new DropPheromone(SmellPerceptType.values()[(int) (Math.random() * SmellPerceptType.values().length)]);
-            }
+            actionHistory.add(new ActionHistory(2,moveAngle.getDegrees()));
+            return new Rotate(moveAngle);
 
-            actionHistory.add(new ActionHistory(2,percepts.getScenarioGuardPercepts().getScenarioPercepts().getMaxRotationAngle().getRadians() * Game._RANDOM.nextDouble()));
-            return new Rotate(Angle.fromRadians(percepts.getScenarioGuardPercepts().getScenarioPercepts().getMaxRotationAngle().getRadians() * Game._RANDOM.nextDouble()));
         }
-        else
-        {
-            actionHistory.add(new ActionHistory(1,percepts.getScenarioGuardPercepts().getMaxMoveDistanceGuard().getValue() * getSpeedModifier(percepts)));
-            return new Move(new Distance(percepts.getScenarioGuardPercepts().getMaxMoveDistanceGuard().getValue() * getSpeedModifier(percepts)));
-        }
+        actionHistory.add(new ActionHistory(1,percepts.getScenarioGuardPercepts().getMaxMoveDistanceGuard().getValue() * modifier));
+        return new Move(new Distance(percepts.getScenarioGuardPercepts().getMaxMoveDistanceGuard().getValue() * modifier));
 
     }
 
 
-    private double getSpeedModifier(GuardPercepts guardPercepts)
-    {
-        SlowDownModifiers slowDownModifiers =  guardPercepts.getScenarioGuardPercepts().getScenarioPercepts().getSlowDownModifiers();
-        if(guardPercepts.getAreaPercepts().isInWindow())
-        {
-            return slowDownModifiers.getInWindow();
-        }
-        else if(guardPercepts.getAreaPercepts().isInSentryTower())
-        {
-            return slowDownModifiers.getInSentryTower();
-        }
-        else if(guardPercepts.getAreaPercepts().isInDoor())
-        {
-            return slowDownModifiers.getInDoor();
-        }
-
-        return 1;
-    }
 
 
+    public boolean needRotate(ArrayList<ObjectPercept> objectPerceptArrayList){
 
-    public int[] putPointInorder( ArrayList<ObjectPercept> objectPerceptArrayList){
 
-        int[] input = new int[objectPerceptArrayList.size()];
-
-        ArrayList<Point> points = new ArrayList<>();
+        boolean flag = false;
+        boolean val = false;
 
 
         for (int i = 0;i<objectPerceptArrayList.size();i++){
 
-            //if ()
+            double x = objectPerceptArrayList.get(i).getPoint().getX();
+            double y = objectPerceptArrayList.get(i).getPoint().getY();
 
-
-
-        }
-        return  input;
-
-    }
-
-    //make sure objectarraylist has size greater than 0;
-    public ArrayList<Point> sortPoints( ArrayList<Point> point){
-
-        ArrayList<Point> aaa = new ArrayList<>();
-
-        ArrayList<Point> val = new ArrayList<>();
-
-        for (int i = 0;i<point.size();i++){
-
-            aaa.add(point.get(i));
+            //if the point is solid, then, input = 1;
+            if (!flag&&objectPerceptArrayList.get(i).getType().isSolid() && Math.abs(x)<0.8){
+                val = true;
+                flag = true;
+            }
 
         }
-
-       for (int i = 0;i<aaa.size();i++){
-
-           val.add(findSmallestX(point));
-           point.remove(findSmallestX(point));
-
-       }
 
         return val;
 
     }
 
-    public Point findSmallestX (ArrayList<Point> point){
-        Point small = point.get(0);
+    public Angle properAngle(ArrayList<ObjectPercept> objectPerceptArrayList){
 
-        for (int i = 0;i<point.size();i++){
-            if(small.getX()>point.get(i).getX()){
-                small = point.get(i);
+        //TODO: using neural network as approximation function to implement RL
+
+
+        return Angle.fromDegrees(45);
+    }
+
+
+    public int[] putPointAsInput( ArrayList<ObjectPercept> objectPerceptArrayList,ArrayList<SoundPercept> soundPerceptArrayList,ArrayList<SmellPercept> smellPerceptArrayList){
+
+        int size = objectPerceptArrayList.size();
+
+        int[] input = new int[size+2];
+
+        Built_In bi = new Built_In();
+
+        ArrayList<ObjectPercept> orderPoints = sortPoints(objectPerceptArrayList);
+
+        boolean flag1 = false;
+
+        boolean flag2 = false;
+
+        for (int i = 0;i<orderPoints.size();i++){
+
+            //if the point is solid, then, input = 1;
+            if (orderPoints.get(i).getType().isSolid()){
+                input[i]=1;
             }
 
         }
 
-        return small;
+        if (soundPerceptArrayList.size()!=0){
+
+
+            for (int i = 0;i<soundPerceptArrayList.size();i++){
+
+                if (!flag1 && soundPerceptArrayList.get(i).getType().equals(SoundPerceptType.Yell)){
+
+                    flag1 = true;
+                    input[size] = 1;
+
+                }else if (!flag1 && soundPerceptArrayList.get(i).getType().equals(SoundPerceptType.Noise)){
+
+                    flag1 = true;
+                    input[size] = 2;
+                }
+            }
+
+        }
+
+        if (smellPerceptArrayList.size()!=0){
+
+            for (int i = 0;i<smellPerceptArrayList.size();i++){
+                if (!flag2&&smellPerceptArrayList.get(i).getType().equals(SmellPerceptType.Pheromone1)){
+                    flag2 = true;
+                    input[size+1] = 1;
+                }else if (!flag2&&smellPerceptArrayList.get(i).getType().equals(SmellPerceptType.Pheromone2)){
+                    input[size+1] = 2;
+                    flag2 = true;
+                }else if (!flag2&&smellPerceptArrayList.get(i).getType().equals(SmellPerceptType.Pheromone3)){
+                    input[size+1] = 3;
+                    flag2 = true;
+                }else if (!flag2&&smellPerceptArrayList.get(i).getType().equals(SmellPerceptType.Pheromone4)){
+                    input[size+1] = 4;
+                    flag2 = true;
+                }else if (!flag2&&smellPerceptArrayList.get(i).getType().equals(SmellPerceptType.Pheromone5)){
+                    input[size+1] = 5;
+                    flag2 = true;
+                }
+            }
+
+        }
+
+
+        return  input;
+
+    }
+
+    public int[] putPointAsInput( ArrayList<ObjectPercept> objectPerceptArrayList){
+
+        int size = objectPerceptArrayList.size();
+
+        int[] input = new int[size+2];
+
+        ArrayList<ObjectPercept> orderPoints = sortPoints(objectPerceptArrayList);
+
+        for (int i = 0;i<orderPoints.size();i++){
+
+            //if the point is solid, then, input = 1;
+            if (orderPoints.get(i).getType().isSolid()){
+                input[i]=1;
+            }
+
+        }
+        return  input;
+    }
+
+    //make sure object arraylist has size greater than 0;
+    public ArrayList<ObjectPercept> sortPoints( ArrayList<ObjectPercept> objectPerceptArrayList){
+
+        ArrayList<ObjectPercept> aa = new ArrayList<>();
+
+        ArrayList<ObjectPercept> vall = new ArrayList<>();
+
+
+
+        ArrayList<Point> aaa = new ArrayList<>();
+
+        ArrayList<Point> val = new ArrayList<>();
+
+        for (int i = 0;i<objectPerceptArrayList.size();i++){
+
+            aa.add(objectPerceptArrayList.get(i));
+        }
+
+       for (int i = 0;i<aa.size();i++){
+
+           vall.add(findSmallestX(objectPerceptArrayList));
+           objectPerceptArrayList.remove(findSmallestX(objectPerceptArrayList));
+
+
+       }
+
+        return vall;
+
+    }
+
+    public ObjectPercept findSmallestX (ArrayList<ObjectPercept> objectPerceptArrayList){
+
+        ObjectPercept smalll = objectPerceptArrayList.get(0);
+
+        for (int i = 0;i<objectPerceptArrayList.size();i++){
+
+
+            if (smalll.getPoint().getX()>objectPerceptArrayList.get(i).getPoint().getX()){
+                smalll = objectPerceptArrayList.get(i);
+            }
+
+        }
+
+        return smalll;
 
     }
 
