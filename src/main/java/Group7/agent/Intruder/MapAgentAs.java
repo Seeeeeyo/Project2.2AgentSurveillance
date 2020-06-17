@@ -1,6 +1,6 @@
-package Group9.agent.Intruder;
+package Group7.agent.Intruder;
 
-import Group9.Game;
+import Group7.Game;
 import Interop.Action.*;
 import Interop.Agent.Guard;
 import Interop.Agent.Intruder;
