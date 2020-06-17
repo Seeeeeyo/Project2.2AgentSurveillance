@@ -26,6 +26,7 @@ public class Vector
     }
 
     public Vector(double angle){
+        //angle should be in radians!
         this.x = Math.cos(angle);
         this.y = Math.sin(angle);
         this.z = 0;
