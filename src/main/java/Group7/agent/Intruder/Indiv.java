@@ -125,7 +125,7 @@ public class Indiv {
             }
             else{
                 fitness -= Math.pow(distance_cost(),3);
-                fitness -= Math.sqrt(path_length_cost())*5;
+                fitness -= Math.sqrt(path_length_cost())*10;
             }
         }
 

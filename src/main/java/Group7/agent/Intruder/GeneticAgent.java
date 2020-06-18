@@ -3,6 +3,7 @@ package Group7.agent.Intruder;
 import Group7.Game;
 import Interop.Action.IntruderAction;
 import Interop.Action.Move;
+import Interop.Action.NoAction;
 import Interop.Action.Rotate;
 import Interop.Agent.Intruder;
 import Interop.Geometry.Angle;
@@ -51,18 +52,64 @@ public class GeneticAgent implements Intruder
         if(path == null) {
             System.out.println("First turn");
 //            path = GeneticAlgorithm.computePath();
-            path = new Indiv(speeds,directions);
+//            path = new Indiv(speeds,directions);
+            recompute();
         }
+
         double collision = path.obstacle_cost();
         System.out.println("collision = " + collision);
         if(collision>0) {
             System.out.println("Re compute");
-            path = GeneticAlgorithm.computePath(GeneticAlgorithm.reproduct(new Indiv[]{path,path}));
+            recompute();
         }
 
        IntruderAction a = computeAction(path,percepts);
         map.updateState(a);
         return a;
+    }
+
+    public void recompute(){
+        ArrayList<Integer> listOfActions = AsSearch.computePath(map);
+
+        if(listOfActions == null){
+            System.out.println("No path found ");
+            System.exit(1);
+        }
+        if(listOfActions.size() ==0){
+            System.out.println("Target Reached");
+            System.exit(1);
+        }
+
+        Indiv converted_path = toIndiv(listOfActions);
+
+        path = GeneticAlgorithm.computePath(GeneticAlgorithm.reproduct(converted_path));
+    }
+
+    public Indiv toIndiv(ArrayList<Integer> path){
+        Indiv out =   new Indiv();
+        out.clear();
+        for (Integer i: path){
+         out.getSpeeds().add(1.0);
+         double angle;
+                 switch(i){
+                     case 1:
+                         angle = 180;
+                         break;
+                     case 2:
+                         angle = 0;
+                         break;
+                     case 3:
+                         angle = 90;
+                         break;
+                     case 4:
+                         angle = 270;
+                         break;
+                     default:
+                         throw new IllegalStateException("Unexpected value: " + i);
+                 }
+         out.getDirections().add(angle);
+        }
+        return out;
     }
 
     public ArrayList<Double> toArraylist(double[]a ){

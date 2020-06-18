@@ -490,7 +490,7 @@ public class MindMap {
 
         ArrayList<Point> out = new ArrayList<>();
 
-         int[][] walkmatrix = walkable();
+         int[][] walkmatrix = walkableExtended();
 
          for (int i = 0; i < walkmatrix.length; i++) {
             for (int j = 0; j < walkmatrix[0].length ; j++) {

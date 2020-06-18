@@ -89,7 +89,7 @@ public class GeneticAlgorithm {
                 prevFitness = newFitness;
                 System.out.println("fitness = " +prevFitness+ "; path_fitness = " + population[fitt].path_length_cost()+"; distance_fitness = " + population[fitt].distance_cost()+"; obstacle_fitness = "+population[fitt].obstacle_cost());
                 System.out.println();
-            }while (error>5 || population[fitt].obstacle_cost()>0);
+            }while (error>2 || population[fitt].obstacle_cost()>0);
 
 //        printPopulation(population);
 
@@ -158,6 +158,15 @@ public class GeneticAlgorithm {
     private static Indiv[] reproductPopulation(Indiv[] population) {
         return reproduct(selectParents(population));
     }
+
+    public static Indiv[] reproduct(Indiv i) {
+        Indiv[] out = new Indiv[population_size];
+        for (int m = 0; m < population_size; m++) {
+          out[m] = i.clone();
+        }
+        return out;
+    }
+
     public static Indiv[] reproduct(Indiv[] parents) {
         Random rnd = new Random();
 
@@ -188,10 +197,10 @@ public class GeneticAlgorithm {
     }
 
     private static void mutation(Indiv[]a){
-        int speed_mutationRate = 50;
-        int direction_mutationRate = 60;
-        int intertion_rate = 20;
-        int deletion_rate = 20;
+        int speed_mutationRate = 80;
+        int direction_mutationRate = 80;
+        int intertion_rate = 40;
+        int deletion_rate = 40;
         double direction_strength = 200;
         double speed_strength = Indiv.getMax_speed()/2;
         Random rnd = new Random();
@@ -231,7 +240,7 @@ public class GeneticAlgorithm {
                 if (direction_mutation < Indiv.getMin_angle()) {
                     direction_mutation = Indiv.getMin_angle();
                 }
-                if (direction_mutation > Indiv.getMax_angle()) {
+                if (direction_mutation >= Indiv.getMax_angle()) {
                     direction_mutation = Indiv.getMax_angle();
                 }
 
