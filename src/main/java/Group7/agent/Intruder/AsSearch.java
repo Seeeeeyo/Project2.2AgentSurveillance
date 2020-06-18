@@ -47,7 +47,7 @@ public class AsSearch {
 
    public static ArrayList<Integer> computePath(MindMap mindMap){
        try {
-           int[][] searchStates = mindMap.walkable();
+           int[][] searchStates = mindMap.walkableExtended();
 
            //  MindMap.printMatrix(searchStates,mindMap.getTargetPos(),mindMap.getState().getPos());
 

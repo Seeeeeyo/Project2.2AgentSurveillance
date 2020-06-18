@@ -270,7 +270,6 @@ public class MindMap {
             switch (type) {
                 case Wall:
                        mapData[ox][oy] = Wall;
-//                    System.out.println("Add wall"+ mapData[ox][oy]+" in "+ox+"; "+oy);
                     break;
 
                 case Door  :
@@ -312,6 +311,7 @@ public class MindMap {
 //     System.out.println();
 //     System.out.println("after update: ");
 //     printMatrix(mapData,targetPos,state.getPos());
+//        System.out.println(unWalkablePointList().size());
   }
     public static final String ANSI_RED = "\u001B[31m";
     public static final String ANSI_GREEN = "\u001B[32m";
@@ -450,7 +450,7 @@ public class MindMap {
      * Method to check the walkable areas so it doesn't go on the walls etc
      * @return 0 if can walk on a "case" of the map and 1 if it can not because there is an obstacle there
      */
-    public int[][] walkable(){
+    public int[][] walkableExtended(){
         int[][] out = new int[mapData.length][mapData[0].length];
 
         for (int i = 0; i < mapData.length; i++) {
@@ -472,6 +472,20 @@ public class MindMap {
         return out;
     }
 
+    public int[][] walkable(){
+        int[][] out = new int[mapData.length][mapData[0].length];
+
+        for (int i = 0; i < mapData.length; i++) {
+            for (int j = 0; j < mapData[0].length ; j++) {
+                if(mapData[i][j]==Wall){
+                    out[i][j] = 1;
+                }
+            }
+        }
+//        printMatrix(out, targetPos, state.getPos());
+        return out;
+    }
+
     public ArrayList<Point> unWalkablePointList(){
 
         ArrayList<Point> out = new ArrayList<>();
@@ -480,7 +494,7 @@ public class MindMap {
 
          for (int i = 0; i < walkmatrix.length; i++) {
             for (int j = 0; j < walkmatrix[0].length ; j++) {
-                if(walkmatrix[i][j]==Wall){
+                if(walkmatrix[i][j]==1){
                     out.add(new Point(i,j));
                 }
             }

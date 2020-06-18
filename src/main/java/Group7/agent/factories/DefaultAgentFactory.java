@@ -2,6 +2,7 @@ package Group7.agent.factories;
 
 import Group7.agent.AstarAgent;
 import Group7.agent.*;
+import Group7.agent.Intruder.GeneticAgent;
 import Group7.agent.Intruder.MapAgentAs;
 import Interop.Agent.Guard;
 import Interop.Agent.Intruder;
@@ -22,7 +23,7 @@ public class DefaultAgentFactory implements IAgentFactory {
         List<Intruder> intruders = new ArrayList<>();
         for(int i = 0; i < number; i++)
         {
-            intruders.add(new AstarAgent());
+            intruders.add(new GeneticAgent());
         }
         return intruders;
     }

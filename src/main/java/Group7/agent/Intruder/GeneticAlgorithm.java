@@ -30,81 +30,93 @@ public class GeneticAlgorithm {
         directions.add(45.0);
 
         Indiv a = new Indiv(speeds,directions);
-        printPopulation(new Indiv[]{a});
+        //printPopulation(new Indiv[]{a});
     }
 
     public static final int generation_nb = 2000;
     public static final int population_size = 50;
-        public static void computePath(MindMap map, IntruderPercepts percepts) {
 
-            Indiv.setMap(map);
-            Indiv.setNb_of_discrete_actions(300); //arbitrary value
-            Indiv.setSenario(percepts);
+    public static Indiv computePath() {
 
-            Indiv[] population = new Indiv[population_size];
-            for (int i = 0; i < population_size; i++) {
-                Indiv a = new Indiv();
-                population[i] = a;
-            }
-            System.out.println("Start");
-            printPopulation(population);
-            System.out.println();
+        Indiv[] population = new Indiv[population_size];
+        for (int i = 0; i < population_size; i++) {
+            Indiv a = new Indiv();
+            population[i] = a;
+        }
+        System.out.println("Start");
+        //printPopulation(population);
+        System.out.println();
+       return computePath(population);
+    }
 
-            double actualFitness = -Double.MAX_VALUE;
-//            double fitness_required =1000;
-//            do {
-            for (int j = 0; j < generation_nb; j++) {
-                System.out.println("generation " + j);
+    public static Indiv computePath( Indiv[] population) {
 
-//                                System.out.println("Population= ");
+        double actualFitness;
+        int fitt = 0;
+            int index = 0;
+
+            double prevFitness = -Double.MAX_VALUE;
+            double error;
+            do {
+                index++;
+//                for (int j = 0; j < generation_nb; j++) {
+                    System.out.println("generation " + index);
+
+//                 System.out.println("Population= ");
 //                printPopulation(population);
 //                System.out.println();
 
+                    Indiv[] child = reproductPopulation(population);
 
-                Indiv[] child = reproduct(population);
-
-//                System.out.println("reproduct");
+             //  System.out.println("reproduct");
 //                printPopulation(child);
 //                System.out.println();
 
-                mutation(child);
+                    mutation(child);
+                //System.out.println("mutation");
 
-                population = child;
+                    population = child;
+                    double newFitness = -Double.MAX_VALUE;
+                fitt=0;
                 for (int w = 0; w < population.length; w++) {
-                    if (population[w].getFitness() > actualFitness) {
-                        actualFitness = population[w].getFitness();
+                        if (population[w].getFitness() > newFitness) {
+                            newFitness = population[w].getFitness();
+                            fitt = w;
+                        }
                     }
-                }
-                System.out.println("fitness = " + actualFitness);
+                error = Math.abs(prevFitness-newFitness);
+                System.out.println("error = " + error);
+                prevFitness = newFitness;
+                System.out.println("fitness = " +prevFitness+ "; path_fitness = " + population[fitt].path_length_cost()+"; distance_fitness = " + population[fitt].distance_cost()+"; obstacle_fitness = "+population[fitt].obstacle_cost());
+                System.out.println();
+            }while (error>5 || population[fitt].obstacle_cost()>0);
 
-            }
+//        printPopulation(population);
 
                 double path_fitness = Double.MAX_VALUE;
                 double distance_fitness = Double.MAX_VALUE;
-                double fit_index = 0;
+                int fit_index = 0;
                 double dst_index = 0;
                 double path_index = 0;
                 for (int w = 0; w < population.length; w++) {
-                    if (population[w].getFitness() >= actualFitness) {
+                    if (population[w].getFitness() >= prevFitness) {
                         actualFitness = population[w].getFitness();
                         fit_index = w;
                     }
-                    if (population[w].path_length_cost() < path_fitness){
+                    if (population[w].path_length_cost() < path_fitness) {
                         path_fitness = population[w].path_length_cost();
                         path_index = w;
                     }
-                    if (population[w].distance_cost() < distance_fitness){
+                    if (population[w].distance_cost() < distance_fitness) {
                         distance_fitness = population[w].distance_cost();
-                        dst_index =w;
+                        dst_index = w;
                     }
                 }
-                System.out.println("fitness = " + actualFitness+ " -- "+ fit_index+"; path_fitness = " + path_fitness+" -- "+ path_index+ "; distance_fitness = " + distance_fitness+" -- "+dst_index);
+                System.out.println("fitness = " + prevFitness + " -- " + fit_index + "; path_fitness = " + path_fitness + " -- " + path_index + "; distance_fitness = " + distance_fitness + " -- " + dst_index);
 
-//                printPopulation(population);
-              printPopulation(population);
+            return population[fit_index];
 
-//            while (actualFitness < fitness_required);
-        }
+            }
 
 
     private static void printIndividual( ArrayList<Double> s, ArrayList<Double> d){
@@ -123,6 +135,7 @@ public class GeneticAlgorithm {
             System.out.print(/*ANSI_RED +*/ "Individual fitness " + i + ": "+ ANSI_RED+ a[i].getFitness() + ANSI_RESET+", costs: ");
             System.out.print(" path_cost= "+a[i].path_length_cost());
             System.out.print(" distance_cost= "+a[i].distance_cost());
+            System.out.print(" obstacle_cost= "+a[i].obstacle_cost());
             System.out.println();
             
            printIndividual(a[i].getSpeeds(),a[i].getDirections());
@@ -142,16 +155,17 @@ public class GeneticAlgorithm {
         return parents;
     }
 
-
-    private static Indiv[] reproduct(Indiv[] a) {
+    private static Indiv[] reproductPopulation(Indiv[] population) {
+        return reproduct(selectParents(population));
+    }
+    public static Indiv[] reproduct(Indiv[] parents) {
         Random rnd = new Random();
-        Indiv[] parents = selectParents(a);
 
         Indiv male = parents[0];
         Indiv female = parents[1];
-        Indiv[] child = new Indiv[a.length];
+        Indiv[] child = new Indiv[population_size];
 
-        for (int m = 0; m < a.length; m = m+2) {
+        for (int m = 0; m < population_size; m = m+2) {
             int cross_limit = rnd.nextInt(Math.min(male.getSpeeds().size(),female.getSpeeds().size()));
             Indiv clone1 = male.clone();
             Indiv clone2 = female.clone();
@@ -176,51 +190,73 @@ public class GeneticAlgorithm {
     private static void mutation(Indiv[]a){
         int speed_mutationRate = 50;
         int direction_mutationRate = 60;
-        double direction_strength = 100;
+        int intertion_rate = 20;
+        int deletion_rate = 20;
+        double direction_strength = 200;
         double speed_strength = Indiv.getMax_speed()/2;
         Random rnd = new Random();
-        for(int i = 0; i < a.length; i++){
+
+        for(int i = 0; i < a.length; i++) {
+
+
             int mutate = rnd.nextInt(100);
-            if(mutate <= speed_mutationRate){
+           if (mutate <= speed_mutationRate) {
 //               System.out.println("mutate = " + i);
                 int mutated = rnd.nextInt(a[i].getSpeeds().size());
-                double speed_mutation = Math.random()*speed_strength +a[i].getSpeeds().get(mutated);
+                double speed_mutation = Math.random() * speed_strength + a[i].getSpeeds().get(mutated);
 
-                if( Math.random()<=0.5){
+                if (Math.random() <= 0.5) {
                     speed_mutation = -speed_mutation;
                 }
-                if(speed_mutation<0){
-                    speed_mutation=0;
+                if (speed_mutation < 0) {
+                    speed_mutation = 0;
                 }
-                if(speed_mutation>Indiv.getMax_speed()){
-                    speed_mutation=Indiv.getMax_speed();
+                if (speed_mutation > Indiv.getMax_speed()) {
+                    speed_mutation = Indiv.getMax_speed();
                 }
 
-//                System.out.println("mutated = " + mutated);
-//                System.out.println("direction_mutation = " + direction_mutation);
-//                System.out.println("speed_mutation = " + speed_mutation);
-
-                a[i].getSpeeds().set(mutated,speed_mutation) ;
-//                System.out.println(a[i].getSpeeds());
+                a[i].getSpeeds().set(mutated, speed_mutation);
                 a[i].comuteFitness();
             }
 
 
-             mutate = rnd.nextInt(100);
-            if(mutate <= direction_mutationRate){
+            mutate = rnd.nextInt(100);
+            if (mutate <= direction_mutationRate) {
                 int mutated = rnd.nextInt(a[i].getSpeeds().size());
 
-                double direction_mutation = Math.random()*direction_strength +a[i].getDirections().get(mutated);
-                if( Math.random()<=0.5){
+                double direction_mutation = Math.random() * direction_strength + a[i].getDirections().get(mutated);
+                if (Math.random() <= 0.5) {
                     direction_mutation = -direction_mutation;
                 }
-                if(direction_mutation<-180){
-                    direction_mutation=-180;
+                if (direction_mutation < Indiv.getMin_angle()) {
+                    direction_mutation = Indiv.getMin_angle();
                 }
-                if(direction_mutation>180){
-                    direction_mutation=180;
+                if (direction_mutation > Indiv.getMax_angle()) {
+                    direction_mutation = Indiv.getMax_angle();
                 }
-                a[i].getDirections().set(mutated,direction_mutation) ;
+
+                a[i].getDirections().set(mutated, direction_mutation);
+                a[i].comuteFitness();
+            }
+
+            mutate = rnd.nextInt(100);
+            if (mutate <= intertion_rate) {
+                int added_gene = rnd.nextInt(a[i].getDirections().size() + 1);
+                a[i].getSpeeds().add(added_gene, Math.random() * Indiv.getMax_speed());
+                int positive = 1;
+                if (Math.random() > 0.5) {
+                    positive = -1;
+                }
+                a[i].getDirections().add(added_gene, Math.random() * Indiv.getMax_angle() * positive);
+                a[i].comuteFitness();
+            }
+
+            mutate = rnd.nextInt(100);
+            if (mutate <= deletion_rate) {
+                int deleted_gene = rnd.nextInt(a[i].getDirections().size());
+//                System.out.println("remove "+deleted_gene);
+                a[i].getSpeeds().remove(deleted_gene);
+                a[i].getDirections().remove(deleted_gene);
                 a[i].comuteFitness();
             }
         }

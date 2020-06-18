@@ -22,35 +22,35 @@ public class Indiv {
     public final static double time_interval = 1;
     private static double[] target;
     private static double[] start;
-    private static  int nb_of_discrete_actions = 300; //arbitrary value
+    private static  int nb_of_discrete_actions; //arbitrary value
     private static double max_speed;
-    private static double max_angle;
-    private static double min_angle;
+    private static double max_angle = 360;
+    private static double min_angle = 0;
 
         private double fitness;
         private ArrayList<Double> speeds = new ArrayList<>();
         private ArrayList<Double> directions = new ArrayList<>();
 
 
-    public static void setMap(MindMap map) {
+
+    public static void setSenario(MindMap map, IntruderPercepts percepts){
+        max_speed = percepts.getScenarioIntruderPercepts().getMaxMoveDistanceIntruder().getValue()/time_interval;
         Indiv.map = map;
         start = map.getState().getRealPosArray();
+        System.out.println("start "+start[0]+"; "+start[1]);
         target = new double[]{map.getTargetPos().getX(),map.getTargetPos().getY()};
+        System.out.println("target "+  target[0]+"; "+target[1]);
+        nb_of_discrete_actions = (int)(Math.sqrt(Math.pow(start[0]-start[1],2)+Math.pow(target[0]-target[1],2))*time_interval*max_speed/2);
+//       nb_of_discrete_actions =5;
+        System.out.println("nb_of_discrete_actions "+nb_of_discrete_actions);
     }
 
-    public static void setSenario(IntruderPercepts percepts){
-        max_speed = percepts.getScenarioIntruderPercepts().getMaxMoveDistanceIntruder().getValue()/time_interval;
-//        max_angle = percepts.getScenarioIntruderPercepts().getScenarioPercepts().getMaxRotationAngle().getDegrees();
-    }
 
-    public static void setNb_of_discrete_actions(int nb_of_discrete_actions) {
-        Indiv.nb_of_discrete_actions = nb_of_discrete_actions;
-    }
 
     public Indiv(ArrayList<Double> speeds, ArrayList<Double> directions) {
         this.speeds = speeds;
         this.directions = directions;
-        clean();
+//        clean();
         comuteFitness();
     }
 
@@ -64,14 +64,15 @@ public class Indiv {
                 directions.add(Math.random()*max_angle*positive);
             }
             comuteFitness();
-        }
+    }
 
-        public Indiv(Indiv newPath) {
-            speeds = newPath.getSpeeds();
-            directions = newPath.getDirections();
-            comuteFitness();
-        }
 
+
+    public void clear(){
+        speeds.clear();
+        directions.clear();
+        fitness = -Double.MAX_VALUE;
+        }
     public static double getMax_speed() {
         return max_speed;
     }
@@ -80,6 +81,9 @@ public class Indiv {
            return fitness;
        }
 
+    public static double getTime_interval() {
+        return time_interval;
+    }
 
     public ArrayList<Double> getSpeeds() {
         return speeds;
@@ -113,10 +117,16 @@ public class Indiv {
 
         public void comuteFitness(){
             fitness = 0;
-            fitness -= Math.pow(distance_cost(),5);
-            fitness -= Math.sqrt(path_length_cost())*5;
-            int collision_penality = 10000;
-            fitness -= collision_penality*obstacle_cost();
+
+            double collision_nb = obstacle_cost();
+
+            if(collision_nb>0) {
+                fitness -= Math.pow(collision_nb + 10, 10);
+            }
+            else{
+                fitness -= Math.pow(distance_cost(),3);
+                fitness -= Math.sqrt(path_length_cost())*5;
+            }
         }
 
         public double distance_cost(){
@@ -165,6 +175,31 @@ public class Indiv {
                 end_point.add(move);
             }
            return collision_nb;
+        }
+
+        public Point[] collidedSubPath(){
+
+        Point[] out = new Point[2];
+
+            Vector end_point = new Vector(start);
+            int i=0;
+            boolean add = false;
+            for(Double d : directions){
+                Vector move = new Vector(d);
+                move.setLength(speeds.get(i)*time_interval);
+                if(isCollision(new Point(end_point.x,end_point.y), new Point(end_point.x+move.x,end_point.y+move.y))){
+                   if(!add){
+                       out[0] = new Point(end_point.x,end_point.y);
+                   }
+                   add = true;
+                }else if(add) {
+                    out[1] = new Point(end_point.x+move.x,end_point.y+move.y);
+                    return out;
+                }
+                i++;
+                end_point.add(move);
+            }
+            return null;
         }
 
 
