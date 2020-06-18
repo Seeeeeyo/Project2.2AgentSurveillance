@@ -124,7 +124,10 @@ public class Indiv {
                 fitness -= Math.pow(collision_nb + 10, 10);
             }
             else{
-                fitness -= Math.pow(distance_cost(),3);
+                double distance = distance_cost();
+                if(distance>1) {
+                    fitness -= Math.pow(distance_cost()+1, 3);
+                }
                 fitness -= Math.sqrt(path_length_cost())*10;
             }
         }
