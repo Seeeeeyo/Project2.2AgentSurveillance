@@ -23,7 +23,6 @@ import java.util.Set;
  public class AstarAgent implements Intruder {
 
     private MindMap map = new MindMap();
-    private boolean firstTurn = true;
 
     private double getSpeedModifier(IntruderPercepts guardPercepts)
     {
