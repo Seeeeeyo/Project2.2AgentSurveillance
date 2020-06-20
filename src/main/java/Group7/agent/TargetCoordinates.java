@@ -62,14 +62,7 @@ public class TargetCoordinates {
      */
     private double xCoordTarget;
     private double yCoordTarget;
-    /**
-     * output of equation of the line agent's position - target at step 1
-     */
-    private double y1 = 2;
-    /**
-     * output of equation of the line agent's position - target at step 2
-     */
-    private double y2 = 1;
+
 
 
 
@@ -98,8 +91,8 @@ public class TargetCoordinates {
         a1 = Math.tan(angle1);
         a2 = Math.tan(angle2);
 
-        b1 = yCoord1 - Math.pow(a1,xCoord1);
-        b2 = yCoord2 - Math.pow(a2,xCoord2);
+        b1 = yCoord1 - a1*xCoord1;
+        b2 = yCoord2 - a2*xCoord2;
 
         double x = -0.5;
         /*
@@ -108,25 +101,37 @@ public class TargetCoordinates {
          */
 
 
-        while (y1 != y2){
+        double y1 = 2;
+        double y2 = 1;
+
+      //  while (y1 != y2){
+        while (Math.abs((y1-y2)) > 0.1){
+            //System.out.println("diff " + (y1-y2));
             x += 0.1;
-            double y1 = Math.pow(Math.tan(angle1),(x-xCoord1)) + yCoord1;
-            //System.out.println("x1 = " + x);
+            y1 = Math.tan(angle1)*(x-xCoord1) + yCoord1;
+            /*
+            System.out.println("a1 = " + a1);
+            System.out.println("b1 = " + b1);
+            System.out.println("x1 = " + x);
             System.out.println("y1 = " + y1);
-            double y2 = Math.pow(Math.tan(angle2),(x-xCoord2)) + yCoord2;
-            //System.out.println("x2 = " + x);
+
+             */
+            y2 = Math.tan(angle2)*(x-xCoord2) + yCoord2;
+            /*
+            System.out.println("a2 = " + a2);
+            System.out.println("b2 = " + b2);
+            System.out.println("x = " + x);
             System.out.println("y2 = " + y2);
+
+             */
         }
         //System.out.println("x = " + x);
 
         xCoordTarget = x;
-        yCoordTarget =  Math.pow(Math.tan(angle1),(xCoordTarget-xCoord1)) + yCoord1;
+        yCoordTarget =  Math.tan(angle1)*(x-xCoord1) + yCoord1;
 
-        if ((Math.pow(Math.tan(angle1),(xCoordTarget-xCoord1)) + yCoord1) != (Math.pow(Math.tan(angle2),(xCoordTarget-xCoord2)) + yCoord2)){
-            System.out.println("Error in the target coordinates calculations");
-        }
-        System.out.println("y1 = " + y1);
-        System.out.println("y2 = " + y2);
+        //System.out.println("y1 = " + y1);
+        //System.out.println("y2 = " + y2);
 
       Coordinate targetCoordinates = new Coordinate(xCoordTarget,yCoordTarget);
         return targetCoordinates;
@@ -150,14 +155,6 @@ public class TargetCoordinates {
         return a2;
     }
 
-    public double getY1() {
-        return y1;
-    }
-
-    public double getY2() {
-        return y2;
-    }
-
     public double getxCoordTarget() {
         return xCoordTarget;
     }
@@ -175,9 +172,9 @@ public class TargetCoordinates {
     }
 
     public static void main(String[]args){
-        Direction dir1 = Direction.fromDegrees(20);
-        Direction dir2 = Direction.fromDegrees(10);
-        Coordinate coord1 = new Coordinate(2,5);
+        Direction dir1 = Direction.fromDegrees(45);
+        Direction dir2 = Direction.fromDegrees(40);
+        Coordinate coord1 = new Coordinate(0,0);
         Coordinate coord2 = new Coordinate(30,30);
 
         TargetCoordinates test = new TargetCoordinates(dir1,dir2,coord1,coord2);
