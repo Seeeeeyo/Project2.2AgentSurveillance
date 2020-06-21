@@ -444,6 +444,10 @@ public class MindMap {
                new_angle-=360;
            }
 
+           if(new_angle<0){
+               new_angle+=360;
+           }
+
            System.out.println("Rotation of "+rotation_angle);
            System.out.println("Pos = " + state.getPos().toString());
            System.out.println("New Angle = "+state.getAngle());

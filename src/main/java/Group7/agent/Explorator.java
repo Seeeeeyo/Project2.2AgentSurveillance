@@ -142,7 +142,15 @@ public class Explorator implements Guard {
         private Rotate rotateTo(double astar_angle, Angle max_rotation){
 
             double old_angle = map.getState().getAngle();
-            Angle rotation_angle = Angle.fromDegrees(astar_angle-old_angle);
+            double rotation = astar_angle-old_angle;
+            double rotation2 = astar_angle-360-old_angle;
+
+            Angle rotation_angle;
+            if(Math.abs(rotation)>=Math.abs(rotation2)){
+                rotation_angle = Angle.fromDegrees(rotation2);
+            }else{
+                rotation_angle = Angle.fromDegrees(rotation);
+            }
 
             if(rotation_angle.getDegrees() > max_rotation.getDegrees()){
                 rotation_angle =max_rotation;
@@ -150,7 +158,7 @@ public class Explorator implements Guard {
                 rotation_angle = max_rotation;
                 rotation_angle = Angle.fromRadians(-rotation_angle.getRadians());
             }
-       System.out.println("Rotate to "+astar_angle+"; old angle is "+old_angle+"; new angle is "+(old_angle+rotation_angle.getDegrees()));
+        System.out.println("Rotate to "+astar_angle+"; old angle is "+old_angle+"; new angle is "+(old_angle+rotation_angle.getDegrees()));
 
             return new Rotate(rotation_angle);
         }
