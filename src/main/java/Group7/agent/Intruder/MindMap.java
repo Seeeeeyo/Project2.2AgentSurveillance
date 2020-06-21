@@ -7,6 +7,7 @@ import Interop.Geometry.Angle;
 import Interop.Geometry.Direction;
 import Interop.Geometry.Point;
 import Interop.Percept.IntruderPercepts;
+import Interop.Percept.Percepts;
 import Interop.Percept.Vision.ObjectPercept;
 import Interop.Percept.Vision.ObjectPerceptType;
 
@@ -27,26 +28,24 @@ public class MindMap {
     //any 0 in this array represents a empty space on the or an are which has not already been explored
     //any 1 represents a wall
     private int[][] mapData;
-    private static final int Unvisited = 0;
-    private static final int Visited = 1;
-    private static final int Wall = 2;
-    private static final int Door = 3;
-    private static final int Teleport = 4;
-    private static final int TargetArea = 5;
-    private static final int Window = 6;
-    private static final int Shaded = 7;
-    private static final int Guard = 8;
-    private static final int Intruder =9;
-    private static final int Sentry =10;
-    private static final int Empty = 11;
-    public int xx;
-    public  int yy;
+    public static final int Unvisited = 0;
+//    public static final int Visited = 1;
+    public static final int Wall = 2;
+    public static final int Door = 3;
+    public static final int Teleport = 4;
+    public static final int TargetArea = 5;
+    public static final int Window = 6;
+    public static final int Shaded = 7;
+    public static final int Guard = 8;
+    public static final int Intruder =9;
+    public static final int Sentry =10;
+    public static final int Empty = 1;
+
+
     //default size is arbitrary 20
     public MindMap(){
-        int height = 200;
-        int width = 200;
-        xx = height;
-        yy = width;
+        int height = 25;
+        int width = 25;
 
         mapData = new int[height*2][width*2];
         mapData[height][width]=9;
@@ -226,15 +225,17 @@ public class MindMap {
         return mapData[x][y];
     }
 
+    public int[][] getMapData() {
+        return mapData;
+    }
 
-
-/**
+    /**
      * update the Map after executing an action
      * @param
      * @param
      * @return a new map being updated
  * */
-    public void updateGridMap(IntruderPercepts percepts){
+    public void updateGridMap(Percepts percepts){
 
         //currently, the explore agent only need to execute move or rotate
         //all the objects in vision
@@ -308,10 +309,38 @@ public class MindMap {
                     break;
             }
     }
-//     System.out.println();
-//     System.out.println("after update: ");
-//     printMatrix(mapData,targetPos,state.getPos());
-//        System.out.println(unWalkablePointList().size());
+        setVisited(percepts);
+  }
+
+  public void setVisited(Percepts percepts){
+      int range = (int)percepts.getVision().getFieldOfView().getRange().getValue();
+      System.out.println("range = " + range);
+      double range_angle = percepts.getVision().getFieldOfView().getViewAngle().getRadians();
+      double angleFrom = Math.toRadians(state.getAngle())-range_angle/2;
+      double angleTo = Math.toRadians(state.getAngle())+range_angle/2;
+
+      for (int i = -range; i <= range ; i++) {
+          for (int j = -range; j <= range ; j++) {
+              if(exists(i+state.getX(),j+state.getY())&& (i!=0 || j!=0)) {
+                  double adjacent = i;
+                  double opposed = j;
+
+                  double angle = Math.atan(opposed / adjacent);
+                  if (i < 0) {
+                      angle += Math.toRadians(180);
+                  }
+                  if (angle < 0) {
+                      angle += Math.toRadians(360);
+                  }
+//                        System.out.println("angle = " + Math.toDegrees(angle));
+                  if (angleFrom < angle && angle < angleTo) {
+                      if(!isVisited(state.getX() + i,state.getY() + j)) {
+                          mapData[state.getX() + i][state.getY() + j] = Empty;
+                      }
+                  }
+              }
+          }
+      }
   }
     public static final String ANSI_RED = "\u001B[31m";
     public static final String ANSI_GREEN = "\u001B[32m";
@@ -347,16 +376,16 @@ public class MindMap {
                         int type = matrix[i][j];
 
                         if(i == agent.getX() && j == agent.getY()){
-                            System.out.print(ANSI_GREEN + "A  " + ANSI_RESET);
+                            System.out.print(ANSI_GREEN + "A " + ANSI_RESET);
                         }
                         else if (targetPos != null && i == targetPos.getX() && j == targetPos.getY()) {
-                            System.out.print(ANSI_GREEN + "T  " + ANSI_RESET);
+                            System.out.print(ANSI_GREEN + "T " + ANSI_RESET);
                         } else if (type == Wall) {
-                            System.out.print(ANSI_RED + matrix[i][j] + "  " + ANSI_RESET);
+                            System.out.print(ANSI_RED + matrix[i][j] + " " + ANSI_RESET);
                         } else if (type == Empty) {
                             System.out.print(ANSI_BLUE + matrix[i][j] + " " + ANSI_RESET);
                         } else {
-                            System.out.print(matrix[i][j] + "  ");
+                            System.out.print(matrix[i][j] + " ");
                         }
                     }
                 }
@@ -408,6 +437,7 @@ public class MindMap {
        }else{
            System.out.println("NoAction ");
        }
+
     }
 
 
@@ -472,6 +502,32 @@ public class MindMap {
         return out;
     }
 
+    public int[][] walkableExtended2(){
+        int[][] out = new int[mapData.length][mapData[0].length];
+
+        for (int i = 0; i < mapData.length; i++) {
+            for (int j = 0; j < mapData[0].length ; j++) {
+                if(mapData[i][j]==Wall){
+                    out[i][j] = Wall;
+                    out[i+1][j] = Wall;
+                    out[i-1][j] = Wall;
+                    out[i+1][j+1] = Wall;
+                    out[i+1][j-1] = Wall;
+                    out[i-1][j-1] = Wall;
+                    out[i-1][j-1] = Wall;
+                    out[i][j-1] = Wall;
+                    out[i][j+1] = Wall;
+                }else {
+                    if(out[i][j]!=Unvisited) {
+                        out[i][j] =mapData[i][j];
+                    }
+                }
+                }
+            }
+//        printMatrix(out, targetPos, state.getPos());
+        return out;
+    }
+
     public int[][] walkable(){
         int[][] out = new int[mapData.length][mapData[0].length];
 
@@ -504,6 +560,64 @@ public class MindMap {
         return out;
     }
 
+    public static void main(String[] args){
+        System.out.println(Math.atan((double)5/7));
+    }
+    public ArrayList<Integer> getSectorInfo(double angleFrom, double angleTo, int range){
+
+        angleFrom = Math.toRadians(angleFrom);
+        angleTo = Math.toRadians(angleTo);
+        ArrayList<Integer> out = new ArrayList<>();
+
+        int[][] mat = walkableExtended2();
+
+        for (int i = -range; i <= range ; i++) {
+            for (int j = -range; j <= range ; j++) {
+                if(exists(i+state.getX(),j+state.getY())&& (i!=0 || j!=0)) {
+                    double adjacent = i;
+                    double opposed = j;
+
+                        double angle = Math.atan(opposed / adjacent);
+                        if (i < 0) {
+                            angle += Math.toRadians(180);
+                        }
+                        if (angle < 0) {
+                            angle += Math.toRadians(360);
+                        }
+//                        System.out.println("angle = " + Math.toDegrees(angle));
+                        if (angleFrom <= angle && angle < angleTo) {
+                            out.add(mat[state.getX() + i][state.getY() + j]);
+//                            System.out.println("add"+"j = " + j+"i = " + i);
+
+                        }
+                }
+            }
+        }
+        return out;
+    }
+
+    public boolean exists(int x, int y){
+        if(x<mapData.length && x>0 && y>0 && y<mapData[0].length){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public int[][] getSubMap(int range){
+
+        int startX = state.getX() - range;
+        int startY = state.getY() - range;
+        int[][] partialMap = new int[range*2][range*2];
+
+        for (int i = 0;i<partialMap.length;i++){
+            for (int j = 0;j<partialMap[0].length;j++){
+                partialMap[i][j] = mapData[startX+i][startY+j];
+            }
+        }
+
+        return partialMap;
+    }
 
     /**
      * @param size to expand

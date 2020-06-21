@@ -201,7 +201,7 @@ public class GeneticAlgorithm {
         int direction_mutationRate = 80;
         int intertion_rate = 40;
         int deletion_rate = 40;
-        double direction_strength = 200;
+//        double direction_strength = 200;
         double speed_strength = Indiv.getMax_speed()/2;
         Random rnd = new Random();
 
@@ -233,7 +233,7 @@ public class GeneticAlgorithm {
             if (mutate <= direction_mutationRate) {
                 int mutated = rnd.nextInt(a[i].getSpeeds().size());
 
-                double direction_mutation = Math.random() * direction_strength + a[i].getDirections().get(mutated);
+                double direction_mutation = Math.random() * Indiv.getMax_angle() + a[i].getDirections().get(mutated);
                 if (Math.random() <= 0.5) {
                     direction_mutation = -direction_mutation;
                 }
