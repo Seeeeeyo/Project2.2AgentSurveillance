@@ -52,15 +52,13 @@ public class GeneticAgent implements Intruder
 
         if(path == null) {
             System.out.println("First turn");
-//            path = GeneticAlgorithm.computePath();
-//            path = new Indiv(speeds,directions);
             recompute();
         }
 
         double collision = path.obstacle_cost();
         System.out.println("collision = " + collision);
-        if(collision>0) {
-            System.out.println("Re compute");
+        if(collision>0) { //the path is not valid anymore since there is a collision
+            System.out.println("Recompute");
             recompute();
         }
 
@@ -69,6 +67,7 @@ public class GeneticAgent implements Intruder
         return a;
     }
 
+//    recompute the genetic path
     public void recompute(){
         ArrayList<Integer> listOfActions = AsSearch.computePath(map);
 
@@ -81,8 +80,10 @@ public class GeneticAgent implements Intruder
             System.exit(1);
         }
 
+//       convert the astar list of actions to a path individual
         Indiv converted_path = toIndiv(listOfActions);
 
+//        start from the astar path to improve it
         path = GeneticAlgorithm.computePath(GeneticAlgorithm.reproduct(converted_path));
     }
 
@@ -121,50 +122,30 @@ public class GeneticAgent implements Intruder
         return out;
     }
 
+//    computes the action that must be taken based on the path
     public IntruderAction computeAction(Indiv path, IntruderPercepts percepts){
         double current_angle = map.getState().getAngle();
         double goal_angle = path.getDirections().get(0);
-        System.out.println("angle = " + goal_angle);
-        System.out.println("current_angle = " + current_angle);
 
      if(current_angle == goal_angle){ // if the agent is in the good direction, move
          double dist = path.getSpeeds().get(0)/Indiv.getTime_interval();
          System.out.println("dist = " + dist);
-         double max_dist = percepts.getScenarioIntruderPercepts().getMaxMoveDistanceIntruder().getValue()*getSpeedModifier(percepts);
+         double max_dist = percepts.getScenarioIntruderPercepts().getMaxMoveDistanceIntruder().getValue()*AstarAgent.getSpeedModifier(percepts);
 
-       if(max_dist>=dist){
+       if(max_dist>=dist){// the agent can cover all the distance in one move, in one turn
             path.getDirections().remove(0);
             path.getSpeeds().remove(0);
-        }else{
-               double dist2go = dist - max_dist;
+        }else{// the agent can not travel all the distance in one turn
+               double dist2go = dist - max_dist; // remaining distance
                dist = max_dist;
                path.getSpeeds().set(0, dist2go / Indiv.getTime_interval());
        }
       return new Move(new Distance(dist));
 
      }else{ //otherwise, rotate to the good direction
-
          return AstarAgent.rotateTo(goal_angle,percepts.getScenarioIntruderPercepts().getScenarioPercepts().getMaxRotationAngle(),map);
 
      }
 }
 
-    private double getSpeedModifier(IntruderPercepts guardPercepts)
-    {
-        SlowDownModifiers slowDownModifiers =  guardPercepts.getScenarioIntruderPercepts().getScenarioPercepts().getSlowDownModifiers();
-        if(guardPercepts.getAreaPercepts().isInWindow())
-        {
-            return slowDownModifiers.getInWindow();
-        }
-        else if(guardPercepts.getAreaPercepts().isInSentryTower())
-        {
-            return slowDownModifiers.getInSentryTower();
-        }
-        else if(guardPercepts.getAreaPercepts().isInDoor())
-        {
-            return slowDownModifiers.getInDoor();
-        }
-
-        return 1;
-    }
 }

@@ -173,129 +173,24 @@ public class GreedyGuard implements Guard {
             setTrackSequence(0);
         }
 
-
-
-        Angle moveAngle = Angle.fromRadians(percepts.getScenarioGuardPercepts().getScenarioPercepts().getMaxRotationAngle().getRadians() * Game._RANDOM.nextDouble());
-
-
-
-
-//        Capturer cp = new Capturer();
-//        Txt txt = new Txt();
         map.updateGridMap(percepts);
-//        System.out.println();
-//        System.out.println("after update: ");
-//        MindMap.printMatrix(map.getMapData(),map.getTargetPos(),map.getState().getPos());
 
-//        int times = txt.readTime(txt.times);
-//
-//        if (turns == 500){
-//
-//           // printTrajectory();
-//            //printMemoryMap();
-//            turns = 0;
-//        }
-//
-//        if (rotateSequence == txt.readTime(txt.times)-1){
-//            rotateFlag = false;
-//            rotateSequence = -1;
-//        }
-//
-//        if (rotateFlag && rotateSequence < txt.readTime(txt.times)-1){
-//            rotateSequence = rotateSequence + 1;
-//            int goalDirection = txt.readDirection(txt.goalDirection);
-//            int direction = txt.readDirection(txt.direction);
-//
-//            encapAction e = new encapAction(direction,goalDirection);
-//
-//            if (times!=0){
-//                return e.rotate.get(rotateSequence);
-//            }else {
-//                rotateFlag = false;
-//                rotateSequence = -1;
-//            }
-//        }
-//
-//
-//        if (!rotateFlag){
-//            if (objectPerceptArrayList.size() == 0){
-//                System.out.println("No object in view");
-//            }else {
-//                if (cp.needRotate(objectPerceptArrayList)){
-//                    rotateSequence = rotateSequence + 1;
-//
-//                    rotateFlag = true; //need to rotate, then using evaluation function to evaluate 8 states:
+        int range = 10;
 
-                    int range = 10;
-
-                   int goalSector = evaluationChoice(range); // greedy evaluation function
+         int goalSector = evaluationChoice(range); // greedy evaluation function
         System.out.println("goalSector = " + goalSector);
-//                    txt.writeDirection(txt.direction,direction);//write down the direction need to rotate.
-//                    txt.writeGoalDirection(txt.goalDirection,goalDirection);
-//
-//                    times = goalDirection - direction;
-//
-//                    if (times<-4){
-//                        times = -(times+8);
-//                    }else if (times>4){
-//                        times = 8 - times;
-//                    }
-//
-//                    txt.writeTime(txt.times,times);
-//
-//                    encapAction e = new encapAction(direction,goalDirection);
-//
-//                    if (times!=0){
-//                        return e.rotate.get(rotateSequence);
-//                    }else {
-//                        rotateFlag = false;
-//                        rotateSequence = -1;
-//                        return new Rotate(Angle.fromDegrees(45));
-//                    }
-//
-//                }
-//            }
-//        }else if (!percepts.wasLastActionExecuted()){
-//            return new Rotate(Angle.fromDegrees(45));
-//        }
-//
-//        else {
-//            return new Move(new Distance(percepts.getScenarioGuardPercepts().getMaxMoveDistanceGuard().getValue() * modifier));
-//        }
+
 
         if(Math.random() <epsilon){
             return new Move(new Distance(percepts.getScenarioGuardPercepts().getMaxMoveDistanceGuard().getValue()*modifier));
         }
 
-        GuardAction out;
-        if(goalSector == getCurrentSector()){ // if the agent is in the good direction, move
-            double max_dist = percepts.getScenarioGuardPercepts().getMaxMoveDistanceGuard().getValue()*modifier;
-            if(max_dist>1){
-                max_dist=1;
-            }
-            out =  new Move(new Distance(max_dist));
-        }else{ //otherwise, rotate to the good direction
-            out = rotateTo(getSectorAngle(goalSector),percepts.getScenarioGuardPercepts().getScenarioPercepts().getMaxRotationAngle());
-        }
+        GuardAction out = (GuardAction)AstarAgent.doAction(getSectorAngle(goalSector),map,percepts);
+
         map.updateState(out);
         return out;
     }
 
-    private Rotate rotateTo(double angle, Angle max_rotation){
-
-        double old_angle = map.getState().getAngle();
-        Angle rotation_angle = Angle.fromDegrees(angle-old_angle);
-
-        if(rotation_angle.getDegrees() > max_rotation.getDegrees()){
-            rotation_angle =max_rotation;
-        }else if(rotation_angle.getDegrees() < -max_rotation.getDegrees()){
-            rotation_angle = max_rotation;
-            rotation_angle = Angle.fromRadians(-rotation_angle.getRadians());
-        }
-        System.out.println("Rotate to "+angle+"; old angle is "+old_angle+"; new angle is "+(old_angle+rotation_angle.getDegrees()));
-
-        return new Rotate(rotation_angle);
-    }
 
     public int evaluationChoice(int range){
 
@@ -396,9 +291,6 @@ public class GreedyGuard implements Guard {
         return val;
 
     }
-
-
-
 
 
     public  ArrayList<Point> predict(Point a, Point b,int numP){
