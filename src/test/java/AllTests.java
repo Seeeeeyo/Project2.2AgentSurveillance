@@ -20,7 +20,7 @@ public class AllTests extends SimpleUnitTest {
     }
 
     private static void testGroups(String[] args) {
-        System.out.println("\n\n\nGroup 7 Tests: \n\n");
+       // System.out.println("\n\n\nGroup 7 Tests: \n\n");
         Group7.GroupTests.main(args);
     }
 

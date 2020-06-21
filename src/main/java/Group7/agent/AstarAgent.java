@@ -62,35 +62,35 @@ import java.util.Set;
 //        }
 
         ArrayList<Integer> listOfActions = AsSearch.computePath(map);
-        System.out.println("listOfActions = " + listOfActions);
+//        System.out.println("listOfActions = " + listOfActions);
 
         if(listOfActions == null){
             System.out.println("No path found ");
-            System.exit(1);
-        }
-        if(listOfActions.size() ==0){
-            System.out.println("Target Reached");
-            System.exit(1);
+//            System.exit(1);
             return new NoAction();
         }
+        else if(listOfActions.size() ==0){
+            System.out.println("Target Reached");
+//            System.exit(1);
+            return new NoAction();
+        }else {
 
-        int astar_move = listOfActions.get(0);
-        System.out.println("astar_move = " + astar_move);
+            int astar_move = listOfActions.get(0);
+//        System.out.println("astar_move = " + astar_move);
 
-        if(!percepts.wasLastActionExecuted())
-        {
-            System.out.println("AstarAgent.getAction rejected");
+            if (!percepts.wasLastActionExecuted()) {
+                System.out.println("AstarAgent.getAction rejected");
 //rotate from a random angle
-            Angle random_rotation_angle =  Angle.fromRadians(percepts.getScenarioIntruderPercepts().getScenarioPercepts().getMaxRotationAngle().getRadians() * Game._RANDOM.nextDouble());
-           return new Rotate(random_rotation_angle);
-        }
+                Angle random_rotation_angle = Angle.fromRadians(percepts.getScenarioIntruderPercepts().getScenarioPercepts().getMaxRotationAngle().getRadians() * Game._RANDOM.nextDouble());
+                return new Rotate(random_rotation_angle);
+            }
 
-            System.out.println("last action accepted");
+//            System.out.println("last action accepted");
 
 //make the action based on the a star move type required
-        IntruderAction out_action = doAction(astar_move,map.getState().getAngle(),percepts);
+            IntruderAction out_action = doAction(astar_move, map.getState().getAngle(), percepts);
 
-            if(out_action ==null){
+            if (out_action == null) {
                 System.out.println("Error ");
                 //should not happen
                 return new NoAction();
@@ -98,8 +98,7 @@ import java.util.Set;
 
             map.updateState(out_action);
             return out_action;
-//        }
-
+        }
     }
 
 
@@ -146,7 +145,7 @@ import java.util.Set;
             rotation_angle = max_rotation;
             rotation_angle = Angle.fromRadians(-rotation_angle.getRadians());
         }
-        System.out.println("Rotate to "+astar_angle+"; old angle is "+old_angle+"; new angle is "+(old_angle+rotation_angle.getDegrees()));
+//        System.out.println("Rotate to "+astar_angle+"; old angle is "+old_angle+"; new angle is "+(old_angle+rotation_angle.getDegrees()));
 
         return new Rotate(rotation_angle);
     }

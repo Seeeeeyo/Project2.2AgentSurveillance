@@ -178,24 +178,19 @@ public class Capturer implements Guard {
     public boolean needRotate(ArrayList<ObjectPercept> objectPerceptArrayList){
 
 
-        boolean flag = false;
-        boolean val = false;
-
 
         for (int i = 0;i<objectPerceptArrayList.size();i++){
 
-            double x = objectPerceptArrayList.get(i).getPoint().getX();
             double y = objectPerceptArrayList.get(i).getPoint().getY();
 
             //if the point is solid, then, input = 1;
-            if (!flag&&objectPerceptArrayList.get(i).getType().isSolid() && Math.abs(x)<0.8){
-                val = true;
-                flag = true;
+            if (objectPerceptArrayList.get(i).getType().isSolid() && Math.abs(y)<0.8){
+                return true;
             }
 
         }
 
-        return val;
+        return false;
 
     }
 
