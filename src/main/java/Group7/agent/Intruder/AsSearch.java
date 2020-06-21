@@ -55,8 +55,6 @@ public class AsSearch {
 
            int[] initialState = mindMap.getState().getPosArray();
 
-           System.out.println("initialState = " + initialState[0] + ", " + initialState[1]);
-
            searchStates[initialState[0]][initialState[1]] = 1; // the robot is there at the start so no need to explore it again
 
            int[] target = {(int) mindMap.getTargetPos().getX(), (int) mindMap.getTargetPos().getY()}; // position of the target area
@@ -233,13 +231,11 @@ public class AsSearch {
         try {
             int[][] searchStates = mindMap.walkableExtended2();
 
-//            MindMap.printMatrix(searchStates,mindMap.getTargetPos(),mindMap.getState().getPos());
+            MindMap.printMatrix(searchStates,mindMap.getTargetPos(),mindMap.getState().getPos());
 
             List<int[]> listOfPositions = new ArrayList<>();
 
             int[] initialState = mindMap.getState().getPosArray();
-
-            System.out.println("initialState = " + initialState[0] + ", " + initialState[1]);
 
             searchStates[initialState[0]][initialState[1]] = 2; // the robot is there at the start so no need to explore it again
 
@@ -247,7 +243,7 @@ public class AsSearch {
 
             ArrayList<int[]> states = new ArrayList<>();
 
-int[] target = new int[2];
+           int[] target = new int[2];
 
             states.add(new int[]{(int) 1, 1, initialState[0], initialState[1]});
 

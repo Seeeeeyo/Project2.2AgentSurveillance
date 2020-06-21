@@ -37,7 +37,7 @@ public class DefaultAgentFactory implements IAgentFactory {
             //guards.add(new DeepSpace());
            // guards.add(new Capturer_Guard(i));
             //guards.add(new Explorator());
-            guards.add(new GreedyGuard());
+            guards.add(new Explorator());
         }
         return guards;
     }

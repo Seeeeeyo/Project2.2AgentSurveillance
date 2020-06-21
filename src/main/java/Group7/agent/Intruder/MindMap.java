@@ -272,14 +272,13 @@ public class MindMap {
     public static final String ANSI_BLUE = "\u001B[34m";
 
 public static double formatAngle(double angle){
-    double out = angle;
     if(angle<0){
         angle+=360;
     }
     if(angle>=360){
         angle-=360;
     }
-    return out;
+    return angle;
 }
 
     public static double formatAngleRadians(double angle){

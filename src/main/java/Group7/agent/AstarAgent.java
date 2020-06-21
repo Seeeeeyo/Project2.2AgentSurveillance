@@ -160,7 +160,7 @@ import java.util.Set;
             rotation_angle = max_rotation;
             rotation_angle = Angle.fromRadians(-rotation_angle.getRadians());
         }
-//        System.out.println("Rotate to "+astar_angle+"; old angle is "+old_angle+"; new angle is "+(old_angle+rotation_angle.getDegrees()));
+       System.out.println("Rotate to "+goal_angle+"; old angle is "+old_angle+"; new angle is "+(old_angle+rotation_angle.getDegrees()));
 
         return new Rotate(rotation_angle);
     }
