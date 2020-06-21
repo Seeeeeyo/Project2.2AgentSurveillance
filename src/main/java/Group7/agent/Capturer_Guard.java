@@ -69,8 +69,8 @@ public class Capturer_Guard implements Guard {
     @Override
     public GuardAction getAction(GuardPercepts percepts) {
 
-        System.out.println("The index for agnet is:   " +index);
-        System.out.println("-----------------------------");
+//        System.out.println("The index for agnet is:   " +index);
+//        System.out.println("-----------------------------");
 
         double numberOfGuard = 3;
 
@@ -101,78 +101,6 @@ public class Capturer_Guard implements Guard {
         }
 
 
-
-
-        if (!detectIntruderFirst && !detectIntruderSecond &&bi.hasObjectInView(objectPerceptArrayList,ObjectPerceptType.Teleport)&&!dropPheromone1){
-            dropPheromone1 = true;
-            return new DropPheromone(SmellPerceptType.Pheromone1);
-        }
-
-        if (targetDCounter == 10){
-            targetDCounter = 0;
-            foundTarget = false;
-        }
-
-        if (foundTarget){
-            targetDCounter++;
-        }
-
-        if (!detectIntruderFirst && !detectIntruderSecond &&bi.hasObjectInView(objectPerceptArrayList,ObjectPerceptType.TargetArea) && !foundTarget){
-            foundTarget = true;
-            targetDCounter++;
-            return new DropPheromone(SmellPerceptType.Pheromone3);
-        }
-
-        if (foundDoor){
-            doorCounter++;
-        }
-
-        if (doorCounter == 10){
-            doorCounter = 0;
-            foundDoor = false;
-        }
-
-        if (!detectIntruderFirst && !detectIntruderSecond &&bi.hasObjectInView(objectPerceptArrayList,ObjectPerceptType.Door) && !foundDoor){
-            foundDoor = true;
-            doorCounter++;
-            return new DropPheromone(SmellPerceptType.Pheromone3);
-        }
-
-        if (!detectIntruderFirst && !detectIntruderSecond &&percepts.getAreaPercepts().isInSentryTower() && sentryCounter == 5){
-            sentryCounter = 0;
-            return new DropPheromone(SmellPerceptType.Pheromone2);
-        }
-
-        if (index == 3){
-            if (percepts.getAreaPercepts().isInSentryTower()){
-                sentryCounter++;
-                return new Rotate(Angle.fromDegrees(45));
-            }
-        }
-
-
-        //try not to enter the shaded Area
-        if (!detectIntruderFirst && !detectIntruderSecond && bi.hasObjectInView(objectPerceptArrayList,ObjectPerceptType.ShadedArea)){
-            return new Rotate(Angle.fromDegrees(45));
-        }
-
-        if (bi.hasDetectSmell(smellPerceptArrayList,SmellPerceptType.Pheromone1) && !avoid1){
-            avoid1 = true;
-            System.out.println("Smell pheromone1, there is already agent entered teleport, avoid");
-            return new Rotate(Angle.fromDegrees(45));
-        }
-
-        if (bi.hasDetectSmell(smellPerceptArrayList,SmellPerceptType.Pheromone2) && !avoid2){
-            avoid2 = true;
-            System.out.println("Smell pheromone2, there is already agent in sentry Tower, avoid");
-            return new Rotate(Angle.fromDegrees(45));
-        }
-
-
-
-
-
-
         //if detect yell, prioritize to go there to help
         if (bi.hasDetectYell(soundPerceptArrayList,SoundPerceptType.Yell)){
             Angle angle = bi.getYellDirection(soundPerceptArrayList);
@@ -187,28 +115,14 @@ public class Capturer_Guard implements Guard {
                 rnd = 1;
             }
             Angle angle = Angle.fromDegrees(rnd*45);
+
             return new Rotate(angle);
         }
-
-
-
-        //if detect guards yell, then rotate to go there
-        if (!detectIntruderFirst && !detectIntruderSecond && bi.hasDetectYell(soundPerceptArrayList, SoundPerceptType.Yell)){
-            Angle yellRotate= bi.getYellDirection(soundPerceptArrayList);
-
-            actionHistory.add(new ActionHistory(2,yellRotate.getDegrees()));
-            return new Rotate(yellRotate);
-        }
-
-
 
         if (!detectIntruderFirst&&!detectIntruderSecond){
             if (bi.hasObjectInView(objectPerceptArrayList, ObjectPerceptType.Intruder)){
                 Point point = bi.getIntruder(objectPerceptArrayList);
 
-                if (debug){
-                    printPointXY(point);
-                }
 
                 IO.writePoint1(IO.point1,point);
 
@@ -277,7 +191,7 @@ public class Capturer_Guard implements Guard {
 
         }
 
-        if (detectIntruderFirst&&detectIntruderSecond&&trackSequence==times-1){
+        if (detectIntruderFirst&&detectIntruderSecond&&trackSequence==times-2){
 
             detectIntruderSecond=false;
             detectIntruderFirst=false;
@@ -288,8 +202,19 @@ public class Capturer_Guard implements Guard {
 
         Angle moveAngle = Angle.fromRadians(percepts.getScenarioGuardPercepts().getScenarioPercepts().getMaxRotationAngle().getRadians() * Game._RANDOM.nextDouble());
 
+        //if detect guards yell, then rotate to go there
+        if (!detectIntruderFirst && !detectIntruderSecond && bi.hasDetectYell(soundPerceptArrayList, SoundPerceptType.Yell)){
+            Angle yellRotate= bi.getYellDirection(soundPerceptArrayList);
+
+            actionHistory.add(new ActionHistory(2,yellRotate.getDegrees()));
+            return new Rotate(yellRotate);
+        }
 
 
+        //try not to enter the shaded Area
+        if (!detectIntruderFirst && !detectIntruderSecond && bi.hasObjectInView(objectPerceptArrayList,ObjectPerceptType.ShadedArea)){
+            return new Rotate(Angle.fromDegrees(45));
+        }
 
         if (objectPerceptArrayList.size() == 0){
             System.out.println("No object in view");
@@ -299,6 +224,68 @@ public class Capturer_Guard implements Guard {
                 actionHistory.add(new ActionHistory(2,moveAngle.getDegrees()));
                 return new Rotate(moveAngle);
             }
+        }
+
+        if (!detectIntruderFirst && !detectIntruderSecond &&bi.hasObjectInView(objectPerceptArrayList,ObjectPerceptType.Teleport)&&!dropPheromone1){
+            dropPheromone1 = true;
+            return new DropPheromone(SmellPerceptType.Pheromone1);
+        }
+
+        if (targetDCounter == 10){
+            targetDCounter = 0;
+            foundTarget = false;
+        }
+
+        if (foundTarget){
+            targetDCounter++;
+        }
+
+        if (!detectIntruderFirst && !detectIntruderSecond &&bi.hasObjectInView(objectPerceptArrayList,ObjectPerceptType.TargetArea) && !foundTarget){
+            foundTarget = true;
+            targetDCounter++;
+            return new DropPheromone(SmellPerceptType.Pheromone3);
+        }
+
+        if (foundDoor){
+            doorCounter++;
+        }
+
+        if (doorCounter == 10){
+            doorCounter = 0;
+            foundDoor = false;
+        }
+
+        if (!detectIntruderFirst && !detectIntruderSecond &&bi.hasObjectInView(objectPerceptArrayList,ObjectPerceptType.Door) && !foundDoor){
+            foundDoor = true;
+            doorCounter++;
+            return new DropPheromone(SmellPerceptType.Pheromone3);
+        }
+
+        if (!detectIntruderFirst && !detectIntruderSecond &&percepts.getAreaPercepts().isInSentryTower() && sentryCounter == 5){
+            sentryCounter = 0;
+            return new DropPheromone(SmellPerceptType.Pheromone2);
+        }
+
+        if (index == 3){
+            if (percepts.getAreaPercepts().isInSentryTower()){
+                sentryCounter++;
+                return new Rotate(Angle.fromDegrees(45));
+            }
+        }
+
+
+
+
+        if (bi.hasDetectSmell(smellPerceptArrayList,SmellPerceptType.Pheromone1) && !avoid1){
+            avoid1 = true;
+            System.out.println("Smell pheromone1, there is already agent entered teleport, avoid");
+            return new Rotate(Angle.fromDegrees(45));
+        }
+
+        if (bi.hasDetectSmell(smellPerceptArrayList,SmellPerceptType.Pheromone2) && !avoid2){
+            avoid2 = true;
+            System.out.println("Smell pheromone2, there is already agent in sentry Tower, avoid");
+            return new Rotate(Angle.fromDegrees(45));
         }
 
 
