@@ -48,6 +48,8 @@ public class GreedyGuard implements Guard {
 
     public boolean detectIntruderSecond = false;
 
+    public boolean capState = false;
+
 
 
     @Override
@@ -69,12 +71,6 @@ public class GreedyGuard implements Guard {
         {
             System.out.println("Map_.getAction rejected");
            // System.exit(1);
-            if(Math.random() < 0.1)
-            {
-                System.out.println("randomrandomrandom");
-                return new DropPheromone(SmellPerceptType.values()[(int) (Math.random() * SmellPerceptType.values().length)]);
-            }
-
 
             System.out.println("randomrandomrandom");
             Angle moveAngle = Angle.fromRadians(percepts.getScenarioGuardPercepts().getScenarioPercepts().getMaxRotationAngle().getRadians() * _RANDOM.nextDouble());
@@ -96,9 +92,11 @@ public class GreedyGuard implements Guard {
 
         double epsilon = 0.3;
 
-        if (Math.random()<epsilon){
-            return new Move(new Distance(percepts.getScenarioGuardPercepts().getMaxMoveDistanceGuard().getValue()*modifier));
-        }
+//        if (Math.random()<epsilon){
+//            return new Move(new Distance(percepts.getScenarioGuardPercepts().getMaxMoveDistanceGuard().getValue()*modifier));
+//        }
+
+
 
         if (!detectIntruderFirst&&!detectIntruderSecond){
             if (bi.hasObjectInView(objectPerceptArrayList, ObjectPerceptType.Intruder)){
@@ -111,10 +109,12 @@ public class GreedyGuard implements Guard {
                 if (debug) System.out.println("---------------------------First found Intruder, stay to find--------------------------------");
                 detectIntruderFirst = true;
 
+                capState = true;
 
                 return new Yell();
             }
         }
+
 
         if (detectIntruderFirst&&!detectIntruderSecond){
 
@@ -149,7 +149,7 @@ public class GreedyGuard implements Guard {
 
         if (trackBuffer == 1){
             setTrackBuffer(0);
-            detectIntruderFirst = false;
+            detectIntruderSecond = false;
         }
 
         int times = IO.readTime(IO.times);
@@ -172,7 +172,7 @@ public class GreedyGuard implements Guard {
 
         }
 
-        if (detectIntruderFirst&&detectIntruderSecond&&trackSequence==times-1){
+        if (detectIntruderFirst&&detectIntruderSecond&&trackSequence==times-2){
 
             detectIntruderSecond=false;
             detectIntruderFirst=false;
