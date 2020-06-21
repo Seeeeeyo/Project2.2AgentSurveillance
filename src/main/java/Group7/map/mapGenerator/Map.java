@@ -2,7 +2,6 @@ package Group7.map.mapGenerator;
 
 import java.io.Serializable;
 
-
 public class Map implements Serializable {
     
     private final Room[] rooms;

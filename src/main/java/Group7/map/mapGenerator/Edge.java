@@ -10,17 +10,14 @@ public class Edge {
         this.source = source;
         this.target = target;
     }
-    
 
     public double distance() {
         return source.distance(target);
     }
 
-
     public Room getFirst() {
         return source;
     }
-
 
     public Room getSecond() {
         return target;

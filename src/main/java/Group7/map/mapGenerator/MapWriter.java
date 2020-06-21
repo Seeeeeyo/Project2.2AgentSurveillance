@@ -1,6 +1,5 @@
 package Group7.map.mapGenerator;
 
-
 import Group7.map.mapGenerator.logic.MapGenerator;
 import Group7.map.mapGenerator.logic.RoomFactory;
 
@@ -24,7 +23,7 @@ public class MapWriter {
         final int maximumX = 200;
         final int maximumY = 70;
         final int rooms = 50;
-        final int maxTargetBlocks = 5;
+        final int maxTargetBlocks = 3;
 
         int columnPointer = 0;
         int rowPointer = 0;
@@ -40,7 +39,6 @@ public class MapWriter {
 
         final double originalX1 = 0, originalX2 = 1.0, originalX3 = 1.0, originalX4 = 0;
         final double originalY1 = 0, originalY2 = 0.0, originalY3 = 1.0, originalY4 = 1;
-
 
         RoomFactory roomFactory = new RoomFactory();
 
@@ -93,7 +91,6 @@ public class MapWriter {
 
                     for (int i = 0; i < array.length; i++) {
                         //System.out.println(i + ": " + array[i]);
-
 
                         if (array[i] == '#') {
 
@@ -182,6 +179,7 @@ public class MapWriter {
                                 columnPointer += 1;
 
                             } else if (toPlaceOrNotTo <= 0.05 && rowPointer >= 50 && targetAreasPlaced <= maxTargetBlocks) {
+                                // Assuming we place the targetAreas exclusively in the bottom half
 
                                 x1 = originalX1 + columnPointer;
                                 x2 = originalX2 + columnPointer;
@@ -212,9 +210,7 @@ public class MapWriter {
 
                             columnPointer += 1;
                             System.out.print(" ");
-
                         }
-
 
                         // in case you manually placed the spawn block into the codemap
                         else if (array[i] == '2') {
@@ -255,7 +251,6 @@ public class MapWriter {
                             writer.write('\n');
 
                             columnPointer += 1;
-
                         }
 
                     }
@@ -270,7 +265,7 @@ public class MapWriter {
             }
 
         } catch (IOException e) {
-            System.out.println("Error reading the file with fixed parameters");
+            System.out.println("Error reading the file containing the fixed parameters");
             e.printStackTrace();
         }
 
