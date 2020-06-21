@@ -1,6 +1,7 @@
 package Group7.agent.Intruder;
 
 import Group7.Game;
+import Group7.agent.AstarAgent;
 import Interop.Action.IntruderAction;
 import Interop.Action.Move;
 import Interop.Action.NoAction;
@@ -122,11 +123,11 @@ public class GeneticAgent implements Intruder
 
     public IntruderAction computeAction(Indiv path, IntruderPercepts percepts){
         double current_angle = map.getState().getAngle();
-        double angle = path.getDirections().get(0);
-        System.out.println("angle = " + angle);
+        double goal_angle = path.getDirections().get(0);
+        System.out.println("angle = " + goal_angle);
         System.out.println("current_angle = " + current_angle);
 
-     if(current_angle == angle){ // if the agent is in the good direction, move
+     if(current_angle == goal_angle){ // if the agent is in the good direction, move
          double dist = path.getSpeeds().get(0)/Indiv.getTime_interval();
          System.out.println("dist = " + dist);
          double max_dist = percepts.getScenarioIntruderPercepts().getMaxMoveDistanceIntruder().getValue()*getSpeedModifier(percepts);
@@ -143,34 +144,10 @@ public class GeneticAgent implements Intruder
 
      }else{ //otherwise, rotate to the good direction
 
-         return rotateTo(angle,percepts.getScenarioIntruderPercepts().getScenarioPercepts().getMaxRotationAngle());
+         return AstarAgent.rotateTo(goal_angle,percepts.getScenarioIntruderPercepts().getScenarioPercepts().getMaxRotationAngle(),map);
 
      }
 }
-
-    private Rotate rotateTo(double astar_angle, Angle max_rotation){
-
-        double old_angle = map.getState().getAngle();
-        double rotation = astar_angle-old_angle;
-        double rotation2 = astar_angle-360-old_angle;
-
-        Angle rotation_angle;
-        if(Math.abs(rotation)>=Math.abs(rotation2)){
-            rotation_angle = Angle.fromDegrees(rotation2);
-        }else{
-            rotation_angle = Angle.fromDegrees(rotation);
-        }
-
-        if(rotation_angle.getDegrees() > max_rotation.getDegrees()){
-            rotation_angle =max_rotation;
-        }else if(rotation_angle.getDegrees() < -max_rotation.getDegrees()){
-            rotation_angle = max_rotation;
-            rotation_angle = Angle.fromRadians(-rotation_angle.getRadians());
-        }
-        System.out.println("Rotate to "+astar_angle+"; old angle is "+old_angle+"; new angle is "+(old_angle+rotation_angle.getDegrees()));
-
-        return new Rotate(rotation_angle);
-    }
 
     private double getSpeedModifier(IntruderPercepts guardPercepts)
     {

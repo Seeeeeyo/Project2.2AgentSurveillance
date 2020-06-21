@@ -3,15 +3,14 @@
 import Group7.Game;
 import Group7.agent.Intruder.MindMap;
 import Group7.agent.Intruder.AsSearch;
-import Interop.Action.IntruderAction;
-import Interop.Action.Move;
-import Interop.Action.NoAction;
-import Interop.Action.Rotate;
+import Interop.Action.*;
 import Interop.Agent.Intruder;
 import Interop.Geometry.Angle;
 import Interop.Geometry.Direction;
 import Interop.Geometry.Distance;
+import Interop.Percept.GuardPercepts;
 import Interop.Percept.IntruderPercepts;
+import Interop.Percept.Percepts;
 import Interop.Percept.Scenario.SlowDownModifiers;
 import Interop.Percept.Smell.SmellPercept;
 import Interop.Percept.Sound.SoundPercept;
@@ -24,18 +23,23 @@ import java.util.Set;
 
     private MindMap map = new MindMap();
 
-    private double getSpeedModifier(IntruderPercepts guardPercepts)
+    public static double getSpeedModifier(Percepts percepts)
     {
-        SlowDownModifiers slowDownModifiers =  guardPercepts.getScenarioIntruderPercepts().getScenarioPercepts().getSlowDownModifiers();
-        if(guardPercepts.getAreaPercepts().isInWindow())
+        SlowDownModifiers slowDownModifiers;
+        if(percepts instanceof IntruderPercepts) {
+            slowDownModifiers = ((IntruderPercepts) percepts).getScenarioIntruderPercepts().getScenarioPercepts().getSlowDownModifiers();
+        }else{
+            slowDownModifiers = ((GuardPercepts) percepts).getScenarioGuardPercepts().getScenarioPercepts().getSlowDownModifiers();
+        }
+        if(percepts.getAreaPercepts().isInWindow())
         {
             return slowDownModifiers.getInWindow();
         }
-        else if(guardPercepts.getAreaPercepts().isInSentryTower())
+        else if(percepts.getAreaPercepts().isInSentryTower())
         {
             return slowDownModifiers.getInSentryTower();
         }
-        else if(guardPercepts.getAreaPercepts().isInDoor())
+        else if(percepts.getAreaPercepts().isInDoor())
         {
             return slowDownModifiers.getInDoor();
         }
@@ -51,20 +55,12 @@ import java.util.Set;
         map.updateGridMap(percepts);
         map.computeTargetPoint(percepts.getTargetDirection());
 
-        Direction target_direction = percepts.getTargetDirection();
-
-//        if(map.getDirectionFirstTurn()==target_direction){
-//            System.out.println("Move first turn ");
-//
-//            IntruderAction a = new Move(new Distance(1.0));
-//            map.updateState(a);
-//            return a;
-//        }
-
+//            finds the closest unvisited point to go visit it afterwards, returns the path to go to it
         ArrayList<Integer> listOfActions = AsSearch.computePath(map);
 //        System.out.println("listOfActions = " + listOfActions);
 
         if(listOfActions == null){
+//            the target is unreachable, the agent might be stuck in a room
             System.out.println("No path found ");
 //            System.exit(1);
             return new NoAction();
@@ -75,36 +71,32 @@ import java.util.Set;
             return new NoAction();
         }else {
 
-            int astar_move = listOfActions.get(0);
-//        System.out.println("astar_move = " + astar_move);
+            int next_move = listOfActions.get(0);
+
+//        System.out.println("next_move = " + next_move);
 
             if (!percepts.wasLastActionExecuted()) {
                 System.out.println("AstarAgent.getAction rejected");
-//rotate from a random angle
+//              rotate from a random angle
                 Angle random_rotation_angle = Angle.fromRadians(percepts.getScenarioIntruderPercepts().getScenarioPercepts().getMaxRotationAngle().getRadians() * Game._RANDOM.nextDouble());
                 return new Rotate(random_rotation_angle);
             }
 
 //            System.out.println("last action accepted");
 
-//make the action based on the a star move type required
-            IntruderAction out_action = doAction(astar_move, map.getState().getAngle(), percepts);
+//          chose an action to apply based on the a star move type required
+            IntruderAction out_action = (IntruderAction)doAction(astarMove2Angle(next_move), map, percepts);
 
-            if (out_action == null) {
-                System.out.println("Error ");
-                //should not happen
-                return new NoAction();
-            }
-
+            //            finds the closest unvisited point to go visit it afterwards, returns the path to go to it
             map.updateState(out_action);
             return out_action;
         }
     }
 
-
-    private IntruderAction doAction( int nb, double current_angle, IntruderPercepts percepts){
+    public static double astarMove2Angle(int move_nb){
         double angle = 0;
-        switch (nb){
+        //           gets the agent corresponding to the chosen move 1-4
+        switch (move_nb){
             case 1:
 //                go up in the grid
                 angle = 180;
@@ -122,31 +114,46 @@ import java.util.Set;
                 angle = 270;
                 break;
         }
+        return angle;
+    }
 
-        if(current_angle == angle){ // if the agent is in the good direction, move
-            double max_dist = percepts.getScenarioIntruderPercepts().getMaxMoveDistanceIntruder().getValue()*getSpeedModifier(percepts);
-            if(max_dist>1){
+    public static Action doAction(double goal_angle, MindMap map, Percepts percepts){
+        double max_dist;
+        Angle max_angle;
+        if(percepts instanceof IntruderPercepts) {
+        max_dist = ((IntruderPercepts) percepts).getScenarioIntruderPercepts().getMaxMoveDistanceIntruder().getValue()*getSpeedModifier(percepts);
+        max_angle = ((IntruderPercepts) percepts).getScenarioIntruderPercepts().getScenarioPercepts().getMaxRotationAngle();
+        }else{
+            max_dist = ((GuardPercepts) percepts).getScenarioGuardPercepts().getMaxMoveDistanceGuard().getValue()*getSpeedModifier(percepts);
+            max_angle = ((GuardPercepts) percepts).getScenarioGuardPercepts().getScenarioPercepts().getMaxRotationAngle();
+        }
+            double current_angle = map.getState().getAngle();
+
+        if(current_angle == goal_angle){ // if the agent is in the good direction, move
+            if(max_dist>1){ //ensure that the agent moves only from one case in the matrix
                 max_dist=1;
             }
             return new Move(new Distance(max_dist));
         }else{ //otherwise, rotate to the good direction
-            return rotateTo(angle,percepts.getScenarioIntruderPercepts().getScenarioPercepts().getMaxRotationAngle());
+            return rotateTo(goal_angle,max_angle, map);
         }
     }
 
-    private Rotate rotateTo(double astar_angle, Angle max_rotation){
+    public static Rotate rotateTo(double goal_angle, Angle max_rotation, MindMap map){
 
         double old_angle = map.getState().getAngle();
-        double rotation = astar_angle-old_angle;
-        double rotation2 = astar_angle-360-old_angle;
+        double rotation = goal_angle-old_angle;
+        double rotation2 = goal_angle-360-old_angle;// anti-angle of the rotation angle
 
         Angle rotation_angle;
+        //            checks which angle is the smallest and assign it to the rotation angle
         if(Math.abs(rotation)>=Math.abs(rotation2)){
             rotation_angle = Angle.fromDegrees(rotation2);
         }else{
             rotation_angle = Angle.fromDegrees(rotation);
         }
 
+        //            checks if the angle is in the controller-acceptable range
         if(rotation_angle.getDegrees() > max_rotation.getDegrees()){
             rotation_angle =max_rotation;
         }else if(rotation_angle.getDegrees() < -max_rotation.getDegrees()){

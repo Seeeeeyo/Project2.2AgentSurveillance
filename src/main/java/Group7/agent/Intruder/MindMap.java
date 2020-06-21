@@ -20,16 +20,12 @@ import java.util.*;
 public class MindMap {
 
     private AgentState state; //position + direction of the agent
-    private Point targetPos =null;
-    private Direction directionFirstTurn;
-    private Point posFirstTurn;
-    private Point posPrevTurn=null;
+    private Point targetPos =null; //position of the target
 
-    //any 0 in this array represents a empty space on the or an are which has not already been explored
-    //any 1 represents a wall
-    private int[][] mapData;
+    private int[][] mapData; //matrix storing the visual percepts types
+
+//    different types stored by the matrix
     public static final int Unvisited = 0;
-//    public static final int Visited = 1;
     public static final int Wall = 2;
     public static final int Door = 3;
     public static final int Teleport = 4;
@@ -42,21 +38,19 @@ public class MindMap {
     public static final int Empty = 1;
 
 
-    //default size is arbitrary 20
+    //default size is arbitrary 25
     public MindMap(){
         int height = 25;
         int width = 25;
 
+        // instanciate the mindmap. The agent is set at the center of the matrix.
         mapData = new int[height*2][width*2];
-        mapData[height][width]=9;
+        mapData[height][width]= Intruder;
         this.state = new AgentState(new Point(height,width),0);
     }
 
-// instanciate the mindmap. The agent is set at the center of the matrix.
-
+//    check if the point (height width) is within the matrix dimensions, if not expand the matrix dimensions which must be expended
     private void checkExpention(int height,int width){
-//        System.out.println(mapData.length);
-//        System.out.println(mapData[0].length);
         if(height<0){
             ExtendMap(height,0);
         }
@@ -70,6 +64,8 @@ public class MindMap {
             ExtendMap(height-mapData.length+1,0);
         }
     }
+
+//    extends the matrix. height, width can be negative or positive
     private void ExtendMap(int height, int width){
       if(height>0){
           expandBottom(height);
@@ -85,88 +81,6 @@ public class MindMap {
       }
     }
 
-
-    public Point findClosestUnvisitedPoint(Direction d){
-        double  dir = d.getDegrees();
-        System.out.println("direction = " + -dir);
-        double this_direction = state.getAngle();
-        System.out.println("direction = " +(-dir+this_direction));
-//        direction.setLength(0.1);
-        Vector direction = new Vector(-d.getDegrees()+ state.getAngle());
-        direction.setLength(5);
-        Vector pos = state.vectorPos();
-        double increment = 5;
-        boolean found = false;
-        while(!found){
-            Vector target = pos.add2(direction);
-            if(!isVisited(target)){
-                found = true;
-            }
-            else{
-                direction.addLength(increment);
-            }
-        }
-        pos.add(direction);
-        checkExpention((int)pos.x,(int)pos.y);
-        if(pos.x<0){
-            pos.x =0;
-        }
-        if(pos.y<0){
-            pos.y =0;
-        }
-        return new Point(pos.x,pos.y);
-    }
-
-    public Point findIntersection(Direction d){
-        if(state.getX()==posFirstTurn.getX() && state.getY()==posFirstTurn.getY()){ //the agent has not moved
-            System.out.println("the agent has not moved");
-            directionFirstTurn = d;
-            return findClosestUnvisitedPoint(d);
-        }
-        System.out.println("d = " + d.getRadians());
-        System.out.println(posFirstTurn);
-        System.out.println("directionFirstTurn = " + directionFirstTurn.getRadians());
-        System.out.println(state.getPos());
-//        building 4 points
-        Point a1 = posFirstTurn;
-//        System.out.println("a1= "+a1.getX()+" "+a1.getY());
-        Vector va1 = new Vector(posFirstTurn);
-        Point a2 = state.getPos();
-//        System.out.println("a2= "+a2.getX()+" "+a2.getY());
-        Vector vb2 = state.vectorPos().add(new Vector(d));
-        Vector vb1 = va1.add(new Vector(directionFirstTurn));
-        Point b1 = new Point(vb1.x,vb1.y);
- //       System.out.println("b1= "+b1.getX()+" "+b1.getY());
-        Point b2 = new Point(vb2.x,vb2.y);
- //       System.out.println("b2= "+b2.getX()+" "+b2.getY());
-
-//        calculating the equations of the lines
-        double m1 = (a1.getY()-a2.getY())/(a1.getX()-a2.getX());
-//        System.out.println("m1 = " + m1);
-        double m2 = (b1.getY()-b2.getY())/(b1.getX()-b2.getX());
-//        System.out.println("m2 = " + m2);
-//        case lines are parallel
-        if(Math.abs(m1-m2)<=0.05){
-            System.out.println("parallel");
-            return findClosestUnvisitedPoint(d);
-        }
-        double c1 = a1.getY()-m1*a1.getX();
-//        System.out.println("c1 = " + c1);
-        double c2 = b1.getY()-m2*b1.getX();
-//        System.out.println("c2 = " + c2);
-
-//        solving the system
-        double interX =(c2-c1)/(m1-m2);
-//        System.out.println("interX = " + interX);
-        double interY = m1*interX+c1;
-//        System.out.println("interY = " + interY);
-        checkExpention((int)interX,(int)interY);
-        return new Point(interX,interY);
-    }
-
-    public Direction getDirectionFirstTurn() {
-        return directionFirstTurn;
-    }
 
     public void computeTargetPoint(Direction d){
 //        if(null==directionFirstTurn){
@@ -186,34 +100,12 @@ public class MindMap {
 
     }
 
-    public boolean isVisited(Vector v){
-        return getData(v)!=Unvisited;
-    }
-
-    public boolean isVisited(Point p){
-        return getData(p)!=Unvisited;
-    }
-
-    public boolean isVisited(double x, double y){
-        return getData(x,y)!=Unvisited;
-    }
 
     public boolean isVisited(int a, int b){
         return getData(a,b)!=Unvisited;
     }
 
-
-    public int getData(Point p){
-        return getData(p.getY(),p.getY());
-    }
-
-    public int getData(Vector v){
-        return getData(v.x,v.y);
-    }
-    public int getData(double x, double y){
-        return getData((int)Math.round(x),(int)Math.round(y));
-    }
-
+//    gets the data type of the point x,y in the matrix. If x,y are not within the dimensions of the matrix, it is being extended
     public int getData(int x, int y){
         checkExpention(x,y);
         if(x<0){
@@ -229,35 +121,26 @@ public class MindMap {
         return mapData;
     }
 
-    /**
-     * update the Map after executing an action
-     * @param
-     * @param
-     * @return a new map being updated
- * */
+    //updates the mapData according to the (visual) percepts
     public void updateGridMap(Percepts percepts){
 
-        //currently, the explore agent only need to execute move or rotate
         //all the objects in vision
         Set<ObjectPercept> objectPercepts = percepts.getVision().getObjects().getAll();
-
         List<ObjectPercept> ls = new ArrayList<ObjectPercept>(objectPercepts);
 
         double[] currentPosition = state.getRealPosArray();
-//        System.out.println("current Position = " + currentPosition[0] +"; "+ currentPosition[1]);
-//        System.out.println("current Angle = "+ state.getAngle());
 
+//        store all the visual point into the matrix
         for (int i = 0;i<ls.size();i++){
 
-          //  System.out.println("Before translation "+ls.get(i).getPoint().toString());
+//            conversion of the data points coordinates to the mapData coordinate system
             double[] cor = getRelativeLocationOfOrigin(ls.get(i).getPoint());
-           // System.out.println("cor = " + cor[0]+ "; "+cor[1]);
 
+//            translated perception points coordinates
             int ox = (int) Math.round(cor[0] + currentPosition[0]);
             int oy = (int) Math.round(cor[1] + currentPosition[1]);
-         //   System.out.println("oy = " + oy);
-        //    System.out.println("ox = " + ox);
 
+//            checks if the data point is within the dimensions of the matrix
              checkExpention(ox,oy);
              if(ox<0){
                  ox = 0;
@@ -267,7 +150,8 @@ public class MindMap {
              }
 
             ObjectPerceptType type = ls.get(i).getType();
-//            System.out.println("type = " + type.toString());
+
+//          updates the info of the corresponding mapData case
             switch (type) {
                 case Wall:
                        mapData[ox][oy] = Wall;
@@ -304,29 +188,41 @@ public class MindMap {
                 case Intruder:
                     mapData[ox][oy] = Intruder;
                     break;
+
                 case TargetArea:
                     mapData[ox][oy] = TargetArea;
                     break;
             }
     }
+
+//        set all unmarked spots within the field of view of the agent as Empty
         setVisited(percepts);
 //        System.out.println("After update");
 //        printMatrix(mapData,targetPos,state.getPos());
   }
 
+//        set all unmarked spots within the field of view of the agent as Empty
   public void setVisited(Percepts percepts){
+
+//        checks if the current mapData location is not marked as Unvisited, otherwise, mark it as Empty (thus visited)
         if(mapData[state.getX()][state.getY()]==Unvisited){
             mapData[state.getX()][state.getY()]=Empty;
         }
+
+//        range of the field of view
       int range = (int)percepts.getVision().getFieldOfView().getRange().getValue();
-      System.out.println("range = " + range);
+
+//        range angle of the field of view
       double range_angle = percepts.getVision().getFieldOfView().getViewAngle().getRadians();
-      double angleFrom = Math.toRadians(state.getAngle())-range_angle/2;
-      double angleTo = Math.toRadians(state.getAngle())+range_angle/2;
+
+//      angle that are the boundaries of the field of view
+      double angleFrom = formatAngleRadians(Math.toRadians(state.getAngle())-range_angle/2);
+      double angleTo = formatAngleRadians(Math.toRadians(state.getAngle())+range_angle/2);
 
       for (int i = -range; i <= range ; i++) {
           for (int j = -range; j <= range ; j++) {
               if(exists(i+state.getX(),j+state.getY())&& (i!=0 || j!=0)) {
+//                  calculates the points of the matrix that are in the field of view
                   double adjacent = i;
                   double opposed = j;
 
@@ -334,13 +230,24 @@ public class MindMap {
                   if (i < 0) {
                       angle += Math.toRadians(180);
                   }
-                  if (angle < 0) {
-                      angle += Math.toRadians(360);
-                  }
-//                        System.out.println("angle = " + Math.toDegrees(angle));
-                  if (angleFrom <= angle && angle <= angleTo) {
-                      if(!isVisited(state.getX() + i,state.getY() + j)) {
-                          mapData[state.getX() + i][state.getY() + j] = Empty;
+                  angle = formatAngleRadians(angle);
+
+                  if(angleTo<Math.toRadians(90) && angleFrom>Math.toRadians(270)) { //special case
+                      if (angleFrom <= angle && angle <= Math.toRadians(360)) { //check if the angle is in the field of view
+                          if (!isVisited(state.getX() + i, state.getY() + j)) {
+                              mapData[state.getX() + i][state.getY() + j] = Empty;
+                          }
+                      }
+                      if (0 <= angle && angle <= angleTo) { //check if the angle is in the field of view
+                          if (!isVisited(state.getX() + i, state.getY() + j)) {
+                              mapData[state.getX() + i][state.getY() + j] = Empty;
+                          }
+                      }
+                  }else {
+                      if (angleFrom <= angle && angle <= angleTo) { //check if the angle is in the field of view
+                          if (!isVisited(state.getX() + i, state.getY() + j)) {
+                              mapData[state.getX() + i][state.getY() + j] = Empty;
+                          }
                       }
                   }
               }
@@ -348,7 +255,7 @@ public class MindMap {
       }
   }
 
-    public void clearEmpty(){
+    public void clearEmpty(){ //clear all the empty area, set them to unvisited
         System.out.println("MindMap.clearEmpty");
         for (int i = 0; i <mapData.length ; i++) {
             for (int j = 0; j <mapData[0].length ; j++) {
@@ -358,12 +265,35 @@ public class MindMap {
             }
         }
     }
+
     public static final String ANSI_RED = "\u001B[31m";
     public static final String ANSI_GREEN = "\u001B[32m";
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_BLUE = "\u001B[34m";
 
+public static double formatAngle(double angle){
+    double out = angle;
+    if(angle<0){
+        angle+=360;
+    }
+    if(angle>=360){
+        angle-=360;
+    }
+    return out;
+}
 
+    public static double formatAngleRadians(double angle){
+        double out = angle;
+        if(angle<0){
+            angle+=2*Math.PI;
+        }
+        if(angle>=360){
+            angle-=2*Math.PI;
+        }
+        return out;
+    }
+
+//    prints the mapData
     public static void printMatrix(int[][] matrix,Point targetPos, Point agent){
         for (int i = -2; i < matrix.length; i++) {
             for (int j = -1; j < matrix[0].length; j++) {
@@ -412,9 +342,9 @@ public class MindMap {
         System.out.println();
     }
 
-    //method to update the state based on the chosen action
+    //method to update the state based on the chosen action, assuming it will not be rejected by the game controller
     public void updateState(Action a){
-       if( a instanceof Move){
+       if( a instanceof Move){ //action is a move
            double moveLength= ((Move) a).getDistance().getValue();
 
            Vector pos = new Vector(state.getRealPos());
@@ -428,25 +358,20 @@ public class MindMap {
            System.out.println("Move of "+moveLength);
            System.out.println("New Pos = " + newpos.getString());
            System.out.println("Angle = "+state.getAngle());
-
+//         updates the positions of the agent
            state.setPos(newpos.x,newpos.y);
 
        }
 
-       else if ( a instanceof Rotate){
+       else if ( a instanceof Rotate){ //action is a rotation
            double old_angle = state.getAngle();
 
            double rotation_angle = ((Rotate) a).getAngle().getDegrees();
 
            double new_angle = old_angle + rotation_angle;
 
-           if(new_angle>=360){
-               new_angle-=360;
-           }
-
-           if(new_angle<0){
-               new_angle+=360;
-           }
+//           checks if the angle is within the range 0-360
+           new_angle = formatAngle(new_angle);
 
            System.out.println("Rotation of "+rotation_angle);
            System.out.println("Pos = " + state.getPos().toString());
@@ -468,16 +393,14 @@ public class MindMap {
         double x = point.getX();
         double y = point.getY();
 
-
+//        current direction angle of the agent is the y axis the visual system
         Vector direction = new Vector(state.getAngle());
 
+//        its perpendicular is the x axis of the system
         Vector p = direction.get2DPerpendicularVector();
 
-//        p.mul(-1);
-//        System.out.println("p = " + p.getString());
-
+//        normalise the axis to x and y
         direction.setLength(y);
-
         p.setLength(x);
 
         Vector values = direction.add(p);
@@ -580,9 +503,7 @@ public class MindMap {
         return out;
     }
 
-    public static void main(String[] args){
-        System.out.println(Math.atan((double)5/7));
-    }
+//  gets the data information of a sector
     public ArrayList<Integer> getSectorInfo(double angleFrom, double angleTo, int range){
 
         angleFrom = Math.toRadians(angleFrom);
@@ -601,15 +522,26 @@ public class MindMap {
                         if (i < 0) {
                             angle += Math.toRadians(180);
                         }
-                        if (angle < 0) {
-                            angle += Math.toRadians(360);
+                        angle =formatAngleRadians(angle);
+
+                    if(angleTo<Math.toRadians(90) && angleFrom>Math.toRadians(270)) { //special case
+                        if (angleFrom <= angle && angle <= Math.toRadians(360)) { //check if the angle is in the field of view
+                            if (!isVisited(state.getX() + i, state.getY() + j)) {
+                                mapData[state.getX() + i][state.getY() + j] = Empty;
+                            }
                         }
-//                        System.out.println("angle = " + Math.toDegrees(angle));
+                        if (0 <= angle && angle <= angleTo) { //check if the angle is in the field of view
+                            if (!isVisited(state.getX() + i, state.getY() + j)) {
+                                mapData[state.getX() + i][state.getY() + j] = Empty;
+                            }
+                        }
+                    }else {
                         if (angleFrom <= angle && angle < angleTo) {
                             out.add(mat[state.getX() + i][state.getY() + j]);
 //                            System.out.println("add"+"j = " + j+"i = " + i);
 
                         }
+                    }
                 }
             }
         }
@@ -675,8 +607,6 @@ public class MindMap {
      * @return new matrix (expanded) with 1 extra Left column
      */
     public void expandLeft(int size) {
-//        System.out.println("Before left exp ");
-//        printMatrix(mapData,targetPos);
         // expand in the y direction if needed to the left
         int[][] tmp = new int[mapData.length][mapData[0].length + size];
         for (int i = size; i < mapData.length; i++) {
@@ -687,12 +617,8 @@ public class MindMap {
         if(targetPos!=null) {
             targetPos = new Point(targetPos.getX(), targetPos.getY() + 1);
         }
-//        System.out.println(targetPos.toString());
         state.setPos(state.getX(),state.getY()+1);
-//        System.out.println(state.getPos().toString());
         mapData = tmp;
-//        System.out.println("After left exp ");
-//        printMatrix(mapData,targetPos);
     }
 
     /**
@@ -708,3 +634,83 @@ public class MindMap {
         mapData = tmp;
     }
 }
+
+
+
+//    public Point findClosestUnvisitedPoint(Direction d){
+//        double  dir = d.getDegrees();
+//        System.out.println("direction = " + -dir);
+//        double this_direction = state.getAngle();
+//        System.out.println("direction = " +(-dir+this_direction));
+////        direction.setLength(0.1);
+//        Vector direction = new Vector(-d.getDegrees()+ state.getAngle());
+//        direction.setLength(5);
+//        Vector pos = state.vectorPos();
+//        double increment = 5;
+//        boolean found = false;
+//        while(!found){
+//            Vector target = pos.add2(direction);
+//            if(!isVisited(target)){
+//                found = true;
+//            }
+//            else{
+//                direction.addLength(increment);
+//            }
+//        }
+//        pos.add(direction);
+//        checkExpention((int)pos.x,(int)pos.y);
+//        if(pos.x<0){
+//            pos.x =0;
+//        }
+//        if(pos.y<0){
+//            pos.y =0;
+//        }
+//        return new Point(pos.x,pos.y);
+//    }
+//
+//    public Point findIntersection(Direction d){
+//        if(state.getX()==posFirstTurn.getX() && state.getY()==posFirstTurn.getY()){ //the agent has not moved
+//            System.out.println("the agent has not moved");
+//            directionFirstTurn = d;
+//            return findClosestUnvisitedPoint(d);
+//        }
+//        System.out.println("d = " + d.getRadians());
+//        System.out.println(posFirstTurn);
+//        System.out.println("directionFirstTurn = " + directionFirstTurn.getRadians());
+//        System.out.println(state.getPos());
+////        building 4 points
+//        Point a1 = posFirstTurn;
+////        System.out.println("a1= "+a1.getX()+" "+a1.getY());
+//        Vector va1 = new Vector(posFirstTurn);
+//        Point a2 = state.getPos();
+////        System.out.println("a2= "+a2.getX()+" "+a2.getY());
+//        Vector vb2 = state.vectorPos().add(new Vector(d));
+//        Vector vb1 = va1.add(new Vector(directionFirstTurn));
+//        Point b1 = new Point(vb1.x,vb1.y);
+// //       System.out.println("b1= "+b1.getX()+" "+b1.getY());
+//        Point b2 = new Point(vb2.x,vb2.y);
+// //       System.out.println("b2= "+b2.getX()+" "+b2.getY());
+//
+////        calculating the equations of the lines
+//        double m1 = (a1.getY()-a2.getY())/(a1.getX()-a2.getX());
+////        System.out.println("m1 = " + m1);
+//        double m2 = (b1.getY()-b2.getY())/(b1.getX()-b2.getX());
+////        System.out.println("m2 = " + m2);
+////        case lines are parallel
+//        if(Math.abs(m1-m2)<=0.05){
+//            System.out.println("parallel");
+//            return findClosestUnvisitedPoint(d);
+//        }
+//        double c1 = a1.getY()-m1*a1.getX();
+////        System.out.println("c1 = " + c1);
+//        double c2 = b1.getY()-m2*b1.getX();
+////        System.out.println("c2 = " + c2);
+//
+////        solving the system
+//        double interX =(c2-c1)/(m1-m2);
+////        System.out.println("interX = " + interX);
+//        double interY = m1*interX+c1;
+////        System.out.println("interY = " + interY);
+//        checkExpention((int)interX,(int)interY);
+//        return new Point(interX,interY);
+//    }
