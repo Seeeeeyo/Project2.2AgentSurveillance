@@ -305,6 +305,8 @@ class encapAction {
     public ArrayList<GuardAction> avoid;
     public ArrayList<GuardAction> targetPatrol;
     public ArrayList<GuardAction> capture;
+    public ArrayList<GuardAction> rotate;
+    public ArrayList<GuardAction> RLrotate;
 
     public boolean debug = false;
 
@@ -318,6 +320,59 @@ class encapAction {
     public encapAction(Point x){
 
         initialCapure(x);
+    }
+
+
+    public encapAction(int times){
+        initialRLRotate(times);
+
+    }
+
+    public encapAction(int direction,int goalDirection){
+        initialRotate(direction,goalDirection);
+    }
+
+
+    public void initialRotate(int direction,int goalDirection){
+        rotate = new ArrayList<>();
+
+        int times = goalDirection - direction;
+
+        if (times<-4){
+            times = -(times+8);
+        }else if (times>4){
+            times = 8 - times;
+        }
+
+        if (times<0){
+            for(int i = 0;i<Math.abs(times);i++){
+                rotate.add(new Rotate(Angle.fromDegrees(-45)));
+            }
+        }else{
+            for(int i = 0;i<Math.abs(times);i++){
+                rotate.add(new Rotate(Angle.fromDegrees(45)));
+            }
+        }
+
+
+    }
+
+    public void initialRLRotate(int times){
+        RLrotate = new ArrayList<>();
+
+        if (times<0){
+
+            for (int i = 0;i<Math.abs(times);i++){
+                RLrotate.add(new Rotate(Angle.fromDegrees(-30)));
+            }
+
+
+        }else {
+            for (int i = 0;i<times;i++){
+                RLrotate.add(new Rotate(Angle.fromDegrees(30)));
+            }
+        }
+
     }
 
     /**
