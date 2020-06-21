@@ -90,13 +90,7 @@ public class GreedyGuard implements Guard {
             modifier = slowDownModifiers.getInDoor();
         }
 
-        double epsilon = 0.3;
-
-//        if (Math.random()<epsilon){
-//            return new Move(new Distance(percepts.getScenarioGuardPercepts().getMaxMoveDistanceGuard().getValue()*modifier));
-//        }
-
-
+        double epsilon = 0.2;
 
         if (!detectIntruderFirst&&!detectIntruderSecond){
             if (bi.hasObjectInView(objectPerceptArrayList, ObjectPerceptType.Intruder)){
@@ -268,6 +262,10 @@ public class GreedyGuard implements Guard {
 //        else {
 //            return new Move(new Distance(percepts.getScenarioGuardPercepts().getMaxMoveDistanceGuard().getValue() * modifier));
 //        }
+
+        if(Math.random() <epsilon){
+            return new Move(new Distance(percepts.getScenarioGuardPercepts().getMaxMoveDistanceGuard().getValue()*modifier));
+        }
 
         GuardAction out;
         if(goalSector == getCurrentSector()){ // if the agent is in the good direction, move
