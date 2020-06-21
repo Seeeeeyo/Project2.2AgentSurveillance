@@ -33,7 +33,7 @@ import static Group7.Game._RANDOM;
 
 public class GreedyGuard implements Guard {
 
-    public boolean debug = false;
+    public boolean debug = true;
 
 
     //matrix for the map, needed be updated every turn
@@ -183,17 +183,6 @@ public class GreedyGuard implements Guard {
 
         Angle moveAngle = Angle.fromRadians(percepts.getScenarioGuardPercepts().getScenarioPercepts().getMaxRotationAngle().getRadians() * Game._RANDOM.nextDouble());
 
-
-
-
-        if (objectPerceptArrayList.size() == 0){
-            System.out.println("No object in view");
-        }else {
-            if (needRotate(objectPerceptArrayList)){
-
-                return new Rotate(moveAngle);
-            }
-        }
 
 
 

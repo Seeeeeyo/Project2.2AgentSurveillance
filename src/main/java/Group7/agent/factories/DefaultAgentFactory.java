@@ -23,7 +23,8 @@ public class DefaultAgentFactory implements IAgentFactory {
         List<Intruder> intruders = new ArrayList<>();
         for(int i = 0; i < number; i++)
         {
-            intruders.add(new AstarAgent());
+            //intruders.add(new AstarAgent());
+            intruders.add(new RandomIntruderAgent());
         }
         return intruders;
     }
@@ -37,6 +38,7 @@ public class DefaultAgentFactory implements IAgentFactory {
             //guards.add(new MapAgent(300,600));
             //guards.add(new DeepSpace());
             guards.add(new Capturer_Guard(i));
+            //guards.add(new Explorator());
         }
         return guards;
     }
