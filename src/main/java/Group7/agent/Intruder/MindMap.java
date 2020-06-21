@@ -310,9 +310,14 @@ public class MindMap {
             }
     }
         setVisited(percepts);
+//        System.out.println("After update");
+//        printMatrix(mapData,targetPos,state.getPos());
   }
 
   public void setVisited(Percepts percepts){
+        if(mapData[state.getX()][state.getY()]==Unvisited){
+            mapData[state.getX()][state.getY()]=Empty;
+        }
       int range = (int)percepts.getVision().getFieldOfView().getRange().getValue();
       System.out.println("range = " + range);
       double range_angle = percepts.getVision().getFieldOfView().getViewAngle().getRadians();
@@ -333,7 +338,7 @@ public class MindMap {
                       angle += Math.toRadians(360);
                   }
 //                        System.out.println("angle = " + Math.toDegrees(angle));
-                  if (angleFrom < angle && angle < angleTo) {
+                  if (angleFrom <= angle && angle <= angleTo) {
                       if(!isVisited(state.getX() + i,state.getY() + j)) {
                           mapData[state.getX() + i][state.getY() + j] = Empty;
                       }
@@ -342,6 +347,17 @@ public class MindMap {
           }
       }
   }
+
+    public void clearEmpty(){
+        System.out.println("MindMap.clearEmpty");
+        for (int i = 0; i <mapData.length ; i++) {
+            for (int j = 0; j <mapData[0].length ; j++) {
+                if(mapData[i][j]==Empty){
+                    mapData[i][j]=Unvisited;
+                }
+            }
+        }
+    }
     public static final String ANSI_RED = "\u001B[31m";
     public static final String ANSI_GREEN = "\u001B[32m";
     public static final String ANSI_RESET = "\u001B[0m";
@@ -509,16 +525,16 @@ public class MindMap {
             for (int j = 0; j < mapData[0].length ; j++) {
                 if(mapData[i][j]==Wall){
                     out[i][j] = Wall;
-                    out[i+1][j] = Wall;
-                    out[i-1][j] = Wall;
-                    out[i+1][j+1] = Wall;
-                    out[i+1][j-1] = Wall;
-                    out[i-1][j-1] = Wall;
-                    out[i-1][j-1] = Wall;
-                    out[i][j-1] = Wall;
-                    out[i][j+1] = Wall;
+//                    out[i+1][j] = Wall;
+//                    out[i-1][j] = Wall;
+//                    out[i+1][j+1] = Wall;
+//                    out[i+1][j-1] = Wall;
+//                    out[i-1][j-1] = Wall;
+//                    out[i-1][j-1] = Wall;
+//                    out[i][j-1] = Wall;
+//                    out[i][j+1] = Wall;
                 }else {
-                    if(out[i][j]!=Unvisited) {
+                    if(out[i][j]==Unvisited) {
                         out[i][j] =mapData[i][j];
                     }
                 }
@@ -643,7 +659,9 @@ public class MindMap {
         for(int i = 0; i < mapData.length; i++){
             System.arraycopy(mapData[i], 0, tmp[i + size], 0, mapData[0].length);
         }
-        targetPos = new Point(targetPos.getX()+1,targetPos.getY());
+        if(targetPos!=null) {
+            targetPos = new Point(targetPos.getX() + 1, targetPos.getY());
+        }
         state.setPos(state.getX()+1,state.getY());
         mapData = tmp;
     }
@@ -661,9 +679,10 @@ public class MindMap {
             for (int j = 0; j < mapData[0].length; j++) {
                 tmp[i][j + 1] = mapData[i][j];
              }
-//            System.arraycopy(mapData[i], 0, tmp[i], 0, mapData[0].length);
         }
-        targetPos = new Point(targetPos.getX(),targetPos.getY()+1);
+        if(targetPos!=null) {
+            targetPos = new Point(targetPos.getX(), targetPos.getY() + 1);
+        }
 //        System.out.println(targetPos.toString());
         state.setPos(state.getX(),state.getY()+1);
 //        System.out.println(state.getPos().toString());

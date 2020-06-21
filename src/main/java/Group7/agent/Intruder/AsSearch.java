@@ -229,6 +229,183 @@ public class AsSearch {
        }
     }
 
+    public static ArrayList<Integer> find_closest_unvisited(MindMap mindMap){
+        try {
+            int[][] searchStates = mindMap.walkableExtended2();
+
+//            MindMap.printMatrix(searchStates,mindMap.getTargetPos(),mindMap.getState().getPos());
+
+            List<int[]> listOfPositions = new ArrayList<>();
+
+            int[] initialState = mindMap.getState().getPosArray();
+
+            System.out.println("initialState = " + initialState[0] + ", " + initialState[1]);
+
+            searchStates[initialState[0]][initialState[1]] = 2; // the robot is there at the start so no need to explore it again
+
+            // add the 4 actions
+
+            ArrayList<int[]> states = new ArrayList<>();
+
+int[] target = new int[2];
+
+            states.add(new int[]{(int) 1, 1, initialState[0], initialState[1]});
+
+            // create a matrix of actions
+            int[][] actions = new int[searchStates.length][searchStates[0].length];
+            int count = 0;
+            boolean stop = false;
+
+            while (states.size() > 0 && !stop) {
+                count++;
+                // to sort the state list regarding their cost. The cost is the first value
+                states.sort(new Comparator<int[]>() {
+                    @Override
+                    public int compare(int[] o1, int[] o2) {
+                        return Integer.compare(o1[0], o2[0]);
+                    }
+                });
+        /*   System.out.println("States: ");
+           for (int i = 0; i <states.size() ; i++) {
+                   System.out.print(i+1 + ")" + " Cost = " + states.get(i)[0] + ", " );
+                   System.out.print( "x = " + states.get(i)[1]  + ", ");
+                   System.out.print("y = " + states.get(i)[2]);
+               System.out.println();
+           }
+           System.out.println("---------");
+         */
+
+                int[] checkedState = states.remove(0);
+
+                for (int i = 0; i < moves.length; i++) { // to check the 4 different moves
+
+                    int possibleNewX = checkedState[2] + moves[i][0]; // new x coordinate after one of the 4 moves
+                    int possibleNewY = checkedState[3] + moves[i][1]; // new y coordinate after one of the 4 moves
+
+                    int instantxdiff = 0;
+                    int instantydiff = 0;
+                    int xdiff = mindMap.getState().getX() - initialState[0];
+                    int ydiff = mindMap.getState().getY() - initialState[1];
+                    // System.out.println("ydiff = " + ydiff);
+                    // System.out.println("xdiff = " + xdiff);
+
+                    possibleNewX += xdiff; // new x coordinate after one of the 4 moves
+                    possibleNewY += ydiff; // new y coordinate after one of the 4 moves
+                    // System.out.println("possibleNewX = " + possibleNewX);
+                    // System.out.println("possibleNewY = " + possibleNewY);
+                    // System.out.println();
+
+                    // expand in the x direction if needed  to the bottom
+                    if (searchStates.length <= possibleNewX) {
+                        actions = expandBottom(actions);
+                        searchStates = expandBottom(searchStates);
+                        mindMap.expandBottom(1);
+                    }
+
+                    // expand in the x direction if needed  to the top
+                    if (possibleNewX < 0) {
+                        actions = expandTop(actions);
+                        searchStates = expandTop(searchStates);
+                        mindMap.expandTop(1);
+                        possibleNewX = 0;
+                        instantxdiff = 1;
+                    }
+
+                    // expand in the y direction if needed to the right
+                    if (searchStates[0].length <= possibleNewY) {
+                        actions = expandRight(actions);
+                        searchStates = expandRight(searchStates);
+                        mindMap.expandRight(1);
+                    }
+
+                    // expand in the y direction if needed to the left
+                    if (possibleNewY < 0) {
+                        actions = expandLeft(actions);
+                        searchStates = expandLeft(searchStates);
+                        mindMap.expandLeft(1);
+                        possibleNewY = 0;
+                        instantydiff = 1;
+                    }
+
+                    if (mindMap.getMapData()[possibleNewX][possibleNewY]==MindMap.Unvisited) { // checks if the agent is in the target area
+                        actions[possibleNewX][possibleNewY] = i + 1;
+                        stop = true;
+                        target[0]=possibleNewX;
+                        target[1]=possibleNewY;
+                    }
+
+                    if (!stop) {
+                        if (searchStates[possibleNewX][possibleNewY] != 2) { // if unvisited and walkable
+
+                            int cost = 1; // cost of this move, equal to 1 here since only move of 1 case
+                            int newCost = cost + checkedState[1]; // new cost = addition of the previous cost (previous moves) and this move
+                            //System.out.println("newCost = " + newCost);
+                            int[] newState = {newCost, checkedState[1] + 1, possibleNewX - xdiff - instantxdiff, possibleNewY - ydiff - instantydiff}; // potential new state
+                            searchStates[possibleNewX][possibleNewY] = 2; // no need to explore anymore
+                            states.add(newState);
+                            actions[possibleNewX][possibleNewY] = i + 1;
+                            //System.out.println("add " + newCost + " " + (possibleNewX - xdiff - instantxdiff) + " " + (possibleNewY - ydiff - instantydiff));
+                            //  printMatrix(searchStates);
+                   /*
+                   i = 1 is going to the top
+                   i = 2 is going to the bottom
+                   i = 3 is going to the right
+                   i = 4 is going to the left
+                    */
+                        }
+                    }
+                }
+            }
+
+            // MindMap.printMatrix(actions,mindMap.getTargetPos(),mindMap.getState().getPos());
+
+            int xdiff = mindMap.getState().getX() - initialState[0];
+            // System.out.println("xdiff = " + xdiff);
+            int ydiff = mindMap.getState().getY() - initialState[1];
+            // System.out.println("ydiff = " + ydiff);
+
+
+            int xCoorTarget = target[0] ;
+            int yCoorTarget = target[1] ;
+
+            int x = xCoorTarget;
+            int y = yCoorTarget;
+
+            int[] lastPosition = {x, y};
+
+            listOfPositions.add(lastPosition);
+
+            ArrayList<Integer> list_of_moves = new ArrayList<>();
+
+            while (x != (initialState[0] + xdiff) || y != (initialState[1] + ydiff)) {
+                list_of_moves.add(actions[x][y]);
+
+
+                int x2 = x - moves[actions[x][y] - 1][0];
+                int y2 = y - moves[actions[x][y] - 1][1];
+
+                int[] position = {x2, y2};
+                listOfPositions.add(position);
+
+                x = x2;
+                y = y2;
+            }
+
+
+            //Collections.reverse(listOfPositions); // inverse the position order so the first index of the array is the first position
+//               for (int j = 0; j < listOfPositions.size(); j++) {
+            //   System.out.println("x position of " + j + "th move = " + listOfPositions.get(j)[0]);
+            //  System.out.println("y position of " + j + "th move = " + listOfPositions.get(j)[1]);
+            //  System.out.println(" ----------- ");
+//               }
+//       return listOfPositions;
+            Collections.reverse(list_of_moves); // inverse the position order so the first index of the array is the first position
+            return list_of_moves;
+        }catch (Exception e){
+//           System.out.println("No path found ");
+            return null;
+        }
+    }
 
     /**
      * This method translates the coordinates of the path into a list of moves: "right", "left", "up" and "down
