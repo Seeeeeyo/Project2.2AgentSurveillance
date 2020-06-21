@@ -711,5 +711,8 @@ public class Game implements Runnable {
          */
         void call(Semaphore lock);
     }
+    public void deleteIntruder(int intruderIndex){
+        intruders.remove(intruderIndex);
+    }
 
 }
