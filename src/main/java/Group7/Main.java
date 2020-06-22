@@ -13,7 +13,6 @@ public class Main {
         long start = System.currentTimeMillis();
         game.run();
         System.out.printf("The winner is: %s\n", game.getWinner());
-        System.out.println("test");
         long finish = System.currentTimeMillis();
         long timeElapsed = finish - start;
         System.out.println("Game took " + timeElapsed/1000 + " seconds to reach an outcome");

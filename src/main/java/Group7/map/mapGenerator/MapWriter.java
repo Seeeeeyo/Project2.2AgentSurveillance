@@ -11,7 +11,6 @@ public class MapWriter {
 
     public static void main(String[] args) throws IOException {
 
-
         String inFilePath = "./src/main/java/Group7/map/maps/testMapGeneratorFixedParameters.map";
         String inFilePathCodeMap = "./src/main/java/Group7/map/maps/codeMap";
         String outFilePath = "./src/main/java/Group7/map/maps/generatedMap.map";
@@ -32,20 +31,19 @@ public class MapWriter {
 
 
         //wall = 0.0 , 0.0, 2.0 , 0.0  , 2.0 , 2.0 , 0.0 , 2.0
-        //
-        double x1 = 0, x2 = 1.0, x3 = 1.0, x4 = 0;
-        double y1 = 0, y2 = 0, y3 = 1.0, y4 = 1.0;
+        double x1, x2, x3, x4;
+        double y1, y2, y3, y4;
 
-        final double originalX1 = 0, originalX2 = 1.0, originalX3 = 1.0, originalX4 = 0;
-        final double originalY1 = 0, originalY2 = 0.0, originalY3 = 1.0, originalY4 = 1;
+        final double originalX1 = 0, originalX2 = 2.0, originalX3 = 2.0, originalX4 = 0;
+        final double originalY1 = 0, originalY2 = 0.0, originalY3 = 2.0, originalY4 = 2.0;
 
         RoomFactory roomFactory = new RoomFactory();
 
-        roomFactory.setMaximumHeight(maximumHeight);
-        roomFactory.setMaximumWidth(maximumWidth);
+        roomFactory.setMaximHeight(maximumHeight);
+        roomFactory.setMaximWidth(maximumWidth);
         roomFactory.setFixedSize(fixedSize);
-        roomFactory.setMaximumX(maximumX);
-        roomFactory.setMaximumY(maximumY);
+        roomFactory.setMaximX(maximumX);
+        roomFactory.setMaximY(maximumY);
 
         MapGenerator generator = new MapGenerator(roomFactory);
         Map myMap = generator.generateMap(rooms);
@@ -86,10 +84,8 @@ public class MapWriter {
                     int targetAreasPlaced = 0;
 
                     char[] array = string.toCharArray();
-                    // System.out.println(array);
 
                     for (int i = 0; i < array.length; i++) {
-                        //System.out.println(i + ": " + array[i]);
 
                         if (array[i] == '#') {
 
@@ -106,7 +102,7 @@ public class MapWriter {
                             String wallBlock = ("wall = " + x1 + columnPointer + "," + y1 + "," + x2 + columnPointer + "," + y2 + "," + x3 + columnPointer + "," + y3 + "," + x4 + columnPointer + "," + y4);
                             writer.write(wallBlock);
                             writer.write('\n');
-                            columnPointer += 1;
+                            columnPointer += 2;
 
                         } else if (array[i] == '.') {
 
@@ -128,7 +124,7 @@ public class MapWriter {
                                 writer.write(spawnAreaIntrudersBlock);
                                 writer.write('\n');
 
-                                columnPointer += 1;
+                                columnPointer += 2;
                                 placedIntrudersSpawn = true;
 
                             }
@@ -175,9 +171,9 @@ public class MapWriter {
                                 writer.write(shadedBlock);
                                 writer.write('\n');
 
-                                columnPointer += 1;
+                                columnPointer += 2;
 
-                            } else if (toPlaceOrNotTo <= 0.05 && rowPointer >= 15 && targetAreasPlaced < maxTargetBlocks) {
+                            } else if (toPlaceOrNotTo <= 0.05 && rowPointer >= 15 && targetAreasPlaced <= maxTargetBlocks) {
                                 // Assuming we place the targetAreas exclusively in the bottom half
 
                                 x1 = originalX1 + columnPointer;
@@ -197,21 +193,21 @@ public class MapWriter {
 
                                 targetAreasPlaced++;
                                 System.out.print(targetAreasPlaced);
-                                columnPointer += 1;
+                                columnPointer += 2;
 
                             } else {
 
-                                columnPointer += 1;
+                                columnPointer += 2;
                                 System.out.print(".");
 
                             }
                         } else if (array[i] == ' ') {
 
-                            columnPointer += 1;
+                            columnPointer += 2;
                             System.out.print(" ");
                         }
 
-                        // in case you manually placed the spawn block into the codemap
+                        // in case you manually placed the spawn block into the codemap file
                         else if (array[i] == '2') {
 
                             x1 = originalX1 + columnPointer;
@@ -229,9 +225,9 @@ public class MapWriter {
                             writer.write(spawnAreaIntrudersBlock);
                             writer.write('\n');
 
-                            columnPointer += 1;
+                            columnPointer += 2;
 
-                        } else if (array[i] == '3') {    //in case you manually placed the spawn block
+                        } else if (array[i] == '3') {    //in case you manually placed the spawn block in the codemap file
 
 
                             x1 = originalX1 + columnPointer;
@@ -249,12 +245,12 @@ public class MapWriter {
                             writer.write(spawnAreaGuardsBlock);
                             writer.write('\n');
 
-                            columnPointer += 1;
+                            columnPointer += 2;
                         }
 
                     }
 
-                    rowPointer += 1;
+                    rowPointer += 2;
                     columnPointer = 0;
                     writer.write('\n');
                     System.out.println("");

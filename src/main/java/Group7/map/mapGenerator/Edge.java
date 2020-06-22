@@ -1,31 +1,31 @@
 package Group7.map.mapGenerator;
 
 public class Edge {
-    
-    private final Room source;
-    private final Room target;
+
+    private final Room sourceRoom;
+    private final Room targetRoom;
 
 
-    public Edge(Room source, Room target) {
-        this.source = source;
-        this.target = target;
+    public Edge(Room _source, Room _target) {
+        sourceRoom = _source;
+        targetRoom = _target;
     }
 
     public double distance() {
-        return source.distance(target);
+        return sourceRoom.distance(targetRoom);
     }
 
     public Room getFirst() {
-        return source;
+        return sourceRoom;
     }
 
     public Room getSecond() {
-        return target;
+        return targetRoom;
     }
 
     @Override
     public String toString() {
-        return "[" + source + ", " + target + ", distance: " + source.distance(target) + "]";
+        return "[" + sourceRoom + ", " + targetRoom + ", distance: " + sourceRoom.distance(targetRoom) + "]";
     }
 
 }

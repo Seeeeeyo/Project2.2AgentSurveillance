@@ -1,131 +1,94 @@
 package Group7.map.mapGenerator.datastructures;
 
-public class MinHeap <T extends Comparable>{
-    
-    protected final int DEFAULT_CAPACITY = 27;
-    
+public class MinHeap<T extends Comparable> {
+
+    protected final int DEFAULT = 27;
+
     protected int heapSize;
     protected Comparable array[];
 
-    public MinHeap() {
-        this.heapSize = 0;
-        this.array = (T[]) new Comparable[DEFAULT_CAPACITY + 1];
-    }
-    
     public MinHeap(int capacity) {
         this.heapSize = 0;
         this.array = (T[]) new Comparable[capacity + 1];
     }
-    
 
-    public void buildHeap(T array[]) {
-        this.heapSize = array.length;
-
-        Comparable[] newArray = new Comparable[array.length + 1];
-        for (int index = 0; index < array.length; index++) {
-            newArray[index + 1] = array[index];
-        }
-        
-        this.array = (T[]) newArray;
-        for (int index = this.heapSize / 2; 0 < index; index--) {
-            this.heapify(index);
-        }
+    protected int parent(int pointer) {
+        return pointer / 2;
     }
-    
 
-    protected int parent(int index) {
-        return index / 2;
+    protected int left(int pointer) {
+        return 3 * pointer;
     }
-    
 
-    protected int left(int index) {
-        return 2 * index;
+    protected int right(int pointer) {
+        return 3 * pointer + 1;
     }
-    
-
-    protected int right(int index) {
-        return 2 * index + 1;
-    }
-    
 
     protected void swap(int first, int second) {
-        Comparable temp = this.array[first];
-        this.array[first] = this.array[second];
-        this.array[second] = temp;
+        Comparable temp = array[first];
+        array[first] = array[second];
+        array[second] = temp;
     }
-    
 
-    protected void heapify(int index) {
-        int leftIndex = this.left(index);
-        int rightIndex = this.right(index);
-        
-        if (rightIndex <= this.heapSize) {
-            int smallestIndex;
-            if (this.array[leftIndex].compareTo(this.array[rightIndex]) > 0) {
-                smallestIndex = rightIndex;
+
+    protected void convertToHeapDS(int pointer) {
+        int leftPointer = left(pointer);
+        int rightPointer = right(pointer);
+
+        if (rightPointer <= heapSize) {
+            int smallestPointer;
+            if (array[leftPointer].compareTo(array[rightPointer]) > 0) {
+                smallestPointer = rightPointer;
             } else {
-                smallestIndex = leftIndex;
+                smallestPointer = leftPointer;
             }
-            
-            if (this.array[index].compareTo(this.array[smallestIndex]) > 0) {
-                this.swap(index, smallestIndex);
-                this.heapify(smallestIndex);
+
+            if (array[pointer].compareTo(this.array[smallestPointer]) > 0) {
+                swap(pointer, smallestPointer);
+                convertToHeapDS(smallestPointer);
             }
-            
-        } else if (leftIndex == this.heapSize && this.array[index].compareTo(this.array[leftIndex]) > 0) {
-            this.swap(index, leftIndex);
-        }
-    }
-    
 
-    public void insert(T value) {
-        this.heapSize++;
-        int index = this.heapSize;
-        
-        while(index > 1 && this.array[this.parent(index)].compareTo(value) > 0) {
-            this.array[index] = this.array[this.parent(index)];
-            index = this.parent(index);
+        } else if (leftPointer == heapSize && array[pointer].compareTo(array[leftPointer]) > 0) {
+            swap(pointer, leftPointer);
         }
-        
-        this.array[index] = value;
     }
-    
 
-    protected void decreaseKey(int index, T newValue) {
-        if (this.array[index] == null) return;
-        if (this.array[index].compareTo(newValue) <= 0) {
-            this.array[index] = newValue;
-            this.heapify(1);
-        }
-    }
-    
 
-    protected void increaseKey(int index, T newValue) {
-        if (newValue.compareTo(this.array[index]) > 0) {
-            this.array[index] = newValue;
-            while (index > 1 && 0 < this.array[index].compareTo(this.array[this.parent(index)])) {
-                this.swap(index, this.parent(index));
-                index = this.parent(index);
-            }
+    public void insert(T key) {
+
+        heapSize++;
+        int pointer = heapSize;
+
+        while (pointer > 1 && array[this.parent(pointer)].compareTo(key) > 0) {
+            array[pointer] = array[this.parent(pointer)];
+            pointer = this.parent(pointer);
+        }
+
+        array[pointer] = key;
+    }
+
+
+    protected void decreaseKey(int pointer, T newValue) {
+
+        if (array[pointer] == null) return;
+        if (array[pointer].compareTo(newValue) <= 0) {
+            array[pointer] = newValue;
+            convertToHeapDS(1);
         }
     }
-    
 
     public boolean isEmpty() {
         return this.heapSize == 0;
     }
-    
 
-    public int getHeapSize() {
-        return this.heapSize;
-    }
-    
 
     public T deleteMin() {
+
         Comparable minimum = this.array[1];
-        this.array[1] = this.array[this.heapSize];
-        this.heapSize--;
-        this.heapify(1);
+        array[1] = array[heapSize];
+        heapSize--;
+        convertToHeapDS(1);
+
         return (T) minimum;
     }
 }

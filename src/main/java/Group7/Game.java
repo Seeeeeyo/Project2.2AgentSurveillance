@@ -1,7 +1,9 @@
 package Group7;
 
 import Group7.agent.container.AgentContainer;
+import Group7.agent.container.GuardContainer;
 import Group7.agent.container.IntruderContainer;
+import Group7.agent.factories.DefaultAgentFactory;
 import Group7.agent.factories.IAgentFactory;
 import Group7.map.GameMap;
 import Group7.map.GameSettings;
@@ -13,10 +15,6 @@ import Group7.map.dynamic.Sound;
 import Group7.map.objects.*;
 import Group7.math.Vector2;
 import Group7.tree.PointContainer;
-import Group7.agent.container.GuardContainer;
-import Group7.agent.factories.DefaultAgentFactory;
-import Group7.map.area.*;
-import Group7.map.objects.*;
 import Interop.Action.*;
 import Interop.Agent.Guard;
 import Interop.Agent.Intruder;
@@ -710,9 +708,6 @@ public class Game implements Runnable {
          * @param lock
          */
         void call(Semaphore lock);
-    }
-    public void deleteIntruder(int intruderIndex){
-        intruders.remove(intruderIndex);
     }
 
 }

@@ -1,14 +1,13 @@
 package Group7.gui2;
 
+import Group7.agent.container.GuardContainer;
 import Group7.agent.container.IntruderContainer;
 import Group7.map.dynamic.DynamicObject;
-import Group7.agent.container.GuardContainer;
 import javafx.application.Application;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Gui extends Application {
@@ -17,17 +16,11 @@ public class Gui extends Application {
     private MainScene scene = new MainScene(new StackPane(), mainController.getGame().getGameMap(), this);
     private Stage primary = new Stage();
 
-    // Threshold For Distance
-    private final double THRESHOLD = 10.0;
-
-    // List For Integers
-    private List<Integer> listOfIndex = new ArrayList<>();
-
-
     public static void Gui(String[] args) {
-        launch(args);
-    }
 
+        launch(args);
+
+    }
 
     @Override
     public void start(Stage primaryStage) {
@@ -48,20 +41,6 @@ public class Gui extends Application {
 
 
     public void drawMovables(List<GuardContainer> guards, List<IntruderContainer> intruders, List<DynamicObject<?>> objects) {
-        System.out.println("Intruders_Size: " + intruders.size());
-        System.out.println("List_Index_Size: " + listOfIndex.size());
-
-        for (int i = 0; i < intruders.size(); i++) {
-            for (GuardContainer guard : guards) {
-                double distance = getDistance(intruders.get(i).getPosition().getX(), intruders.get(i).getPosition().getY(), guard.getPosition().getX(), guard.getPosition().getY());
-                if (distance < THRESHOLD && !intruders.get(i).isCaptured()) {
-                    System.out.println("Distance_To_Eliminate: " + distance);
-                    intruders.get(i).setCaptured(true);
-                    mainController.getGame().deleteIntruder(i);
-                }
-            }
-        }
-
         scene.drawMovables(guards, intruders, objects);
     }
 
@@ -92,9 +71,5 @@ public class Gui extends Application {
 
     public File getMapFile() {
         return mapFile;
-    }
-
-    public double getDistance(double intruderX, double intruderY, double guardX, double guardY) {
-        return Math.sqrt((guardX - intruderX) * (guardX - intruderX) + (guardY - intruderY) * (guardY - intruderY));
     }
 }
