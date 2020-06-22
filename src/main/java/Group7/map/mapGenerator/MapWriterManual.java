@@ -7,7 +7,7 @@ import java.io.*;
 import java.util.Random;
 
 
-public class MapWriter {
+public class MapWriterManual {
 
     public static void main(String[] args) throws IOException {
 
@@ -16,48 +16,26 @@ public class MapWriter {
         String inFilePathCodeMap = "./src/main/java/Group7/map/maps/codeMap";
         String outFilePath = "./src/main/java/Group7/map/maps/generatedMap.map";
 
-        final int maximumHeight = 25;
-        final int maximumWidth = 25;
-        final boolean fixedSize = false;
-        final int maximumX = 25;
-        final int maximumY = 25;
-        final int rooms = 35;
-        final int maxTargetBlocks = 1;
 
         int columnPointer = 0;
         int rowPointer = 0;
         boolean placedIntrudersSpawn = false;
-        boolean placedGuardsSpawn = false;
         String readLine;
-        final int scale = 5;
+        final int scale = 1;
 
         //wall = 0.0 , 0.0, 2.0 , 0.0  , 2.0 , 2.0 , 0.0 , 2.0
-        //
-        double x1 = 0, x2 = 1.0, x3 = 1.0, x4 = 0;
-        double y1 = 0, y2 = 0, y3 = 1.0, y4 = 1.0;
+        double x1,x2,x3,x4;
+        double y1,y2, y3, y4;
 
         final double originalX1 = 0, originalX2 = 1.0, originalX3 = 1.0, originalX4 = 0;
         final double originalY1 = 0, originalY2 = 0.0, originalY3 = 1.0, originalY4 = 1;
 
-        RoomFactory roomFactory = new RoomFactory();
-
-        roomFactory.setMaximHeight(maximumHeight);
-        roomFactory.setMaximWidth(maximumWidth);
-        roomFactory.setFixedSize(fixedSize);
-        roomFactory.setMaximX(maximumX);
-        roomFactory.setMaximY(maximumY);
-
-        MapGenerator generator = new MapGenerator(roomFactory);
-        Map myMap = generator.generateMap(rooms);
+        int innerSpaceBlockCount = 0;
+        int wallBlockCount = 0;
 
         //System.out.println(myMap);
         //System.out.println("--------");
 
-        FileWriter fw = new FileWriter(inFilePathCodeMap);
-        BufferedWriter bw = new BufferedWriter(fw);
-        bw.write(String.valueOf(myMap));
-        bw.newLine();
-        bw.close();
 
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(inFilePath));
              Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFilePath), "utf-8"))
@@ -76,14 +54,10 @@ public class MapWriter {
 
                 Random rand = new Random();
                 int randomColumnSpawnInt = rand.nextInt(50);
-                int randomColumnSpawnGuardsInt = rand.nextInt(20);
 
                 while ((readLine = bufferedReader2.readLine()) != null) {
 
                     String string = readLine;
-
-                    int inisdeBlockCounter = 0;
-                    int targetAreasPlaced = 0;
 
                     char[] array = string.toCharArray();
                     // System.out.println(array);
@@ -92,7 +66,7 @@ public class MapWriter {
                         //System.out.println(i + ": " + array[i]);
 
                         if (array[i] == '#') {
-
+                            wallBlockCount++;
                             x1 = originalX1 + columnPointer;
                             x2 = originalX2 + columnPointer;
                             x3 = originalX3 + columnPointer;
@@ -109,48 +83,7 @@ public class MapWriter {
                             columnPointer += scale;
 
                         } else if (array[i] == '.') {
-
-                            inisdeBlockCounter += scale;
-
-                            if (inisdeBlockCounter == randomColumnSpawnInt && placedIntrudersSpawn == false) {
-
-                                x1 = originalX1 + columnPointer;
-                                x2 = originalX2 + columnPointer;
-                                x3 = originalX3 + columnPointer;
-                                x4 = originalX4 + columnPointer;
-                                y1 = originalY1 + rowPointer;
-                                y2 = originalY2 + rowPointer;
-                                y3 = originalY3 + rowPointer;
-                                y4 = originalY4 + rowPointer;
-
-                                System.out.print("2");
-                                String spawnAreaIntrudersBlock = ("spawnAreaIntruders = " + x1 + columnPointer + "," + y1 + "," + x2 + columnPointer + "," + y2 + "," + x3 + columnPointer + "," + y3 + "," + x4 + columnPointer + "," + y4);
-                                writer.write(spawnAreaIntrudersBlock);
-                                writer.write('\n');
-
-                                columnPointer += scale;
-                                placedIntrudersSpawn = true;
-
-                            } else if (rowPointer >= scale * 20 && columnPointer == scale * randomColumnSpawnGuardsInt && placedGuardsSpawn == false) {
-
-                                x1 = originalX1 + columnPointer;
-                                x2 = originalX2 + columnPointer;
-                                x3 = originalX3 + columnPointer;
-                                x4 = originalX4 + columnPointer;
-
-                                y1 = originalY1 + rowPointer;
-                                y2 = originalY2 + rowPointer;
-                                y3 = originalY3 + rowPointer;
-                                y4 = originalY4 + rowPointer;
-
-                                System.out.print("3");
-                                String spawnAreaIntrudersBlock = ("spawnAreaGuards = " + x1 + columnPointer + "," + y1 + "," + x2 + columnPointer + "," + y2 + "," + x3 + columnPointer + "," + y3 + "," + x4 + columnPointer + "," + y4);
-                                writer.write(spawnAreaIntrudersBlock);
-                                writer.write('\n');
-                                columnPointer++;
-                                placedGuardsSpawn = true;
-
-                            }
+                            innerSpaceBlockCount++;
 
                             // Generate random integer in range 0 to 999
                             int toPlaceOrNotTo = rand.nextInt(1000);
@@ -172,28 +105,6 @@ public class MapWriter {
                                 writer.write(shadedBlock);
                                 writer.write('\n');
 
-                                columnPointer += scale;
-
-                            } else if (toPlaceOrNotTo <= 0.05 && rowPointer >= scale * 50 && targetAreasPlaced < maxTargetBlocks) {
-                                // Assuming we place the targetAreas exclusively in the bottom half
-
-                                x1 = originalX1 + columnPointer;
-                                x2 = originalX2 + columnPointer;
-                                x3 = originalX3 + columnPointer;
-                                x4 = originalX4 + columnPointer;
-
-                                y1 = originalY1 + rowPointer;
-                                y2 = originalY2 + rowPointer;
-                                y3 = originalY3 + rowPointer;
-                                y4 = originalY4 + rowPointer;
-
-                                System.out.print("9");
-                                String targetBlock = ("targetArea = " + x1 + columnPointer + "," + y1 + "," + x2 + columnPointer + "," + y2 + "," + x3 + columnPointer + "," + y3 + "," + x4 + columnPointer + "," + y4);
-                                writer.write(targetBlock);
-                                writer.write('\n');
-
-                                targetAreasPlaced++;
-                                System.out.print(targetAreasPlaced);
                                 columnPointer += scale;
 
                             } else {
@@ -249,6 +160,28 @@ public class MapWriter {
                             columnPointer += scale;
                         }
 
+                        else if (array[i] == '9') {    //in case you manually placed the spawn block
+
+
+                            x1 = originalX1 + columnPointer;
+                            x2 = originalX2 + columnPointer;
+                            x3 = originalX3 + columnPointer;
+                            x4 = originalX4 + columnPointer;
+
+                            y1 = originalY1 + rowPointer;
+                            y2 = originalY2 + rowPointer;
+                            y3 = originalY3 + rowPointer;
+                            y4 = originalY4 + rowPointer;
+
+                            System.out.print("9");
+                            String targetBlock = ("targetArea = " + x1 + columnPointer + "," + y1 + "," + x2 + columnPointer + "," + y2 + "," + x3 + columnPointer + "," + y3 + "," + x4 + columnPointer + "," + y4);
+                            writer.write(targetBlock);
+                            writer.write('\n');
+
+                            columnPointer += scale;
+                        }
+
+
                     }
 
                     rowPointer += scale;
@@ -258,6 +191,10 @@ public class MapWriter {
 
                 }
 
+                System.out.println("---------------------");
+                System.out.println("Wall blocks count : " + wallBlockCount);
+                System.out.println("Inner Space Blocks count: " + innerSpaceBlockCount);
+                System.out.println("---------------------");
             }
 
         } catch (IOException e) {

@@ -9,14 +9,14 @@ public class Main {
     public static void main(String[] args) {
         int gameTurns = 0;
         double averageTurns = 0;
-        int nGames = 100;
+        int nGames = 25;
         int nGamesWon = 0;
         double averageTime = 0;
         double[] captureTimes = new double[nGames];
         double[] captureTurns = new double[nGames];
         int winCounter = 0;
         for (int i = 0; i < nGames; i++) {
-            Game game = new Game(Parser.parseFile("C:\\Users\\steph\\Documents\\GitHub\\Project2.2AgentSurveillance\\src\\main\\java\\Group7\\map\\maps\\generatedMap-SMALLEST.map"), new DefaultAgentFactory(), false);
+            Game game = new Game(Parser.parseFile("src/main/java/Group7/map/maps/openSpace-0-InnerWalls.map"), new DefaultAgentFactory(), false);
             long start = System.currentTimeMillis();
             game.run();
             gameTurns = game.getTurns();
@@ -31,7 +31,7 @@ public class Main {
                 captureTurns[winCounter] = gameTurns;
                 winCounter++;
             }
-            //System.out.println("Game took " + timeElapsed / 1000 + " seconds to reach an outcome");
+
         }
         averageTurns = averageTurns / nGamesWon;
         averageTime = averageTime / nGamesWon;

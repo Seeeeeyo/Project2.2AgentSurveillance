@@ -23,11 +23,10 @@
  */
 package Group7.map.mapGenerator.logic;
 
-import Group7.map.mapGenerator.Edge;
+import Group7.map.mapGenerator.Connector;
 import Group7.map.mapGenerator.Map;
 import Group7.map.mapGenerator.Object;
 import Group7.map.mapGenerator.Room;
-import Group7.map.mapGenerator.datastructures.ObjectHeap;
 
 public class MapGenerator {
 
@@ -58,7 +57,7 @@ public class MapGenerator {
      * @param rooms Rooms which to be connected
      * @return Minimum spanning tree represented as edges
      */
-    private Edge[] primAlgorithm(Room rooms[]) {
+    private Connector[] primAlgorithm(Room rooms[]) {
         int rootIndex = 0;
 
         ObjectHeap heap = new ObjectHeap(rooms.length);
@@ -75,7 +74,7 @@ public class MapGenerator {
             heap.insert(object);
         }
 
-        Edge edges[] = new Edge[rooms.length - 1];
+        Connector edges[] = new Connector[rooms.length - 1];
         int edgePointer = 0;
 
         // Prim's algorithm for Minimum Spanning Tree
@@ -84,7 +83,7 @@ public class MapGenerator {
             Object currentObject = heap.deleteMin();
             // Add edge
             if (parent[currentObject.getIndex()] != null) {
-                Edge edge = new Edge(currentObject.getRoom(), parent[currentObject.getIndex()]);
+                Connector edge = new Connector(currentObject.getRoom(), parent[currentObject.getIndex()]);
                 edges[edgePointer] = edge;
                 edgePointer++;
             }
@@ -115,7 +114,7 @@ public class MapGenerator {
             mapRooms[i] = room;
         }
 
-        Edge edges[] = primAlgorithm(mapRooms);
+        Connector edges[] = primAlgorithm(mapRooms);
         
         char[][] map = visualizer.createMap(mapRooms, edges);
         return new Map(map);

@@ -1,12 +1,12 @@
 package Group7.map.mapGenerator;
 
-public class Edge {
+public class Connector {
 
     private final Room sourceRoom;
     private final Room targetRoom;
 
 
-    public Edge(Room _source, Room _target) {
+    public Connector(Room _source, Room _target) {
         sourceRoom = _source;
         targetRoom = _target;
     }

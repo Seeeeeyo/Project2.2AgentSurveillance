@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 package Group7.map.mapGenerator.logic;
-import Group7.map.mapGenerator.Edge;
+import Group7.map.mapGenerator.Connector;
 import Group7.map.mapGenerator.Room;
 
 
@@ -66,7 +66,7 @@ public class MapVisualizer {
      * @param edge Edge containing two rooms
      * @param map  Character map
      */
-    private void drawEdge(Edge edge, char[][] map) {
+    private void drawEdge(Connector edge, char[][] map) {
         int x = edge.getFirst().getCenterX();
         int y = edge.getFirst().getCenterY();
         int destinationX = edge.getSecond().getCenterX();
@@ -153,7 +153,7 @@ public class MapVisualizer {
         }
     }
 
-    public final char[][] createMap(Room mapRooms[], Edge[] edges) {
+    public final char[][] createMap(Room mapRooms[], Connector[] edges) {
         if (mapRooms.length == 0) {
             return new char[0][0];
 
@@ -194,7 +194,7 @@ public class MapVisualizer {
             this.drawRoom(room, map);
         }
 
-        for (Edge edge : edges) {
+        for (Connector edge : edges) {
             drawEdge(edge, map);
         }
 

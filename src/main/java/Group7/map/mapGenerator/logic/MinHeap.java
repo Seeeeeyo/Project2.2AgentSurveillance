@@ -1,4 +1,4 @@
-package Group7.map.mapGenerator.datastructures;
+package Group7.map.mapGenerator.logic;
 
 public class MinHeap<T extends Comparable> {
 
