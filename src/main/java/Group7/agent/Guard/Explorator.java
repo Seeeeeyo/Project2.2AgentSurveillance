@@ -1,40 +1,18 @@
-package Group7.agent;
+package Group7.agent.Guard;
 
 import Group7.Game;
-import Group7.agent.Intruder.AsSearch;
-import Group7.agent.Intruder.MindMap;
+import Group7.agent.AstarAgent;
 import Interop.Action.*;
 import Interop.Agent.Guard;
-import Interop.Agent.Intruder;
 import Interop.Geometry.Angle;
-import Interop.Geometry.Direction;
-import Interop.Geometry.Distance;
 import Interop.Percept.GuardPercepts;
-import Interop.Percept.IntruderPercepts;
-import Interop.Percept.Percepts;
-import Interop.Percept.Scenario.SlowDownModifiers;
 
 import java.util.ArrayList;
 
-import Group7.Game;
 import Group7.agent.Intruder.MindMap;
 import Group7.agent.Intruder.AsSearch;
-import Interop.Action.IntruderAction;
-import Interop.Action.Move;
 import Interop.Action.NoAction;
 import Interop.Action.Rotate;
-import Interop.Agent.Intruder;
-import Interop.Geometry.Angle;
-import Interop.Geometry.Direction;
-import Interop.Geometry.Distance;
-import Interop.Percept.IntruderPercepts;
-import Interop.Percept.Scenario.SlowDownModifiers;
-import Interop.Percept.Smell.SmellPercept;
-import Interop.Percept.Sound.SoundPercept;
-import Interop.Percept.Vision.ObjectPercept;
-
-import java.util.ArrayList;
-import java.util.Set;
 
 public class Explorator implements Guard {
 
@@ -78,7 +56,7 @@ public class Explorator implements Guard {
 //            System.out.println("last action accepted");
 
 //              choose an action to apply based on the a star move type required
-                GuardAction out_action = (GuardAction)AstarAgent.doAction(AstarAgent.astarMove2Angle(next_move), map, percepts);
+                GuardAction out_action = (GuardAction) AstarAgent.doAction(AstarAgent.astarMove2Angle(next_move), map, percepts);
 
 //            finds the closest unvisited point to go visit it afterwards, returns the path to go to it
                 map.updateState(out_action);

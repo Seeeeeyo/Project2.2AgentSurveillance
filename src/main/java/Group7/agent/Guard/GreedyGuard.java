@@ -1,6 +1,6 @@
-package Group7.agent;
+package Group7.agent.Guard;
 
-import Group7.Game;
+import Group7.agent.AstarAgent;
 import Interop.Action.*;
 import Group7.agent.Intruder.MindMap;
 import Interop.Agent.Guard;
@@ -10,7 +10,6 @@ import Interop.Geometry.Point;
 import Interop.Percept.GuardPercepts;
 import Interop.Percept.Scenario.SlowDownModifiers;
 import Interop.Percept.Smell.SmellPercept;
-import Interop.Percept.Smell.SmellPerceptType;
 import Interop.Percept.Sound.SoundPercept;
 import Interop.Percept.Vision.ObjectPercept;
 import Interop.Percept.Vision.ObjectPerceptType;
@@ -185,7 +184,7 @@ public class GreedyGuard implements Guard {
             return new Move(new Distance(percepts.getScenarioGuardPercepts().getMaxMoveDistanceGuard().getValue()*modifier));
         }
 
-        GuardAction out = (GuardAction)AstarAgent.doAction(getSectorAngle(goalSector),map,percepts);
+        GuardAction out = (GuardAction) AstarAgent.doAction(getSectorAngle(goalSector),map,percepts);
 
         map.updateState(out);
         return out;

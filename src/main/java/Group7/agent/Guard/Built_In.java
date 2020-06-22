@@ -1,4 +1,4 @@
-package Group7.agent;
+package Group7.agent.Guard;
 import Interop.Action.*;
 import Interop.Geometry.Angle;
 import Interop.Geometry.Direction;

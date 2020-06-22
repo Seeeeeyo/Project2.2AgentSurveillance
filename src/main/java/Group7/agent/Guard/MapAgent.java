@@ -1,4 +1,4 @@
-package Group7.agent;
+package Group7.agent.Guard;
 
 import Group7.Game;
 import Interop.Action.*;
