@@ -29,7 +29,7 @@ public class MapWriter {
         boolean placedIntrudersSpawn = false;
         boolean placedGuardsSpawn = false;
         String readLine;
-
+        final int scale = 5;
 
         //wall = 0.0 , 0.0, 2.0 , 0.0  , 2.0 , 2.0 , 0.0 , 2.0
         //
@@ -106,11 +106,11 @@ public class MapWriter {
                             String wallBlock = ("wall = " + x1 + columnPointer + "," + y1 + "," + x2 + columnPointer + "," + y2 + "," + x3 + columnPointer + "," + y3 + "," + x4 + columnPointer + "," + y4);
                             writer.write(wallBlock);
                             writer.write('\n');
-                            columnPointer += 1;
+                            columnPointer += scale * 1;
 
                         } else if (array[i] == '.') {
 
-                            inisdeBlockCounter += 1;
+                            inisdeBlockCounter += scale * 1;
 
                             if (inisdeBlockCounter == randomColumnSpawnInt && placedIntrudersSpawn == false) {
 
@@ -128,13 +128,10 @@ public class MapWriter {
                                 writer.write(spawnAreaIntrudersBlock);
                                 writer.write('\n');
 
-                                columnPointer += 1;
+                                columnPointer += scale * 1;
                                 placedIntrudersSpawn = true;
 
-                            }
-
-
-                            else if (rowPointer >= 20 && columnPointer == randomColumnSpawnGuardsInt && placedGuardsSpawn == false) {
+                            } else if (rowPointer >= scale * 20 && columnPointer == scale * randomColumnSpawnGuardsInt && placedGuardsSpawn == false) {
 
                                 x1 = originalX1 + columnPointer;
                                 x2 = originalX2 + columnPointer;
@@ -158,7 +155,7 @@ public class MapWriter {
                             // Generate random integer in range 0 to 999
                             int toPlaceOrNotTo = rand.nextInt(1000);
 
-                            if (toPlaceOrNotTo > 1 && toPlaceOrNotTo < 50) {
+                            if (toPlaceOrNotTo > 1 && toPlaceOrNotTo < scale * 1 * 50) {
 
                                 x1 = originalX1 + columnPointer;
                                 x2 = originalX2 + columnPointer;
@@ -175,9 +172,9 @@ public class MapWriter {
                                 writer.write(shadedBlock);
                                 writer.write('\n');
 
-                                columnPointer += 1;
+                                columnPointer += scale * 1;
 
-                            } else if (toPlaceOrNotTo <= 0.05 && rowPointer >= 15 && targetAreasPlaced < maxTargetBlocks) {
+                            } else if (toPlaceOrNotTo <= 0.05 && rowPointer >= scale * 1 * 15 && targetAreasPlaced < maxTargetBlocks) {
                                 // Assuming we place the targetAreas exclusively in the bottom half
 
                                 x1 = originalX1 + columnPointer;
@@ -197,17 +194,17 @@ public class MapWriter {
 
                                 targetAreasPlaced++;
                                 System.out.print(targetAreasPlaced);
-                                columnPointer += 1;
+                                columnPointer += scale * 1;
 
                             } else {
 
-                                columnPointer += 1;
+                                columnPointer += scale * 1;
                                 System.out.print(".");
 
                             }
                         } else if (array[i] == ' ') {
 
-                            columnPointer += 1;
+                            columnPointer += scale * 1;
                             System.out.print(" ");
                         }
 
@@ -229,7 +226,7 @@ public class MapWriter {
                             writer.write(spawnAreaIntrudersBlock);
                             writer.write('\n');
 
-                            columnPointer += 1;
+                            columnPointer += scale * 1;
 
                         } else if (array[i] == '3') {    //in case you manually placed the spawn block
 
@@ -249,12 +246,12 @@ public class MapWriter {
                             writer.write(spawnAreaGuardsBlock);
                             writer.write('\n');
 
-                            columnPointer += 1;
+                            columnPointer += scale * 1;
                         }
 
                     }
 
-                    rowPointer += 1;
+                    rowPointer += scale * 1;
                     columnPointer = 0;
                     writer.write('\n');
                     System.out.println("");
