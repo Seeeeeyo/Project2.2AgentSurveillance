@@ -49,7 +49,6 @@ public class MainController implements Runnable {
                         entry.dynamicObjects = game.getGameMap().getDynamicObjects().stream()
                                 .map(DynamicObject::clone)
                                 .collect(Collectors.toList());
-
                     }
                 }
             }
