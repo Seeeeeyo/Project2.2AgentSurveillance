@@ -21,10 +21,11 @@ public class Main {
             long finish = System.currentTimeMillis();
             long timeElapsed = finish - start;
             if (game.getWinner() == Game.Team.GUARDS) {
-                winCounter++;
+               
                 nGamesWon++;
                 averageTime = averageTime + timeElapsed;
                 captureTimes[winCounter] = timeElapsed;
+                winCounter++;
             }
             //System.out.println("Game took " + timeElapsed / 1000 + " seconds to reach an outcome");
         }
