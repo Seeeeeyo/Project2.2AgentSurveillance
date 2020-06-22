@@ -14,16 +14,15 @@ public class MapWriter {
 
         String inFilePath = "./src/main/java/Group7/map/maps/testMapGeneratorFixedParameters.map";
         String inFilePathCodeMap = "./src/main/java/Group7/map/maps/codeMap";
-
         String outFilePath = "./src/main/java/Group7/map/maps/generatedMap.map";
 
         final int maximumHeight = 25;
         final int maximumWidth = 25;
         final boolean fixedSize = false;
-        final int maximumX = 50;
-        final int maximumY = 50;
+        final int maximumX = 25;
+        final int maximumY = 25;
         final int rooms = 35;
-        final int maxTargetBlocks = 3;
+        final int maxTargetBlocks = 1;
 
         int columnPointer = 0;
         int rowPointer = 0;
@@ -135,7 +134,7 @@ public class MapWriter {
                             }
 
 
-                            else if (rowPointer >= 35 && columnPointer == randomColumnSpawnGuardsInt && placedGuardsSpawn == false) {
+                            else if (rowPointer >= 20 && columnPointer == randomColumnSpawnGuardsInt && placedGuardsSpawn == false) {
 
                                 x1 = originalX1 + columnPointer;
                                 x2 = originalX2 + columnPointer;
@@ -178,7 +177,7 @@ public class MapWriter {
 
                                 columnPointer += 1;
 
-                            } else if (toPlaceOrNotTo <= 0.05 && rowPointer >= 35 && targetAreasPlaced < maxTargetBlocks) {
+                            } else if (toPlaceOrNotTo <= 0.05 && rowPointer >= 15 && targetAreasPlaced < maxTargetBlocks) {
                                 // Assuming we place the targetAreas exclusively in the bottom half
 
                                 x1 = originalX1 + columnPointer;
