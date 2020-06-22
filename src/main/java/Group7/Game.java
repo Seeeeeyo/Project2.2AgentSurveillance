@@ -63,6 +63,7 @@ public class Game implements Runnable {
     private Set<AgentContainer<?>> justTeleported = new HashSet<>();
 
     private Team winner = null;
+    private int turns = 0;
 
     private AtomicBoolean runningLoop = new AtomicBoolean(false);
     private final AtomicInteger ticks;
@@ -254,6 +255,7 @@ public class Game implements Runnable {
         runningLoop.set(true);
         while (this.winner == null && runningLoop.get())
         {
+            turns++;
             // --- at 0 ticks pause, if -1 we want to go as fas as possible
             if(ticks.get() == 0 ){
                 continue;
@@ -708,6 +710,10 @@ public class Game implements Runnable {
          * @param lock
          */
         void call(Semaphore lock);
+    }
+    
+    public int getTurns() {
+        return turns;
     }
 
 }
