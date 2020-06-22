@@ -13,7 +13,7 @@ public class Main {
         double[] captureTimes = new double[nGames];
         int winCounter = 0;
         for (int i = 0; i < nGames; i++) {
-            Game game = new Game(Parser.parseFile("src/main/java/Group7/map/maps/generatedMap-SMALLEST.map"), new DefaultAgentFactory(), false);
+            Game game = new Game(Parser.parseFile("src/main/java/Group7/map/maps/generatedMap"), new DefaultAgentFactory(), false);
 
             long start = System.currentTimeMillis();
             game.run();
