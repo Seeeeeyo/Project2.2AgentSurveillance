@@ -33,8 +33,8 @@ public class GeneticAlgorithm {
         //printPopulation(new Indiv[]{a});
     }
 
-    public static final int generation_nb = 2000;
-    public static final int population_size = 50;
+    public static final int generation_nb = 1000;
+    public static final int population_size = 100;
 
     public static Indiv computePath() {
 
@@ -89,7 +89,7 @@ public class GeneticAlgorithm {
                 prevFitness = newFitness;
                 System.out.println("fitness = " +prevFitness+ "; path_fitness = " + population[fitt].path_length_cost()+"; distance_fitness = " + population[fitt].distance_cost()+"; obstacle_fitness = "+population[fitt].obstacle_cost());
                 System.out.println();
-            }while (error>2 || population[fitt].obstacle_cost()>0);
+            }while (generation_nb>index || population[fitt].obstacle_cost()>0);
 
 //        printPopulation(population);
 
@@ -197,10 +197,10 @@ public class GeneticAlgorithm {
     }
 
     private static void mutation(Indiv[]a){
-        int speed_mutationRate = 80;
-        int direction_mutationRate = 80;
-        int intertion_rate = 40;
-        int deletion_rate = 40;
+        int speed_mutationRate = 50;
+        int direction_mutationRate = 50;
+        int intertion_rate = 50;
+        int deletion_rate = 50;
 //        double direction_strength = 200;
         double speed_strength = Indiv.getMax_speed()/2;
         Random rnd = new Random();

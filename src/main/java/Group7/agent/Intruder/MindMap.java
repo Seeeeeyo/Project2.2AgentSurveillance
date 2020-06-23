@@ -81,6 +81,17 @@ public class MindMap {
       }
     }
 
+    public void setMapData(int[][] mapData) {
+        this.mapData = mapData;
+    }
+
+    public void setTargetPos(Point targetPos) {
+        this.targetPos = targetPos;
+    }
+
+    public void setState(AgentState state) {
+        this.state = state;
+    }
 
     public void computeTargetPoint(Direction d){
 //        if(null==directionFirstTurn){
@@ -294,6 +305,7 @@ public static double formatAngle(double angle){
 
 //    prints the mapData
     public static void printMatrix(int[][] matrix,Point targetPos, Point agent){
+        System.out.println(matrix.length);
         for (int i = -2; i < matrix.length; i++) {
             for (int j = -1; j < matrix[0].length; j++) {
                 if(i==-2){
@@ -304,7 +316,7 @@ public static double formatAngle(double angle){
                         System.out.print(j + " ");
                     }
                     else{
-                        System.out.print(j + "  ");
+                        System.out.print(j + " ");
                     }
                 }
                 else if(i==-1){
@@ -429,14 +441,30 @@ public static double formatAngle(double angle){
             for (int j = 0; j < mapData[0].length ; j++) {
                 if(mapData[i][j]==Wall){
                     out[i][j] = 1;
-                    out[i+1][j] = 1;
-                    out[i-1][j] = 1;
-                    out[i+1][j+1] = 1;
-                    out[i+1][j-1] = 1;
-                    out[i-1][j-1] = 1;
-                    out[i-1][j-1] = 1;
-                    out[i][j-1] = 1;
-                    out[i][j+1] = 1;
+                    if(exists(i+1,j)) {
+                        out[i + 1][j] = 1;
+                    }
+                    if(exists(i-1,j)) {
+                        out[i - 1][j] = 1;
+                    }
+                    if(exists(i+1,j+1)) {
+                        out[i + 1][j + 1] = 1;
+                    }
+                    if(exists(i+1,j-1)) {
+                        out[i + 1][j - 1] = 1;
+                    }
+                    if(exists(i-1,j+1)) {
+                        out[i - 1][j + 1] = 1;
+                    }
+                    if(exists(i-1,j-1)) {
+                       out[i - 1][j - 1] = 1;
+                    }
+                    if(exists(i,j-1)) {
+                        out[i][j - 1] = 1;
+                    }
+                    if(exists(i,j+1)) {
+                        out[i][j + 1] = 1;
+                    }
                 }
             }
         }

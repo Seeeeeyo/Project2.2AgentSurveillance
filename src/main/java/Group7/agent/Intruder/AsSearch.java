@@ -1,5 +1,7 @@
 package Group7.agent.Intruder;
 
+import Interop.Geometry.Angle;
+import Interop.Geometry.Direction;
 import Interop.Geometry.Distance;
 import Interop.Geometry.Point;
 
@@ -7,29 +9,64 @@ import java.util.*;
 
 public class AsSearch {
 
-  /* public static void main2(String[] args){
+   public static void main(String[] args){
        MindMap mindmap = new MindMap();
-       int[][] matrix = {{0,0,2,0,0,0},{0,0,0,0,0,0},{0,0,2,0,2,0},{0,0,2,0,2,0},{0,0,2,0,2,0}}; // where 2 = walls, 0 is nothing special
+       int[][] matrix = {
+               {0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0},
+               {0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0},
+               {0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0},
+               {0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0},
+               {0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0},
+               {0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0},
+               {0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0},
+               {0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0},
+               {0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0},
+               {0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0},
+               {0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0},
+               {0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0},
+               {0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0},
+               {0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0},
+               {0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0},
+               {0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,2},
+               {0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+               {0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+               {0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+               {0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+               {0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+               {2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
+
+
+       }; // where 2 = walls, 0 is nothing special
        mindmap.setMapData(matrix);
-       Point targetPoint = new Point(5,5);
-       System.out.println("value "+matrix[5-1][5-1]);
+       Point targetPoint = new Point(18,26);
        mindmap.setTargetPos(targetPoint);
-       Point initialPoint = new Point(0,0);
+       Point initialPoint = new Point(10,0);
        Angle initialAngle = new Angle(0.0);
-       AgentState agentState = new AgentState(initialPoint, Direction.fromRadians(initialAngle.getRadians()));
-       System.out.println("Initial map: ");
-       printMatrix(matrix);
+       AgentState agentState = new AgentState(initialPoint, 0.0);
+//       System.out.println("Initial map: ");
+//       MindMap.printMatrix(matrix,targetPoint,agentState.getPos());
        mindmap.setState(agentState);
-      // computePath(mindmap);
-       List<Integer> listPositions =  AsSearch.computePath(mindmap);
-       ArrayList<Integer> directions = AsSearch.getListOfActionsDirections(listPositions);
-       List<int[]> listConsecutivesActions = AsSearch.getNumberConsecutiveMoves(directions);
-       int move = listConsecutivesActions.get(0)[0];
-       System.out.println("move = " + move);
-       int numberConsecutiveMove = listConsecutivesActions.get(0)[1];
-       System.out.println("numberConsecutiveMove = " + numberConsecutiveMove);
+       ArrayList<Integer> listPositions =  AsSearch.computePath(mindmap);
+
+       Indiv.setSenario(mindmap,1.4);
+       GeneticAgent g = new GeneticAgent();
+       Indiv converted_path = g.toIndiv(listPositions);
+
+       System.out.println(converted_path.getSpeeds());
+       System.out.println(converted_path.getDirections());
+//        start from the astar path to improve it
+       Indiv new_path = GeneticAlgorithm.computePath(GeneticAlgorithm.reproduct(converted_path));
+       System.out.println(new_path.getSpeeds());
+       System.out.println(new_path.getDirections());
+
+//       ArrayList<Integer> directions = AsSearch.getListOfActionsDirections(listPositions);
+////       List<int[]> listConsecutivesActions = AsSearch.getNumberConsecutiveMoves(directions);
+//       int move = listConsecutivesActions.get(0)[0];
+//       System.out.println("move = " + move);
+//       int numberConsecutiveMove = listConsecutivesActions.get(0)[1];
+//       System.out.println("numberConsecutiveMove = " + numberConsecutiveMove);
    }
-   */
+
 
 
     private static final int[][] moves =  // list of all the possible moves
@@ -47,9 +84,9 @@ public class AsSearch {
 
    public static ArrayList<Integer> computePath(MindMap mindMap){
        try {
-           int[][] searchStates = mindMap.walkableExtended();
 
-           //  MindMap.printMatrix(searchStates,mindMap.getTargetPos(),mindMap.getState().getPos());
+           int[][] searchStates = mindMap.walkableExtended2();
+            MindMap.printMatrix(searchStates,mindMap.getTargetPos(),mindMap.getState().getPos());
 
            List<int[]> listOfPositions = new ArrayList<>();
 
@@ -59,7 +96,7 @@ public class AsSearch {
 
            int[] target = {(int) mindMap.getTargetPos().getX(), (int) mindMap.getTargetPos().getY()}; // position of the target area
 
-           System.out.println("target: x = " + target[0] + ", y = " + target[1]);
+//           System.out.println("target: x = " + target[0] + ", y = " + target[1]);
 
            // add the 4 actions
 
@@ -177,7 +214,7 @@ public class AsSearch {
                }
            }
 
-           // MindMap.printMatrix(actions,mindMap.getTargetPos(),mindMap.getState().getPos());
+//           MindMap.printMatrix(actions,mindMap.getTargetPos(),mindMap.getState().getPos());
 
            int xdiff = mindMap.getState().getX() - initialState[0];
            // System.out.println("xdiff = " + xdiff);

@@ -45,6 +45,17 @@ public class Indiv {
         System.out.println("nb_of_discrete_actions "+nb_of_discrete_actions);
     }
 
+    public static void setSenario(MindMap map, double ms){
+        max_speed = ms/time_interval;
+        Indiv.map = map;
+        start = map.getState().getRealPosArray();
+        System.out.println("start "+start[0]+"; "+start[1]);
+        target = new double[]{map.getTargetPos().getX(),map.getTargetPos().getY()};
+        System.out.println("target "+  target[0]+"; "+target[1]);
+        nb_of_discrete_actions = (int)(Math.sqrt(Math.pow(start[0]-start[1],2)+Math.pow(target[0]-target[1],2))*time_interval*max_speed/2);
+//       nb_of_discrete_actions =5;
+        System.out.println("nb_of_discrete_actions "+nb_of_discrete_actions);
+    }
 
 
     public Indiv(ArrayList<Double> speeds, ArrayList<Double> directions) {
