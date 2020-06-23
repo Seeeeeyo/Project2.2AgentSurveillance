@@ -1,9 +1,9 @@
 gameMode = 0
 height = 121
 width = 250
-numGuards = 4
-numIntruders = 3
-captureDistance = 0.5
+numGuards = 1
+numIntruders = 1
+captureDistance = 1.0
 winConditionIntruderRounds = 1
 maxRotationAngle = 45.0
 maxMoveDistanceIntruder = 1.4
@@ -27,4 +27,3 @@ maxMoveSoundRadius = 10.0
 windowSoundRadius = 10.0
 doorSoundRadius = 5.0
 pheromoneExpireRounds = 5
-

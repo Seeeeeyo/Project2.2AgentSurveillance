@@ -23,16 +23,14 @@
  */
 package Group7.map.mapGenerator.logic;
 
+import Group7.map.mapGenerator.Connector;
 import Group7.map.mapGenerator.Map;
-import Group7.map.mapGenerator.Edge;
-import Group7.map.mapGenerator.Map;
-import Group7.map.mapGenerator.PrimObject;
+import Group7.map.mapGenerator.Object;
 import Group7.map.mapGenerator.Room;
-import Group7.map.mapGenerator.datastructures.PrimObjectHeap;
 
 public class MapGenerator {
 
-    private final int INFINITY = 999999;
+    private final int INFINITY = Integer.MAX_VALUE;
 
     private RoomFactory roomFactory;
     private MapVisualizer visualizer;
@@ -59,38 +57,33 @@ public class MapGenerator {
      * @param rooms Rooms which to be connected
      * @return Minimum spanning tree represented as edges
      */
-    private Edge[] primAlgorithm(Room rooms[]) {
-        // Generate the graph from given rooms
-        // ID of each room is the index in which the room is located at.
+    private Connector[] primAlgorithm(Room rooms[]) {
         int rootIndex = 0;
 
-        PrimObjectHeap heap = new PrimObjectHeap(rooms.length);
-        PrimObject objects[] = new PrimObject[rooms.length];
+        ObjectHeap heap = new ObjectHeap(rooms.length);
+        Object objects[] = new Object[rooms.length];
         Room parent[] = new Room[rooms.length];
-        
-        // Initialize all objects
+
         for (int i = 0; i < rooms.length; i++) {
             parent[i] = null;
-            objects[i] = new PrimObject(rooms[i], this.INFINITY, i);
+            objects[i] = new Object(rooms[i], this.INFINITY, i);
         }
         objects[rootIndex].setValue(0);
-        
-        // Insert all prim objects to heap
-        for (PrimObject object : objects) {
+
+        for (Object object : objects) {
             heap.insert(object);
         }
 
-        // Edges between rooms
-        Edge edges[] = new Edge[rooms.length - 1];
+        Connector edges[] = new Connector[rooms.length - 1];
         int edgePointer = 0;
 
-        // Actual Prim's Algorithm
+        // Prim's algorithm for Minimum Spanning Tree
         while (!heap.isEmpty()) {
             // Delete the minimum
-            PrimObject currentObject = heap.deleteMin();
+            Object currentObject = heap.deleteMin();
             // Add edge
             if (parent[currentObject.getIndex()] != null) {
-                Edge edge = new Edge(currentObject.getRoom(), parent[currentObject.getIndex()]);
+                Connector edge = new Connector(currentObject.getRoom(), parent[currentObject.getIndex()]);
                 edges[edgePointer] = edge;
                 edgePointer++;
             }
@@ -112,12 +105,6 @@ public class MapGenerator {
         return edges;
     }
 
-    /**
-     * Generate a map with given number of rooms.
-     *
-     * @param rooms Amount of rooms
-     * @return Generated map
-     */
 
     public Map generateMap(int rooms) {
         Room mapRooms[] = new Room[rooms];
@@ -127,11 +114,10 @@ public class MapGenerator {
             mapRooms[i] = room;
         }
 
-        // Calculate the edges between the rooms
-        Edge edges[] = primAlgorithm(mapRooms);
+        Connector edges[] = primAlgorithm(mapRooms);
         
         char[][] map = visualizer.createMap(mapRooms, edges);
-        return new Map(mapRooms, map);
+        return new Map(map);
     }
 
 }

@@ -22,52 +22,51 @@
  * THE SOFTWARE.
  */
 package Group7.map.mapGenerator.logic;
-import Group7.map.mapGenerator.Edge;
+import Group7.map.mapGenerator.Connector;
 import Group7.map.mapGenerator.Room;
 
 
 public class MapVisualizer {
-    
+
     public final static char WALL = '#';
-    public final static char EMPTY = '.';
-    public final static char NOTHING = ' ';
-    
+    public final static char insideBlock = '.';
+    public final static char outerBlock = ' ';
+
     /**
-     * Draw given room into the character map.
+     * Drawing the room into character code
      *
      * @param room Room to be drawn
-     * @param map Character map to be drawn into
+     * @param map  Character map to be drawn into
      */
 
     private void drawRoom(Room room, char[][] map) {
-        //upper and lower wall
+        //N and S
         for (int i = 0; i < room.getWidth(); i++) {
             map[room.getY()][room.getX() + i] = WALL;
             map[room.getY() + room.getHeight() - 1][room.getX() + i] = WALL;
         }
 
-        //left and right wall
+        //E and W
         for (int i = 0; i < room.getHeight(); i++) {
             map[room.getY() + i][room.getX()] = WALL;
             map[room.getY() + i][room.getX() + room.getWidth() - 1] = WALL;
         }
 
-        //blank area within the room
+        //blank area
         for (int i = 0; i < room.getWidth() - 2; i++) {
             for (int j = 0; j < room.getHeight() - 2; j++) {
-                map[room.getY() + j + 1][room.getX() + i + 1] = EMPTY;
+                map[room.getY() + j + 1][room.getX() + i + 1] = outerBlock;
             }
         }
     }
 
     /**
-     *
-     * Draw routes between two rooms
+     * Connects 2 rooms
      *
      * @param edge Edge containing two rooms
-     * @param map Character map
+     * @param map  Character map
      */
-    private void drawEdge(Edge edge, char[][] map) {
+    private void drawEdge(Connector edge, char[][] map) {
         int x = edge.getFirst().getCenterX();
         int y = edge.getFirst().getCenterY();
         int destinationX = edge.getSecond().getCenterX();
@@ -83,8 +82,8 @@ public class MapVisualizer {
                 x -= 1;
                 direction = 'l';
             }
-            if (map[y][x] != EMPTY) {
-                map[y][x] = EMPTY;
+            if (map[y][x] != insideBlock) {
+                map[y][x] = insideBlock;
                 map[y + 1][x] = WALL;
                 map[y - 1][x] = WALL;
             }
@@ -119,8 +118,8 @@ public class MapVisualizer {
             } else if (y > destinationY) {
                 y--;
             }
-            if (map[y][x] != EMPTY) {
-                map[y][x] = EMPTY;
+            if (map[y][x] != insideBlock) {
+                map[y][x] = insideBlock;
                 map[y][x + 2] = WALL;
                 map[y][x - 2] = WALL;
             }
@@ -136,14 +135,13 @@ public class MapVisualizer {
     private void clearRoom(Room room, char[][] map) {
         for (int i = 0; i < room.getWidth() - 2; i++) {
             for (int j = 0; j < room.getHeight() - 2; j++) {
-                map[room.getY() + j + 1][room.getX() + i + 1] = EMPTY;
+                map[room.getY() + j + 1][room.getX() + i + 1] = insideBlock;
             }
         }
     }
     
     /**
      * Offset all rooms by given x and y offsets.
-     *
      * @param rooms Array of rooms.
      * @param offsetX how much x will be offset
      * @param offsetY how much y will be offset
@@ -155,13 +153,7 @@ public class MapVisualizer {
         }
     }
 
-    /**
-     * Generate a character map from given map rooms.
-     *
-     * @param mapRooms Array containing map rooms
-     * @return Character map containing rooms
-     */
-    public final char[][] createMap(Room mapRooms[], Edge[] edges) {
+    public final char[][] createMap(Room mapRooms[], Connector[] edges) {
         if (mapRooms.length == 0) {
             return new char[0][0];
 
@@ -194,7 +186,7 @@ public class MapVisualizer {
         char map[][] = new char[maximumY][maximumX];
         for (int i = 0; i < maximumY; i++) {
             for (int j = 0; j < maximumX; j++) {
-                map[i][j] = NOTHING;
+                map[i][j] = outerBlock;
             }
         }
 
@@ -202,7 +194,7 @@ public class MapVisualizer {
             this.drawRoom(room, map);
         }
 
-        for (Edge edge : edges) {
+        for (Connector edge : edges) {
             drawEdge(edge, map);
         }
 

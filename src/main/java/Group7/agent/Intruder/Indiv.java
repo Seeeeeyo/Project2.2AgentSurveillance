@@ -32,7 +32,6 @@ public class Indiv {
         private ArrayList<Double> directions = new ArrayList<>();
 
 
-
     public static void setSenario(MindMap map, IntruderPercepts percepts){
         max_speed = percepts.getScenarioIntruderPercepts().getMaxMoveDistanceIntruder().getValue()/time_interval;
         Indiv.map = map;
@@ -76,7 +75,6 @@ public class Indiv {
             }
             comuteFitness();
     }
-
 
 
     public void clear(){

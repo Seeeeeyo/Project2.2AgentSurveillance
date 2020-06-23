@@ -1,6 +1,15 @@
-package Group7.agent;
+package Group7.agent.Guard;
+/**
+ * @author: Tianchen Luo
+ * Trying to using Neural Network learning the shape of wall and finding the best rotation angle to rotate and avoid collision
+ * But performance is not good enough and time limited to improve this method, we give it up and chose to use greedy
+ */
 
 import Group7.Game;
+import Group7.agent.Guard.Built_In;
+import Group7.agent.Guard.Capturer_Guard;
+import Group7.agent.Guard.Txt;
+import Group7.agent.Guard.encapAction;
 import Group7.agent.NeuralNetwork.NeuralNetwork;
 import Interop.Action.*;
 import Interop.Agent.Guard;
@@ -85,7 +94,7 @@ public class RL implements Guard {
     @Override
     public GuardAction getAction(GuardPercepts percepts) {
         Txt IO = new Txt();
-        Built_In  bi = new Built_In();
+        Built_In bi = new Built_In();
         Capturer_Guard cp =new Capturer_Guard();
 
         Angle moveAngle = Angle.fromRadians(percepts.getScenarioGuardPercepts().getScenarioPercepts().getMaxRotationAngle().getRadians() * Game._RANDOM.nextDouble());
@@ -598,4 +607,68 @@ public class RL implements Guard {
 
     }
 
+}
+class tit {
+
+    /**
+     * using to initialize the weight
+     */
+
+    public static String hiddenWeightPath1 = "src/main/resources/hiddenWeight1.txt";
+    public static String hiddenWeightPath2 = "src/main/resources/hiddenWeight2.txt";
+    public static String hiddenWeightPath3 = "src/main/resources/hiddenWeight3.txt";
+    public static String hiddenWeightPath4 = "src/main/resources/hiddenWeight4.txt";
+    public static String hiddenWeightPath5 = "src/main/resources/hiddenWeight5.txt";
+    public static String hiddenWeightPath6 = "src/main/resources/hiddenWeight6.txt";
+    public static String hiddenWeightPath7 = "src/main/resources/hiddenWeight7.txt";
+    public static String hiddenWeightPath8 = "src/main/resources/hiddenWeight8.txt";
+    public static String hiddenWeightPath9 = "src/main/resources/hiddenWeight9.txt";
+    public static String hiddenWeightPath10 = "src/main/resources/hiddenWeight10.txt";
+    public static String hiddenWeightPath11 = "src/main/resources/hiddenWeight11.txt";
+    public static String hiddenWeightPath12 = "src/main/resources/hiddenWeight12.txt";
+
+    public static String inputWeightPath1 = "src/main/resources/inputWeight1.txt";
+    public static String inputWeightPath2 = "src/main/resources/inputWeight2.txt";
+    public static String inputWeightPath3 = "src/main/resources/inputWeight3.txt";
+    public static String inputWeightPath4 = "src/main/resources/inputWeight4.txt";
+    public static String inputWeightPath5 = "src/main/resources/inputWeight5.txt";
+    public static String inputWeightPath6 = "src/main/resources/inputWeight6.txt";
+    public static String inputWeightPath7 = "src/main/resources/inputWeight7.txt";
+    public static String inputWeightPath8 = "src/main/resources/inputWeight8.txt";
+    public static String inputWeightPath9 = "src/main/resources/inputWeight9.txt";
+    public static String inputWeightPath10 = "src/main/resources/inputWeight10.txt";
+    public static String inputWeightPath11 = "src/main/resources/inputWeight11.txt";
+    public static String inputWeightPath12 = "src/main/resources/inputWeight12.txt";
+
+    public static String biasWeightPath1 = "src/main/resources/biasWeight1.txt";
+    public static String biasWeightPath2 = "src/main/resources/biasWeight2.txt";
+    public static String biasWeightPath3 = "src/main/resources/biasWeight3.txt";
+    public static String biasWeightPath4 = "src/main/resources/biasWeight4.txt";
+    public static String biasWeightPath5 = "src/main/resources/biasWeight5.txt";
+    public static String biasWeightPath6 = "src/main/resources/biasWeight6.txt";
+    public static String biasWeightPath7 = "src/main/resources/biasWeight7.txt";
+    public static String biasWeightPath8 = "src/main/resources/biasWeight8.txt";
+    public static String biasWeightPath9 = "src/main/resources/biasWeight9.txt";
+    public static String biasWeightPath10 = "src/main/resources/biasWeight10.txt";
+    public static String biasWeightPath11 = "src/main/resources/biasWeight11.txt";
+    public static String biasWeightPath12 = "src/main/resources/biasWeight12.txt";
+
+    public static void main(String[] args) {
+
+
+//        RL rl = new RL();
+//        NeuralNetwork n = new NeuralNetwork();
+//        t.writeDecision(t.decision,3);
+//        System.out.println(t.readTime(t.decision));
+
+
+        double[] input = new double[19];
+
+        for (int i = 0; i < input.length; i++) {
+
+            input[i] = 1;
+        }
+
+
+    }
 }

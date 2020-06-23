@@ -1,16 +1,15 @@
 package Group7.gui2;
 
 import Group7.agent.container.AgentContainer;
-import Group7.agent.container.IntruderContainer;
-import Group7.map.objects.*;
-import Group7.map.objects.Window;
-import Group7.math.Vector2;
 import Group7.agent.container.GuardContainer;
+import Group7.agent.container.IntruderContainer;
 import Group7.map.GameMap;
 import Group7.map.dynamic.DynamicObject;
 import Group7.map.dynamic.Pheromone;
 import Group7.map.dynamic.Sound;
+import Group7.map.objects.Window;
 import Group7.map.objects.*;
+import Group7.math.Vector2;
 import Interop.Percept.Vision.FieldOfView;
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
@@ -72,6 +71,7 @@ public class MainScene extends Scene {
             }
         }
     }
+
     private StackPane mainStack;
     private HBox mainHBox = new HBox();
     private StackPane menuBackground = new StackPane();
@@ -249,6 +249,7 @@ public class MainScene extends Scene {
         menu.addEventHandler(MouseEvent.MOUSE_EXITED, event -> {
             menu.setVisible(false);
             menuPane.setMouseTransparent(true);
+
         });
         this.setOnKeyPressed(event -> {
             if(event.getText().equalsIgnoreCase("+")){
@@ -442,6 +443,7 @@ public class MainScene extends Scene {
         draw();
     }
     private void draw(){
+
         GraphicsContext g = canvas.getGraphicsContext2D();
         g.clearRect(0,0,canvas.getWidth(),canvas.getHeight());
         g.setFill(GuiSettings.backgroundColor);

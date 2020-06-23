@@ -1,7 +1,9 @@
 package Group7;
 
 import Group7.agent.container.AgentContainer;
+import Group7.agent.container.GuardContainer;
 import Group7.agent.container.IntruderContainer;
+import Group7.agent.factories.DefaultAgentFactory;
 import Group7.agent.factories.IAgentFactory;
 import Group7.map.GameMap;
 import Group7.map.GameSettings;
@@ -13,10 +15,6 @@ import Group7.map.dynamic.Sound;
 import Group7.map.objects.*;
 import Group7.math.Vector2;
 import Group7.tree.PointContainer;
-import Group7.agent.container.GuardContainer;
-import Group7.agent.factories.DefaultAgentFactory;
-import Group7.map.area.*;
-import Group7.map.objects.*;
 import Interop.Action.*;
 import Interop.Agent.Guard;
 import Interop.Agent.Intruder;
@@ -65,6 +63,7 @@ public class Game implements Runnable {
     private Set<AgentContainer<?>> justTeleported = new HashSet<>();
 
     private Team winner = null;
+    private int turns = 0;
 
     private AtomicBoolean runningLoop = new AtomicBoolean(false);
     private final AtomicInteger ticks;
@@ -256,6 +255,7 @@ public class Game implements Runnable {
         runningLoop.set(true);
         while (this.winner == null && runningLoop.get())
         {
+            turns++;
             // --- at 0 ticks pause, if -1 we want to go as fas as possible
             if(ticks.get() == 0 ){
                 continue;
@@ -711,8 +711,9 @@ public class Game implements Runnable {
          */
         void call(Semaphore lock);
     }
-    public void deleteIntruder(int intruderIndex){
-        intruders.remove(intruderIndex);
+    
+    public int getTurns() {
+        return turns;
     }
 
 }

@@ -13,7 +13,7 @@ import java.util.*;
 
 public abstract class AgentContainer<T> {
 
-    public final static double _RADIUS = 0.1;
+    public final static double _RADIUS = 0.15;
 
     private T agent;
     private FieldOfView normalFOV;
