@@ -1,26 +1,3 @@
-/*
- * The MIT License
- *
- * Copyright 2018 d471061c.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
 package Group7.map.mapGenerator.logic;
 
 import Group7.map.mapGenerator.Connector;
@@ -34,29 +11,15 @@ public class MapGenerator {
 
     private RoomFactory roomFactory;
     private MapVisualizer visualizer;
-    
-    /**
-     * Map Generator
-     *
-     * @param roomFactory Factory that provides the rooms
-     */
-    public MapGenerator(RoomFactory roomFactory) {
-        this.roomFactory = roomFactory;
-        this.visualizer = new MapVisualizer();
-    }
 
-    public MapGenerator() {
-        this(new RoomFactory());
+
+    public MapGenerator(RoomFactory _roomFactory) {
+        roomFactory = _roomFactory;
+        visualizer = new MapVisualizer();
     }
 
 
-    /**
-     *
-     * Get minimum spanning tree with Prim's algorithm
-     *
-     * @param rooms Rooms which to be connected
-     * @return Minimum spanning tree represented as edges
-     */
+   //Minimum Spanning Tree
     private Connector[] primAlgorithm(Room rooms[]) {
         int rootIndex = 0;
 
@@ -66,7 +29,7 @@ public class MapGenerator {
 
         for (int i = 0; i < rooms.length; i++) {
             parent[i] = null;
-            objects[i] = new Object(rooms[i], this.INFINITY, i);
+            objects[i] = new Object(rooms[i], INFINITY, i);
         }
         objects[rootIndex].setValue(0);
 
@@ -110,7 +73,7 @@ public class MapGenerator {
         Room mapRooms[] = new Room[rooms];
 
         for (int i = 0; i < rooms; i++) {
-            Room room = this.roomFactory.produceRoom();
+            Room room = roomFactory.produceRoom();
             mapRooms[i] = room;
         }
 

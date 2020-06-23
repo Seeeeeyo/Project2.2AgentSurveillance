@@ -1,6 +1,7 @@
 package Group7.agent.factories;
 
 import Group7.agent.Capturer_Guard;
+import Group7.agent.GreedyGuard;
 import Group7.agent.RandomIntruderAgent;
 import Interop.Agent.Guard;
 import Interop.Agent.Intruder;
@@ -36,6 +37,7 @@ public class DefaultAgentFactory implements IAgentFactory {
             //guards.add(new MapAgent(300,600));
             //guards.add(new DeepSpace());
             //
+            //guards.add(new GreedyGuard());
             guards.add(new Capturer_Guard(i));
             //guards.add(new Explorator());
             //guards.add(new Explorator());

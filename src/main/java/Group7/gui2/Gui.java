@@ -11,7 +11,7 @@ import java.io.File;
 import java.util.List;
 
 public class Gui extends Application {
-    private File mapFile = new File("./src/main/java/Group7/map/maps/generatedMap.map");
+    private File mapFile = new File("./src/main/java/Group7/map/maps/map3-18PercentWalls.map");
     private MainController mainController = new MainController(this, mapFile, true);
     private MainScene scene = new MainScene(new StackPane(), mainController.getGame().getGameMap(), this);
     private Stage primary = new Stage();

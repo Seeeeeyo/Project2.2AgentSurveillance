@@ -11,9 +11,6 @@ public class Connector {
         targetRoom = _target;
     }
 
-    public double distance() {
-        return sourceRoom.distance(targetRoom);
-    }
 
     public Room getFirst() {
         return sourceRoom;
@@ -23,9 +20,8 @@ public class Connector {
         return targetRoom;
     }
 
-    @Override
-    public String toString() {
-        return "[" + sourceRoom + ", " + targetRoom + ", distance: " + sourceRoom.distance(targetRoom) + "]";
+    public double distance() {
+        return sourceRoom.distance(targetRoom);
     }
 
 }

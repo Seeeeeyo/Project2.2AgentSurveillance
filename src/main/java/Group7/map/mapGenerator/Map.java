@@ -10,10 +10,6 @@ public class Map implements Serializable {
         map = _map;
     }
 
-    public char[][] cloneMap() {
-        return map.clone();
-    }
-
     public String toString() {
         String mapString = " ";
         for (int i = 0; i < map.length; i++) {

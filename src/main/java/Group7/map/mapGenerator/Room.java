@@ -15,8 +15,8 @@ public class Room implements Serializable {
      *
      * @param _width  The width of the room
      * @param _height The height of the room
-     * @param _x      Upper-left corners X-coordinate of the room
-     * @param _y      Upper-left corners Y-coordinate of the room
+     * @param _x      Upper-left coordinate
+     * @param _y      Upper-left coordinate
      */
 
     public Room(int _x, int _y, int _width, int _height) {

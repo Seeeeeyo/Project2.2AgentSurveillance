@@ -1,8 +1,5 @@
 package Group7.map.mapGenerator;
 
-import Group7.map.mapGenerator.logic.MapGenerator;
-import Group7.map.mapGenerator.logic.RoomFactory;
-
 import java.io.*;
 import java.util.Random;
 

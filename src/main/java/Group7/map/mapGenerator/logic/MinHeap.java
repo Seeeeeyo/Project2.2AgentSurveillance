@@ -2,14 +2,12 @@ package Group7.map.mapGenerator.logic;
 
 public class MinHeap<T extends Comparable> {
 
-    protected final int DEFAULT = 27;
-
     protected int heapSize;
     protected Comparable array[];
 
     public MinHeap(int capacity) {
-        this.heapSize = 0;
-        this.array = (T[]) new Comparable[capacity + 1];
+        heapSize = 0;
+        array = (T[]) new Comparable[capacity + 1];
     }
 
     protected int parent(int pointer) {
@@ -25,7 +23,7 @@ public class MinHeap<T extends Comparable> {
     }
 
     protected void swap(int first, int second) {
-        Comparable temp = array[first];
+        Comparable<? extends Object> temp = array[first];
         array[first] = array[second];
         array[second] = temp;
     }
@@ -78,13 +76,13 @@ public class MinHeap<T extends Comparable> {
     }
 
     public boolean isEmpty() {
-        return this.heapSize == 0;
+        return heapSize == 0;
     }
 
 
     public T deleteMin() {
 
-        Comparable minimum = this.array[1];
+        Comparable<? extends Object> minimum = array[1];
         array[1] = array[heapSize];
         heapSize--;
         convertToHeapDS(1);
